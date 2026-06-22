@@ -268,13 +268,16 @@ function Capture({ uid, onDone }) {
       {preview && <img className="preview" src={preview} alt="Beleg" style={{ marginBottom: 12 }} />}
       <div className="card">
         <div className="field"><label>{t("Händler")}</label><input value={form.merchant} onChange={(e) => setForm({ ...form, merchant: e.target.value })} /></div>
-        <div className="row2">
+        <div className="row3">
           <div className="field"><label>{t("Datum")}</label><input type="date" value={form.doc_date} onChange={(e) => setForm({ ...form, doc_date: e.target.value })} /></div>
-          <div className="field"><label>{t("Betrag brutto (€)")}</label><input type="number" step="0.01" value={form.gross} onChange={(e) => setForm({ ...form, gross: parseFloat(e.target.value) })} /></div>
+          <div className="field"><label>{t("Betrag brutto")}</label><input type="number" step="0.01" value={form.gross ?? ""} onChange={(e) => setForm({ ...form, gross: parseFloat(e.target.value) })} /></div>
+          <div className="field"><label>{t("Währung")}</label>
+            <select value={form.currency || "EUR"} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
+              {Array.from(new Set([form.currency || "EUR", "EUR", "USD", "RON", "CHF", "GBP"])).map((c) => <option key={c} value={c}>{c}</option>)}
+            </select></div>
         </div>
         <div className="field"><label>{t("MwSt-Satz (%)")}</label>
-          <select value={form.vat_rate} onChange={(e) => setForm({ ...form, vat_rate: parseFloat(e.target.value) })}>
-            <option value="19">19 %</option><option value="7">7 %</option><option value="0">0 %</option></select></div>
+          <input type="number" step="0.1" min="0" value={form.vat_rate ?? ""} onChange={(e) => setForm({ ...form, vat_rate: e.target.value === "" ? null : parseFloat(e.target.value) })} /></div>
         <div className="field"><label>{t("Kategorie")}</label>
           <div className="chips">{Object.entries(CATS).map(([k, v]) => (
             <button key={k} className={"chip" + (form.category === k ? " on" : "")} onClick={() => setForm({ ...form, category: k })}>
