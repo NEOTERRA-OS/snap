@@ -1,1 +1,1 @@
-colors: warm light + neutral/emerald dark — Mon Jun 22 15:52:05 UTC 2026
+redesign in-app: Google Sans Flex, KPI-Sublines, NeosBarChart, Journal-Tabelle, SVG-Monatschart — Mon Jun 22 16:12:16 UTC 2026
