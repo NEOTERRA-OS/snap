@@ -576,7 +576,10 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
     <>
       <div className="ahead">
         <h1 className="title">{t("Auswertungen")}</h1>
-        <button className="btn ghost csv" onClick={exportCsv}><Icon name="upload" size={15} /> {t("CSV-Export")}</button>
+        <div className="ahead-actions">
+          <button className="btn ghost" onClick={exportPdf}><Icon name="filetext" size={15} /> PDF</button>
+          <button className="btn ghost" onClick={exportCsv}><Icon name="upload" size={15} /> {t("CSV-Export")}</button>
+        </div>
       </div>
       <div className="filterbar">
         <div className="fseg">

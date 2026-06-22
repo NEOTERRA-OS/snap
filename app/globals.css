@@ -203,6 +203,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .ahead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .ahead .title{margin:0}
 .ahead .csv{margin-left:auto;width:auto;padding:9px 14px;font-size:12.5px}
+.ahead-actions{margin-left:auto;display:flex;gap:8px}
+.ahead-actions .btn{width:auto;padding:9px 14px;font-size:12.5px}
 .filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:12px 0 16px}
 .fseg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
 .fseg .fs{border:0;background:none;color:var(--muted);font-weight:600;font-size:12px;padding:7px 13px;border-radius:999px;cursor:pointer;font-family:inherit}
