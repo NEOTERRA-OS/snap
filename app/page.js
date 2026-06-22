@@ -296,6 +296,7 @@ function Capture({ uid, onDone }) {
 }
 
 function Receipts({ uid, onOpen }) {
+  const { t } = useT();
   const [rows, setRows] = useState(null);
   const [tab, setTab] = useState("all");
   const load = useCallback(() => {
