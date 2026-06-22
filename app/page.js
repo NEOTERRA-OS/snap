@@ -570,7 +570,16 @@ function Detail({ id, onBack }) {
         <div className="kv"><span className="k">{t("Originalbeleg")}</span>
           <span className="v">{r.file_path ? <button className="linkbtn" style={{ color: "var(--green)" }} onClick={openOriginal}><Icon name="filetext" size={13} /> {t("Öffnen")}</button> : "—"}</span></div>
         {r.file_hash && <div className="kv"><span className="k">SHA-256</span><span className="v mono" style={{ fontSize: 11 }} title={r.file_hash}>{r.file_hash.slice(0, 20)}…</span></div>}
+        {r.category === "hospitality" && (r.occasion || r.attendees) && <>
+          <div className="kv"><span className="k">{t("Anlass der Bewirtung")}</span><span className="v">{r.occasion || "—"}</span></div>
+          <div className="kv"><span className="k">{t("Teilnehmer")}</span><span className="v">{r.attendees || "—"}</span></div>
+        </>}
       </div>
+      {r.status === "rejected" && r.reject_reason && (
+        <div className="bflag dup" style={{ marginBottom: 12 }}><Icon name="alert" size={13} /> {t("Abgelehnt")}: {r.reject_reason}</div>
+      )}
+      {r.duplicate_of && <div className="bflag dup" style={{ marginBottom: 12 }}><Icon name="alert" size={13} /> {t("Mögliche Dublette — dieser Beleg existiert bereits.")}</div>}
+      {r.flags?.length > 0 && r.flags.map((fl) => <div className="bflag" key={fl} style={{ marginBottom: 8 }}><Icon name="alert" size={13} /> {t(fl)}</div>)}
       <div className="card">
         <div className="pw"><Icon name="filetext" /> {t("Verlauf (Audit-Trail)")}</div>
         {steps.map((s, i) => (
@@ -578,6 +587,12 @@ function Detail({ id, onBack }) {
             <div><b>{t(s.label)}</b></div></div>
         ))}
       </div>
+      {(r.status === "draft" || r.status === "rejected") && (
+        <button className="btn" disabled={busy} onClick={() => setStatus("submitted", { reject_reason: null })}>{busy ? <span className="spin" /> : <Icon name="arrowright" />} {t("Einreichen")}</button>
+      )}
+      {r.status === "submitted" && (
+        <button className="btn ghost" disabled={busy} onClick={() => setStatus("draft")} style={{ marginBottom: 10 }}><Icon name="chevronleft" size={15} /> {t("Zurückziehen")}</button>
+      )}
       {["submitted", "approved"].includes(r.status) && (
         <button className="btn" disabled={busy} onClick={handoff}>{busy ? <span className="spin" /> : <Icon name="link" />} {t("An ERPNext übergeben")}</button>
       )}
