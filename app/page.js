@@ -404,6 +404,7 @@ function Capture({ uid, onDone }) {
       if (error) throw error;
       // Lieferanten-Gedächtnis aktualisieren (fire-and-forget).
       Promise.all(ready.filter((it) => it.merchant).map((it) => saveVendorMemory(it).catch(() => {}))).catch(() => {});
+      toast(status === "draft" ? `${rows.length} ${t("als Entwurf gespeichert")}` : `${rows.length} ${t("Beleg(e) eingereicht")}`);
       onDone();
     } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
   }
@@ -557,13 +558,18 @@ function Approvals({ onOpen }) {
 
   async function decide(id, decision, reason) {
     const patch = decision === "approved" ? { status: "approved" } : { status: "rejected", reject_reason: reason || "" };
-    await supabase.from("receipts").update({ ...patch, decided_at: new Date().toISOString() }).eq("id", id);
+    const { error } = await supabase.from("receipts").update({ ...patch, decided_at: new Date().toISOString() }).eq("id", id);
+    if (error) { toast(error.message, "err"); return; }
+    toast(decision === "approved" ? t("Freigegeben") : t("Abgelehnt"));
     load();
   }
   async function approveAll() {
     setBusy(true);
-    await supabase.from("receipts").update({ status: "approved", decided_at: new Date().toISOString() }).in("id", rows.map((r) => r.id));
-    setBusy(false); load();
+    const n = rows.length;
+    const { error } = await supabase.from("receipts").update({ status: "approved", decided_at: new Date().toISOString() }).in("id", rows.map((r) => r.id));
+    setBusy(false);
+    if (error) { toast(error.message, "err"); return; }
+    toast(`${n} ${t("freigegeben")}`); load();
   }
   return (
     <>
