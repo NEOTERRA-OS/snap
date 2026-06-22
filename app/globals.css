@@ -299,20 +299,29 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .rcpt-prev{display:block;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;background:var(--surface)}
 .rcpt-prev img{display:block;width:100%;max-height:360px;object-fit:contain;background:#0000000a}
 
-/* ===== Dark Mode ===== */
+/* ===== Dark Mode (neutral surfaces + Emerald-Akzent, NEOS-Guideline) ===== */
 [data-theme="dark"]{
-  --bg:#0f1311;--surface:#171d19;--thead:#1b231e;
-  --ink:#e9ece8;--muted:#9aa39b;--muted2:#727b72;--line:#2a322c;--line2:#222a24;
-  --emerald-bg:#10231b;--emerald-bd:#1f4435;
-  --amber-bg:#241d0e;--amber-bd:#4a3a16;--red-bg:#2a1414;
+  --bg:#121212;--surface:#1f1f1f;--thead:#262626;
+  --ink:#f4f5f5;--muted:#9ca3af;--muted2:#6b7280;--line:#2c2c2c;--line2:#232323;
+  --green:#10b981;                 /* Brand-Akzent in Dark = Emerald (Icons/Fills/Progress) */
+  --emerald:#34d399;--emerald-bg:#10231b;--emerald-bd:#1f4435;
+  --amber-bg:#241d0e;--amber-bd:#4a3a16;--red:#f87171;--red-bg:#2a1414;
 }
-[data-theme="dark"] .lthumb,[data-theme="dark"] .bthumb,[data-theme="dark"] .tl .mk.pending{background:#222a24}
-[data-theme="dark"] .snav.on,[data-theme="dark"] .bnav.active{color:#fff}
-[data-theme="dark"] .snav.on{background:#2f4a30}
-[data-theme="dark"] .sb-brand .pn,[data-theme="dark"] .brand,[data-theme="dark"] .seg .s.on,[data-theme="dark"] .bnav.active{color:#bcd6bb}
-[data-theme="dark"] .seg .s.on{border-bottom-color:#bcd6bb}
-[data-theme="dark"] .bflag{background:#2a230f;color:#e6cf8a;border-color:#4a3a16}
-[data-theme="dark"] .bflag.dup{background:#2a1414;color:#e7a3a3;border-color:#5a2727}
-[data-theme="dark"] .bflag.mem{background:#13241a;color:#bcd6bb;border-color:#244531}
+/* CTAs behalten dunkles Bottle-Green auf Gelb (Kontrast) */
+[data-theme="dark"] .btn,[data-theme="dark"] .sb-cta,[data-theme="dark"] .dz-btn{color:#2C3C2B}
+[data-theme="dark"] .btn .i,[data-theme="dark"] .dz-btn .i{color:#2C3C2B}
+/* Auswahl-Elemente (Nav/Chips/Tabs) = Bottle-Green-Fläche + Weiß, Tab-Unterstrich Gelb */
+[data-theme="dark"] .snav.on,[data-theme="dark"] .chip.on,[data-theme="dark"] .fseg .fs.on,[data-theme="dark"] .langtog button.on{background:#2C3C2B;color:#fff}
+[data-theme="dark"] .snav.on .i{color:var(--yellow)}
+[data-theme="dark"] .seg .s.on,[data-theme="dark"] .bnav.active{color:#fff}
+[data-theme="dark"] .seg .s.on{border-bottom-color:var(--yellow)}
+[data-theme="dark"] .bnav.active{border-top-color:var(--yellow)}
+[data-theme="dark"] .brand,[data-theme="dark"] .sb-brand .pn,[data-theme="dark"] .sb-brand{color:var(--green)}
+/* neutrale Chips/Thumbnails */
+[data-theme="dark"] .lthumb,[data-theme="dark"] .bthumb,[data-theme="dark"] .tl .mk.pending{background:#2a2a2a}
+/* Flags */
+[data-theme="dark"] .bflag{background:#241d0e;color:#fbbf24;border-color:#4a3a16}
+[data-theme="dark"] .bflag.dup{background:#2a1414;color:#f87171;border-color:#5a2727}
+[data-theme="dark"] .bflag.mem{background:#10231b;color:#34d399;border-color:#1f4435}
 [data-theme="dark"] .rcpt-prev img{background:#ffffff0a}
-[data-theme="dark"] .dropzone:hover,[data-theme="dark"] .dropzone.over{background:#16201a}
+[data-theme="dark"] .dropzone:hover,[data-theme="dark"] .dropzone.over{background:#1a1a1a}
