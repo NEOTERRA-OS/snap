@@ -783,14 +783,21 @@ function Dashboard() {
 
   const sorted = (m) => Object.entries(m).sort((a, b) => b[1] - a[1]);
   const months = Object.keys(byMonth).sort();
-  const mMax = Math.max(1, ...Object.values(byMonth));
+  const rampClass = (i) => (i === 0 ? "f1" : i <= 2 ? "f2" : "f3");
   const Bars = ({ map, label, limit }) => {
-    const items = sorted(map).slice(0, limit || 99); const mx = Math.max(1, ...items.map((i) => i[1]));
-    return (<div className="panel"><div className="pw"><Icon name="banknote" /> {t(label)}</div>
-      {items.length === 0 && <p className="lead">{t("Keine Daten im Filter.")}</p>}
-      {items.map(([k, v]) => (<div className="bar" key={k}><div className="lab" title={k}>{t(k)}</div>
-        <div className="track"><div className="fill" style={{ width: (v / mx) * 100 + "%" }} /></div>
-        <div className="v">{eur(v)}</div></div>))}
+    const items = sorted(map).slice(0, limit || 99);
+    const mx = Math.max(1, ...items.map((i) => i[1]));
+    const tot = items.reduce((s, i) => s + i[1], 0) || 1;
+    return (<div className="panel"><div className="pw">{t(label)}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
+      {items.length === 0 && <div className="empty"><Icon name="banknote" size={26} /><p>{t("Keine Daten im Filter.")}</p></div>}
+      {items.map(([k, v], i) => (
+        <div className="rrow" key={k}>
+          <div className="rmain">
+            <div className="rlab" title={k}>{t(k)}</div>
+            <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
+          </div>
+          <div className="rrgt"><span className="rv mono">{eur(v)}</span><span className="rpct mono">{Math.round(v / tot * 100)}%</span></div>
+        </div>))}
     </div>);
   };
 
