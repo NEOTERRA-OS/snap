@@ -752,6 +752,21 @@ function Dashboard() {
   const openReimb = openR.filter((r) => r.payment_method === "private");
   const booked = f.filter((r) => r.status === "booked");
   const unconverted = f.filter((r) => eurOf(r) == null).length;
+  const inReview = f.filter((r) => ["review", "submitted"].includes(r.status));
+
+  // Vorperiode (gleich lange Spanne unmittelbar davor) für Deltas.
+  const monthsBack = period === "1m" ? 1 : period === "3m" ? 3 : period === "12m" ? 12 : 0;
+  const prevStart = monthsBack ? new Date(now.getFullYear(), now.getMonth() - 2 * monthsBack + 1, 1) : null;
+  const prevF = (prevStart && cutoff) ? rows.filter((r) => {
+    if (cc && r.cost_center_id !== cc) return false;
+    if (cat && r.category !== cat) return false;
+    const d = r.doc_date ? new Date(r.doc_date) : null;
+    return d && d >= prevStart && d < cutoff;
+  }) : [];
+  const prevTotal = sum(prevF);
+  const volDelta = prevTotal > 0 ? (total - prevTotal) / prevTotal * 100 : null;
+  const cntDelta = prevF.length ? f.length - prevF.length : null;
+  const bookedPct = total > 0 ? Math.round(sum(booked) / total * 100) : 0;
 
   // currency breakdown (original + EUR)
   const byCur = {};
