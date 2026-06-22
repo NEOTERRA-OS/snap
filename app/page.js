@@ -622,8 +622,9 @@ function Detail({ id, onBack }) {
     try {
       const { error } = await supabase.from("receipts").update({ status, ...extra }).eq("id", id);
       if (error) throw error;
+      toast(status === "submitted" ? t("Eingereicht") : t("Zurückgezogen"));
       load();
-    } catch (e) { setMsg(e.message); } finally { setBusy(false); }
+    } catch (e) { setMsg(e.message); toast(e.message, "err"); } finally { setBusy(false); }
   }
 
   async function handoff() {
@@ -637,8 +638,9 @@ function Detail({ id, onBack }) {
       const { error } = await supabase.from("receipts").update({ status: "booked", erp_doctype: j.doctype, erp_docname: j.docname }).eq("id", id);
       if (error) throw error;
       setMsg(`${j.doctype} · ${j.docname}`);
+      toast(`ERPNext: ${j.doctype} · ${j.docname}`);
       load();
-    } catch (e) { setMsg(e.message); } finally { setBusy(false); }
+    } catch (e) { setMsg(e.message); toast(e.message, "err"); } finally { setBusy(false); }
   }
 
   const steps = [
