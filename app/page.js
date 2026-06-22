@@ -532,7 +532,9 @@ function Receipts({ uid, onOpen }) {
         {[["all", "Alle"], ["open", "In Prüfung"], ["booked", "Gebucht"]].map(([k, l]) => (
           <button key={k} className={"s" + (tab === k ? " on" : "")} onClick={() => setTab(k)}>{t(l)}</button>))}
       </div>
-      {filtered.length === 0 && <p className="lead">{t("Keine Belege in dieser Ansicht.")}</p>}
+      {filtered.length === 0 && (
+        <div className="empty"><Icon name="receipt" size={28} /><p>{t("Keine Belege in dieser Ansicht.")}</p></div>
+      )}
       {filtered.map((r) => (
         <div key={r.id} className="lcard" onClick={() => onOpen(r.id)}>
           <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
