@@ -52,6 +52,29 @@ async function findDuplicate(hash, merchant, date, gross) {
   }
   return null;
 }
+
+// ===== Lieferanten-Gedächtnis (Learning Phase 1) =====
+// Normalisierter Händler-Schlüssel (Groß/Klein, Sonderzeichen, GmbH-Suffixe egal).
+const vendorKey = (m) => String(m || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").replace(/\b(gmbh|ag|kg|srl|sa|ltd|inc|llc|co|the)\b/g, "").trim().replace(/\s+/g, " ");
+
+async function loadVendorMemory(merchant) {
+  const key = vendorKey(merchant);
+  if (!key) return null;
+  const { data } = await supabase.from("vendor_memory").select("*").eq("merchant_key", key).limit(1);
+  return data && data.length ? data[0] : null;
+}
+
+async function saveVendorMemory(it) {
+  const key = vendorKey(it.merchant);
+  if (!key) return;
+  const prev = await loadVendorMemory(it.merchant);
+  await supabase.from("vendor_memory").upsert({
+    merchant_key: key, merchant: it.merchant,
+    category: it.category || null, cost_center_id: it.cost_center_id || null,
+    vat_rate: it.vat_rate ?? null, payment_method: it.payment_method || null,
+    currency: it.currency || null, hits: (prev?.hits || 0) + 1, updated_at: new Date().toISOString(),
+  }, { onConflict: "merchant_key" });
+}
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const r = new FileReader();
   r.onload = () => resolve(String(r.result).split(",")[1] || "");
