@@ -384,11 +384,12 @@ function Detail({ id, onBack }) {
       <div className="lcard" style={{ cursor: "default" }}>
         <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
         <div className="meta"><div className="t">{r.merchant}</div><div className="d">{t((CATS[r.category] || CATS.other).label)} · {r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte")}</div></div>
-        <div className="amt">{eur(r.gross)}</div>
+        <div className="amt">{money(r.gross, r.currency)}</div>
       </div>
       <div className="card">
         <div className="kv"><span className="k">{t("Datum")}</span><span className="v">{dDE(r.doc_date)}</span></div>
-        <div className="kv"><span className="k">{t("MwSt")}</span><span className="v">{r.vat_rate}% · {eur(r.vat_amount)}</span></div>
+        <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
+        <div className="kv"><span className="k">{t("MwSt")}</span><span className="v">{r.vat_rate}% · {money(r.vat_amount, r.currency)}</span></div>
         <div className="kv"><span className="k">{t("Status")}</span><span className="v">{t(STATUS[r.status])}</span></div>
         {r.erp_docname && <div className="kv"><span className="k">ERPNext</span><span className="v">{r.erp_doctype} · {r.erp_docname}</span></div>}
       </div>
