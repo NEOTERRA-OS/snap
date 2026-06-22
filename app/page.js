@@ -18,6 +18,12 @@ const STATUS = {
 };
 const eur = (n) => (n == null ? "—" : Number(n).toLocaleString("de-DE", { style: "currency", currency: "EUR" }));
 const dDE = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "—");
+const fileToBase64 = (file) => new Promise((resolve, reject) => {
+  const r = new FileReader();
+  r.onload = () => resolve(String(r.result).split(",")[1] || "");
+  r.onerror = reject;
+  r.readAsDataURL(file);
+});
 
 // Mock OCR — simulates a Document-AI extraction from the uploaded file.
 function mockOcr(filename) {
