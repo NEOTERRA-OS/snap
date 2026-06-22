@@ -518,10 +518,10 @@ function Dashboard() {
   };
 
   function exportCsv() {
-    const head = ["Datum", "Händler", "Kategorie", "Kostenstelle", "Mitarbeiter", "Status", "Brutto", "MwSt"];
+    const head = ["Datum", "Händler", "Kategorie", "Kostenstelle", "Mitarbeiter", "Status", "Währung", "Brutto", "Brutto_EUR", "MwSt"];
     const lines = f.map((r) => [r.doc_date || "", (r.merchant || "").replace(/;/g, ","), (CATS[r.category] || CATS.other).label,
       r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "") : "", profiles[r.user_id] || "", STATUS[r.status] || r.status,
-      Number(r.gross || 0).toFixed(2), Number(r.vat_amount || 0).toFixed(2)].join(";"));
+      r.currency || "EUR", Number(r.gross || 0).toFixed(2), (eurOf(r) != null ? eurOf(r).toFixed(2) : ""), Number(r.vat_amount || 0).toFixed(2)].join(";"));
     const blob = new Blob(["﻿" + [head.join(";"), ...lines].join("\n")], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `snap-auswertung-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
   }
