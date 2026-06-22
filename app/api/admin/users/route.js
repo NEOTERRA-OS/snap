@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { SUPA_URL, SUPA_ANON } from "@/lib/config";
 
 export const runtime = "nodejs";
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const URL = SUPA_URL;
+const ANON = SUPA_ANON;
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ROLES = ["employee", "approver", "accounting", "admin"];
 
 function svc() {
-  return createClient(URL, SERVICE, { auth: { persistSession: false }, db: { schema: "belegflow" } });
+  return createClient(URL, SERVICE, { auth: { persistSession: false } });
 }
 
 // Verify the caller's bearer token and that they are an admin. Returns {ok} or {error,status}.
