@@ -241,14 +241,17 @@ function Capture({ uid, onDone }) {
   async function processFile(id, file) {
     try {
       const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
-      const up = await supabase.storage.from("receipts").upload(path, file, { upsert: false });
+      const [up, hash] = await Promise.all([
+        supabase.storage.from("receipts").upload(path, file, { upsert: false }),
+        sha256(file),
+      ]);
       let ocr;
       try {
         const b64 = await fileToBase64(file);
         const res = await fetch("/api/ocr", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: b64, mediaType: file.type, filename: file.name }) });
         ocr = (await res.json()).fields || mockOcr(file.name);
       } catch { ocr = mockOcr(file.name); }
-      upd(id, { loading: false, filePath: up.error ? null : path, error: up.error ? up.error.message : null,
+      upd(id, { loading: false, filePath: up.error ? null : path, file_hash: hash, file_size: file.size, error: up.error ? up.error.message : null,
         merchant: ocr.merchant || "", doc_date: ocr.doc_date, gross: ocr.gross, currency: ocr.currency || "EUR",
         vat_rate: ocr.vat_rate, category: ocr.category || "other", confidence: ocr.confidence });
     } catch (e) { upd(id, { loading: false, error: e.message }); }
