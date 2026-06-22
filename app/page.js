@@ -292,7 +292,7 @@ function Capture({ uid, onDone }) {
     } catch (e) { upd(id, { loading: false, error: e.message }); }
   }
 
-  async function submitAll() {
+  async function submitAll(status = "submitted") {
     const ready = items.filter((it) => !it.loading);
     if (!ready.length) return;
     setBusy(true); setErr("");
@@ -300,8 +300,9 @@ function Capture({ uid, onDone }) {
       const rows = [];
       for (const it of ready) {
         const { eur, rate } = await fxToEur(it.gross, it.currency, it.doc_date);
+        const flags = plausFlags(it);
         rows.push({
-          user_id: uid, status: "submitted", source: it.source, file_path: it.filePath,
+          user_id: uid, status, source: it.source, file_path: it.filePath,
           merchant: it.merchant, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
           currency: it.currency || "EUR", gross_eur: eur, fx_rate: rate,
           file_hash: it.file_hash, file_size: it.file_size,
@@ -309,6 +310,10 @@ function Capture({ uid, onDone }) {
           category: it.category, payment_method: it.payment_method,
           reimbursable: it.payment_method === "private", confidence: it.confidence,
           cost_center_id: it.cost_center_id || null,
+          occasion: it.category === "hospitality" ? (it.occasion || null) : null,
+          attendees: it.category === "hospitality" ? (it.attendees || null) : null,
+          duplicate_of: it.duplicate_of || null,
+          flags: flags.length ? flags : null,
         });
       }
       const { error } = await supabase.from("receipts").insert(rows);
