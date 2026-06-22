@@ -25,6 +25,19 @@ const money = (n, cur) => {
   catch { return `${Number(n).toLocaleString("de-DE", { minimumFractionDigits: 2 })} ${cur || ""}`.trim(); }
 };
 const dDE = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "—");
+
+// Plausibilitäts-Flags (kanonisch deutsch; bei Anzeige via t() übersetzt).
+function plausFlags(it) {
+  const f = [];
+  const today = new Date().toISOString().slice(0, 10);
+  if (!it.merchant || !String(it.merchant).trim()) f.push("Händler fehlt");
+  if (it.gross == null || Number(it.gross) <= 0) f.push("Betrag fehlt");
+  if (it.doc_date && it.doc_date > today) f.push("Datum in der Zukunft");
+  if (it.vat_rate != null && (Number(it.vat_rate) < 0 || Number(it.vat_rate) > 27)) f.push("MwSt-Satz unplausibel");
+  if (it.gross != null && Number(it.gross) > 1000) f.push("Betrag über Limit (1.000)");
+  if (it.category === "hospitality" && (!it.attendees || !String(it.attendees).trim())) f.push("Bewirtung: Teilnehmer fehlen");
+  return f;
+}
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const r = new FileReader();
   r.onload = () => resolve(String(r.result).split(",")[1] || "");
@@ -234,6 +247,7 @@ function Capture({ uid, onDone }) {
       filePath: null, file_hash: null, file_size: null, merchant: "", doc_date: new Date().toISOString().slice(0, 10),
       gross: null, currency: "EUR", vat_rate: null, category: "other",
       payment_method: "company_card", cost_center_id: "", confidence: null,
+      occasion: "", attendees: "", duplicate_of: null,
       source: file.type.includes("pdf") ? "upload" : "photo",
     }));
     setItems((prev) => [...prev, ...newItems]);
