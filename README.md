@@ -4,7 +4,7 @@ Mobile-first Beleg-/Spesenerfassung mit Übergabe an ERPNext. Next.js (App Route
 
 ## Stack
 - **Next.js 14** (App Router, JS)
-- **Supabase** — Auth, Postgres (dedizierte `belegflow`-Schema), Storage-Bucket `receipts`, RLS
+- **Supabase** — eigenes Projekt `neoterra-snap` (eu-central-1), Auth, Postgres (`public`-Schema), Storage-Bucket `receipts`, RLS
 - **NEOS Global UX/UI Guideline** — Bottle Green `#2C3C2B`, Neoterra Yellow `#FAD201`, Lucide-Icons, keine Emojis
 
 ## Features (MVP)
@@ -22,7 +22,7 @@ npm run dev   # http://localhost:3000
 `.env.local` enthält die (öffentlichen) Supabase-Keys.
 
 ## Datenbank
-Schema, Tabellen, RLS und Seed liegen in Supabase (`neoterra-dev`, Schema `belegflow`). Siehe `Snap_Konzept.md`.
+Eigenes Supabase-Projekt **`neoterra-snap`** (eu-central-1) — getrennt vom FMIS. Tabellen, RLS, Trigger, Storage-Bucket `receipts` und Seed liegen im `public`-Schema. URL/Anon stehen in `lib/config.js`; der `SUPABASE_SERVICE_ROLE_KEY` (Admin-Tool) und `ANTHROPIC_API_KEY` (OCR) sind Vercel-Secrets.
 
 ## Nächste Schritte
 - Echter Document-AI-OCR-Dienst statt Mock
