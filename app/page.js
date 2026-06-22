@@ -401,6 +401,7 @@ const MONTHS_DE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep
 const monthLabel = (k) => { const [y, m] = k.split("-"); return `${MONTHS_DE[(+m) - 1]} ${y.slice(2)}`; };
 
 function Dashboard() {
+  const { t } = useT();
   const [rows, setRows] = useState(null);
   const [ccs, setCcs] = useState([]);
   const [profiles, setProfiles] = useState({});
@@ -446,9 +447,9 @@ function Dashboard() {
   const mMax = Math.max(1, ...Object.values(byMonth));
   const Bars = ({ map, label, limit }) => {
     const items = sorted(map).slice(0, limit || 99); const mx = Math.max(1, ...items.map((i) => i[1]));
-    return (<div className="panel"><div className="pw"><Icon name="banknote" /> {label}</div>
-      {items.length === 0 && <p className="lead">Keine Daten im Filter.</p>}
-      {items.map(([k, v]) => (<div className="bar" key={k}><div className="lab" title={k}>{k}</div>
+    return (<div className="panel"><div className="pw"><Icon name="banknote" /> {t(label)}</div>
+      {items.length === 0 && <p className="lead">{t("Keine Daten im Filter.")}</p>}
+      {items.map(([k, v]) => (<div className="bar" key={k}><div className="lab" title={k}>{t(k)}</div>
         <div className="track"><div className="fill" style={{ width: (v / mx) * 100 + "%" }} /></div>
         <div className="v">{eur(v)}</div></div>))}
     </div>);
