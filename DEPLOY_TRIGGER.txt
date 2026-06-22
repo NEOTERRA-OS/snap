@@ -1,1 +1,1 @@
-redesign in-app: Google Sans Flex, KPI-Sublines, NeosBarChart, Journal-Tabelle, SVG-Monatschart — Mon Jun 22 16:12:16 UTC 2026
+spacing: mehr Top-Padding im Content (app-weit) — Mon Jun 22 16:25:05 UTC 2026
