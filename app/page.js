@@ -519,5 +519,89 @@ function Dashboard() {
   );
 }
 
-// category labels for the byCat bars (override numeric keys with readable labels)
+const ROLE_LABELS = { employee: "Mitarbeiter", approver: "Genehmiger", accounting: "Buchhaltung", admin: "Administrator" };
+
+function Admin({ session }) {
+  const { t } = useT();
+  const [users, setUsers] = useState(null);
+  const [form, setForm] = useState({ email: "", full_name: "", role: "employee" });
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [created, setCreated] = useState(null);
+  const token = session.access_token;
+  const auth = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+
+  const load = useCallback(() => {
+    fetch("/api/admin/users", { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json()).then((j) => { if (j.error) setErr(j.error); setUsers(j.users || []); });
+  }, [token]);
+  useEffect(() => { load(); }, [load]);
+
+  async function createUser(e) {
+    e.preventDefault(); setBusy(true); setErr(""); setCreated(null);
+    try {
+      const res = await fetch("/api/admin/users", { method: "POST", headers: auth, body: JSON.stringify(form) });
+      const j = await res.json();
+      if (j.error) throw new Error(j.error);
+      setCreated({ email: j.user.email, password: j.password });
+      setForm({ email: "", full_name: "", role: "employee" });
+      load();
+    } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
+  }
+  async function changeRole(id, role) {
+    await fetch("/api/admin/users", { method: "PATCH", headers: auth, body: JSON.stringify({ id, role }) });
+    load();
+  }
+
+  return (
+    <>
+      <h1 className="title">{t("Nutzerverwaltung")}</h1>
+      <p className="lead">{t("Nutzer anlegen")} · {t("Rolle")}</p>
+      {err && <div className="err" style={{ marginBottom: 12 }}>{err}</div>}
+
+      <div className="panel">
+        <div className="pw"><Icon name="user" /> {t("Nutzer anlegen")}</div>
+        <form onSubmit={createUser}>
+          <div className="row2">
+            <div className="field"><label>{t("E-Mail")}</label>
+              <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@neoterra.ag" /></div>
+            <div className="field"><label>{t("Name")}</label>
+              <input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} placeholder="Vor- Nachname" /></div>
+          </div>
+          <div className="field"><label>{t("Rolle")}</label>
+            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+              {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
+            </select></div>
+          <button className="btn" disabled={busy} style={{ width: "auto", padding: "12px 18px" }}>{busy ? <span className="spin" /> : <Icon name="plus" />} {t("Anlegen")}</button>
+        </form>
+        {created && (
+          <div className="ok" style={{ marginTop: 12 }}>
+            <b>{t("Nutzer angelegt")}:</b> {created.email}<br />
+            {t("Passwort (einmalig anzeigen):")} <span className="mono">{created.password}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="panel">
+        <div className="pw"><Icon name="user" /> {t("Nutzer")} {users ? `(${users.length})` : ""}</div>
+        {!users ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div> : (
+          <table className="utable">
+            <thead><tr><th>{t("Name")}</th><th>{t("E-Mail")}</th><th>{t("Rolle")}</th></tr></thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.full_name || "—"}</td>
+                  <td className="muted">{u.email}</td>
+                  <td><select value={u.role} onChange={(e) => changeRole(u.id, e.target.value)}>
+                    {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
+                  </select></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
 
