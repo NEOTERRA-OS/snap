@@ -508,42 +508,92 @@ function Capture({ uid, onDone }) {
   );
 }
 
+const dShort = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—");
+
 function Receipts({ uid, onOpen }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
-  const [tab, setTab] = useState("all");
+  const [statusF, setStatusF] = useState("all");
+  const [q, setQ] = useState("");
+  const [sortBy, setSortBy] = useState("date");
+  const [dir, setDir] = useState("desc");
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency").order("doc_date", { ascending: false })
+    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency,flags,duplicate_of").order("doc_date", { ascending: false })
       .then(({ data }) => setRows(data || []));
   }, []);
   useEffect(() => { load(); }, [load]);
   if (!rows) return <div className="center"><span className="spin" /></div>;
-  const filtered = rows.filter((r) => tab === "all" ? true : tab === "open" ? ["review", "submitted", "approved"].includes(r.status) : r.status === "booked");
+
+  const statusMatch = (r) => statusF === "all" ? true
+    : statusF === "review" ? ["review", "submitted"].includes(r.status)
+    : r.status === statusF;
+  const filtered = rows.filter((r) => statusMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
+  const sorted = [...filtered].sort((a, b) => {
+    let c = 0;
+    if (sortBy === "amount") c = Number(a.gross || 0) - Number(b.gross || 0);
+    else if (sortBy === "merchant") c = (a.merchant || "").localeCompare(b.merchant || "", "de", { numeric: true });
+    else c = (a.doc_date || "").localeCompare(b.doc_date || "");
+    return dir === "asc" ? c : -c;
+  });
   const open = rows.filter((r) => ["review", "submitted", "approved"].includes(r.status));
   const openSum = open.reduce((s, r) => s + Number(r.gross || 0), 0);
+  const chips = [["all", "Alle"], ["draft", "Entwurf"], ["review", "In Prüfung"], ["approved", "Genehmigt"], ["booked", "Gebucht"], ["rejected", "Abgelehnt"]];
+  const flagged = (r) => (r.flags?.length > 0 || r.duplicate_of);
+
   return (
     <>
       <h1 className="title">{t("Meine Belege")}</h1>
       <div className="kpis">
-        <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n">{open.length}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n">{eur(openSum)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n mono">{open.length}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n mono">{eur(openSum)}</div></div>
       </div>
-      <div className="seg">
-        {[["all", "Alle"], ["open", "In Prüfung"], ["booked", "Gebucht"]].map(([k, l]) => (
-          <button key={k} className={"s" + (tab === k ? " on" : "")} onClick={() => setTab(k)}>{t(l)}</button>))}
-      </div>
-      {filtered.length === 0 && (
-        <div className="empty"><Icon name="receipt" size={28} /><p>{t("Keine Belege in dieser Ansicht.")}</p></div>
-      )}
-      {filtered.map((r) => (
-        <div key={r.id} className="lcard" onClick={() => onOpen(r.id)}>
-          <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
-          <div className="meta"><div className="t">{r.merchant}</div>
-            <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
-            <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{t(STATUS[r.status])}</span></div>
-          <div className="amt">{money(r.gross, r.currency)}</div>
+
+      <div className="filterbox">
+        <div className="srch"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Belege durchsuchen …")} /></div>
+        <div className="srt">
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="date">{t("Datum")}</option><option value="amount">{t("Betrag")}</option><option value="merchant">{t("Händler")}</option>
+          </select>
+          <button className="dirbtn" onClick={() => setDir(dir === "asc" ? "desc" : "asc")} title={dir === "asc" ? t("Aufsteigend") : t("Absteigend")}><Icon name={dir === "asc" ? "arrowup" : "arrowdown"} size={15} /></button>
         </div>
-      ))}
+        <div className="fchips">
+          {chips.map(([k, l]) => <button key={k} className={"fchip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)}</button>)}
+        </div>
+      </div>
+      <div className="shownline">{sorted.length} {t("von")} {rows.length} {t("Belegen")}</div>
+
+      {sorted.length === 0 ? (
+        <div className="empty"><Icon name="receipt" size={28} /><p>{q || statusF !== "all" ? t("Keine Treffer im Filter.") : t("Noch keine Belege erfasst.")}</p></div>
+      ) : (<>
+        <table className="jtable only-desktop">
+          <thead><tr>
+            <th className="thc">{t("Datum")}</th><th className="thc">{t("Händler")}</th><th className="thc">{t("Kategorie")}</th>
+            <th className="thc">{t("Status")}</th><th className="thc r">{t("Betrag")}</th>
+          </tr></thead>
+          <tbody>
+            {sorted.map((r) => (
+              <tr key={r.id} onClick={() => onOpen(r.id)}>
+                <td className="mono">{dShort(r.doc_date)}</td>
+                <td className="tdmerch">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || "—"}</td>
+                <td><span className="catcell"><Icon name={(CATS[r.category] || CATS.other).icon} size={14} /> {t((CATS[r.category] || CATS.other).label)}</span></td>
+                <td><span className={"badge b-" + r.status}><span className="dot" />{t(STATUS[r.status])}</span></td>
+                <td className="r mono amt">{money(r.gross, r.currency)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="only-mobile">
+          {sorted.map((r) => (
+            <div key={r.id} className="lcard" onClick={() => onOpen(r.id)}>
+              <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
+              <div className="meta"><div className="t">{r.merchant}{flagged(r) && <Icon name="alert" size={12} className="flagdot" />}</div>
+                <div className="d">{dShort(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
+                <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{t(STATUS[r.status])}</span></div>
+              <div className="amt mono">{money(r.gross, r.currency)}</div>
+            </div>
+          ))}
+        </div>
+      </>)}
     </>
   );
 }

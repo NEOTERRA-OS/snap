@@ -38,6 +38,9 @@ const P = {
   trend: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
   trendup: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
   trenddown: '<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  arrowup: '<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>',
+  arrowdown: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
 };
 export default function Icon({ name, size = 16, color, style, className }) {
   return (
