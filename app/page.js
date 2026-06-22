@@ -405,7 +405,7 @@ function Capture({ uid, onDone }) {
         </div>
       ))}
       {err && <div className="err">{err}</div>}
-      <div className="row3" style={{ marginTop: 4 }}>
+      <div className="submitrow">
         <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("submitted")}>
           {busy ? <span className="spin" /> : <Icon name="arrowright" />} {anyLoading ? t("OCR läuft …") : `${t("Alle einreichen")} (${items.filter((i) => !i.loading).length})`}
         </button>
