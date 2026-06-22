@@ -1,0 +1,13 @@
+{
+  "name": "NEOS Snap",
+  "short_name": "Snap",
+  "description": "Beleg- & Spesenerfassung mit Übergabe an ERPNext",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f6f4",
+  "theme_color": "#2C3C2B",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
