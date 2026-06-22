@@ -236,26 +236,26 @@ function Capture({ uid, onDone }) {
 
   if (stage === "pick") return (
     <>
-      <h1 className="title">Beleg erfassen</h1>
-      <p className="lead">Foto, Scan, Upload oder per E-Mail — die OCR füllt die Felder automatisch.</p>
+      <h1 className="title">{t("Beleg erfassen")}</h1>
+      <p className="lead">{t("Foto, Scan, Upload oder per E-Mail — die OCR füllt die Felder automatisch.")}</p>
       <div className="capwrap">
         <div className="sources">
-          <div className="src on"><Icon name="camera" size={20} /> Foto</div>
-          <div className="src"><Icon name="scan" size={20} /> Scan</div>
-          <div className="src"><Icon name="upload" size={20} /> Upload</div>
-          <div className="src"><Icon name="mail" size={20} /> E-Mail</div>
+          <div className="src on"><Icon name="camera" size={20} /> {t("Foto")}</div>
+          <div className="src"><Icon name="scan" size={20} /> {t("Scan")}</div>
+          <div className="src"><Icon name="upload" size={20} /> {t("Upload")}</div>
+          <div className="src"><Icon name="mail" size={20} /> {t("E-Mail-Inbox")}</div>
         </div>
         <label className={"dropzone" + (drag ? " over" : "")}
           onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
           onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
           onDrop={onDrop}>
           <span className="dz-ic"><Icon name="upload" size={30} /></span>
-          <span className="dz-h">Beleg hierher ziehen oder auswählen</span>
-          <span className="dz-p">JPG, PNG oder PDF · mehrseitige Belege werden zusammengeführt</span>
-          <span className="dz-btn">{busy ? <span className="spin" /> : <Icon name="camera" size={15} />} {busy ? "Lade hoch & erkenne …" : "Datei auswählen"}</span>
+          <span className="dz-h">{t("Beleg hierher ziehen oder auswählen")}</span>
+          <span className="dz-p">{t("JPG, PNG oder PDF · mehrseitige Belege werden zusammengeführt")}</span>
+          <span className="dz-btn">{busy ? <span className="spin" /> : <Icon name="camera" size={15} />} {busy ? t("Lade hoch & erkenne …") : t("Datei auswählen")}</span>
           <input type="file" accept="image/*,application/pdf" capture="environment" hidden onChange={onFile} disabled={busy} />
         </label>
-        <div className="tip"><Icon name="scan" size={14} /> OCR startet automatisch nach dem Hochladen — du prüfst nur die markierten Felder.</div>
+        <div className="tip"><Icon name="scan" size={14} /> {t("OCR startet automatisch nach dem Hochladen — du prüfst nur die markierten Felder.")}</div>
         {err && <div className="err">{err}</div>}
       </div>
     </>
