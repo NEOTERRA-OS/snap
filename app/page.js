@@ -312,6 +312,19 @@ function Capture({ uid, onDone }) {
         const dup = await findDuplicate(hash, ocr.merchant, ocr.doc_date, ocr.gross);
         if (dup) upd(id, { duplicate_of: dup });
       } catch {}
+      // Lieferanten-Gedächtnis: bestätigte Defaults vorbelegen (Kostenstelle/Zahlart immer,
+      // Kategorie/MwSt nur wenn vom Nutzer früher bestätigt).
+      try {
+        const mem = await loadVendorMemory(ocr.merchant);
+        if (mem) {
+          const patch = { memoryHit: true };
+          if (mem.cost_center_id) patch.cost_center_id = mem.cost_center_id;
+          if (mem.payment_method) patch.payment_method = mem.payment_method;
+          if (mem.category) patch.category = mem.category;
+          if (mem.vat_rate != null) patch.vat_rate = mem.vat_rate;
+          upd(id, patch);
+        }
+      } catch {}
     } catch (e) { upd(id, { loading: false, error: e.message }); }
   }
 
@@ -341,6 +354,8 @@ function Capture({ uid, onDone }) {
       }
       const { error } = await supabase.from("receipts").insert(rows);
       if (error) throw error;
+      // Lieferanten-Gedächtnis aktualisieren (fire-and-forget).
+      Promise.all(ready.filter((it) => it.merchant).map((it) => saveVendorMemory(it).catch(() => {}))).catch(() => {});
       onDone();
     } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
   }
