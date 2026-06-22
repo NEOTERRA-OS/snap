@@ -715,6 +715,47 @@ function Detail({ id, onBack }) {
 
 const MONTHS_DE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 const monthLabel = (k) => { const [y, m] = k.split("-"); return `${MONTHS_DE[(+m) - 1]} ${y.slice(2)}`; };
+const shortEur = (v) => (v >= 1000 ? (v / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + "k" : Math.round(v).toString());
+
+// Monatschart: SVG mit Gitter, Ø-Linie, hervorgehobenem aktuellem Monat (NEOS-konform).
+function MonthlyChart({ months, data }) {
+  const vals = months.map((k) => data[k] || 0);
+  const max = Math.max(1, ...vals);
+  const avg = vals.reduce((s, v) => s + v, 0) / (vals.length || 1);
+  const W = 620, H = 196, padL = 42, padT = 16, padB = 26;
+  const plotH = H - padT - padB, plotW = W - padL - 10;
+  const n = months.length;
+  const step = plotW / n;
+  const bw = Math.min(46, step * 0.56);
+  const yOf = (v) => padT + plotH - (v / max) * plotH;
+  const xOf = (i) => padL + step * i + step / 2;
+  const ticks = [0, max / 2, max];
+  return (
+    <svg className="mchart" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label="Ausgaben pro Monat">
+      {ticks.map((tk, i) => (
+        <g key={i}>
+          <line className="mc-grid" x1={padL} y1={yOf(tk)} x2={W} y2={yOf(tk)} />
+          <text className="mc-axt" x={padL - 6} y={yOf(tk) + 3} textAnchor="end">{shortEur(tk)}</text>
+        </g>
+      ))}
+      <line className="mc-avg" x1={padL} y1={yOf(avg)} x2={W} y2={yOf(avg)} strokeDasharray="5 4" />
+      <text className="mc-avgt mono" x={W - 2} y={yOf(avg) - 4} textAnchor="end">Ø {shortEur(avg)}</text>
+      {months.map((k, i) => {
+        const v = data[k] || 0;
+        const cur = i === n - 1;
+        const h = Math.max(2, (v / max) * plotH);
+        const x = xOf(i) - bw / 2;
+        return (
+          <g key={k}>
+            <rect className={"mc-bar" + (cur ? " cur" : "")} x={x} y={padT + plotH - h} width={bw} height={h} rx="5" />
+            <text className="mc-val mono" x={xOf(i)} y={padT + plotH - h - 6} textAnchor="middle">{shortEur(v)}</text>
+            <text className={"mc-lab" + (cur ? " cur" : "")} x={xOf(i)} y={H - 8} textAnchor="middle">{monthLabel(k)}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
 
 function Dashboard() {
   const { t } = useT();
@@ -933,16 +974,10 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
       )}
 
       <div className="panel">
-        <div className="pw"><Icon name="trend" /> {t("Ausgaben pro Monat")}</div>
-        {months.length === 0 ? <p className="lead">{t("Keine Daten im Filter.")}</p> : (
-          <div className="vbars">
-            {months.map((k) => (
-              <div className="vbar" key={k} title={`${monthLabel(k)}: ${eur(byMonth[k])}`}>
-                <div className="vbval">{Math.round(byMonth[k] / 1000) >= 1 ? Math.round(byMonth[k] / 1000) + "k" : Math.round(byMonth[k])}</div>
-                <div className="vbtrack"><div className="vbfill" style={{ height: (byMonth[k] / mMax) * 100 + "%" }} /></div>
-                <div className="vblab">{monthLabel(k)}</div>
-              </div>))}
-          </div>)}
+        <div className="pw">{t("Ausgaben pro Monat")}<span className="pw-hint">Ø {eur(total / (months.length || 1))} · {t("Beträge in EUR")}</span></div>
+        {months.length === 0
+          ? <div className="empty"><Icon name="trend" size={26} /><p>{t("Keine Daten im Filter.")}</p></div>
+          : <MonthlyChart months={months} data={byMonth} />}
       </div>
 
       <div className="agrid">
