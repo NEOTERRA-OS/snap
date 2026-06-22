@@ -434,6 +434,9 @@ function Capture({ uid, onDone }) {
               )}
             </div>
           )}
+          {!it.loading && it.memoryHit && (
+            <div className="bflag mem"><Icon name="sparkles" size={13} /> {t("Vorbelegt aus Lieferanten-Gedächtnis — bitte prüfen.")}</div>
+          )}
           {!it.loading && it.duplicate_of && (
             <div className="bflag dup"><Icon name="alert" size={13} /> {t("Mögliche Dublette — dieser Beleg existiert bereits.")}</div>
           )}
