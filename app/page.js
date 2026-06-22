@@ -704,6 +704,16 @@ function Detail({ id, onBack }) {
     } catch (e) { setMsg(e.message); toast(e.message, "err"); } finally { setBusy(false); }
   }
 
+  async function syncNow() {
+    setBusy(true);
+    const d = await syncToDrive(id);
+    setBusy(false);
+    if (d?.ok) toast(t("In Drive abgelegt"));
+    else if (d?.skipped) toast(t("Drive ist noch nicht konfiguriert."), "err");
+    else toast(d?.error || "Fehler", "err");
+    load();
+  }
+
   async function handoff() {
     setBusy(true); setMsg("");
     try {
@@ -750,6 +760,12 @@ function Detail({ id, onBack }) {
         <div className="kv"><span className="k">{t("Originalbeleg")}</span>
           <span className="v">{r.file_path ? <button className="linkbtn" style={{ color: "var(--green)" }} onClick={openOriginal}><Icon name="filetext" size={13} /> {t("Öffnen")}</button> : "—"}</span></div>
         {r.file_hash && <div className="kv"><span className="k">SHA-256</span><span className="v mono" style={{ fontSize: 11 }} title={r.file_hash}>{r.file_hash.slice(0, 20)}…</span></div>}
+        <div className="kv"><span className="k">{t("Drive-Ablage")}</span>
+          <span className="v">{r.drive_link
+            ? <button className="linkbtn" style={{ color: "var(--green)" }} onClick={() => window.open(r.drive_link, "_blank")}><Icon name="link" size={13} /> {t("In Drive öffnen")}</button>
+            : ["approved", "booked"].includes(r.status)
+              ? <button className="linkbtn" disabled={busy} onClick={syncNow}><Icon name="upload" size={13} /> {t("Jetzt ablegen")}</button>
+              : <span style={{ color: "var(--muted2)" }}>{t("nach Freigabe")}</span>}</span></div>
         {r.category === "hospitality" && (r.occasion || r.attendees) && <>
           <div className="kv"><span className="k">{t("Anlass der Bewirtung")}</span><span className="v">{r.occasion || "—"}</span></div>
           <div className="kv"><span className="k">{t("Teilnehmer")}</span><span className="v">{r.attendees || "—"}</span></div>
