@@ -263,34 +263,34 @@ function Capture({ uid, onDone }) {
 
   return (
     <>
-      <h1 className="title">Prüfen &amp; ergänzen</h1>
-      <p className="lead" style={{ color: "var(--emerald)" }}><Icon name="check" size={13} /> Beleg erkannt · Confidence {form.confidence}%</p>
+      <h1 className="title">{t("Prüfen & ergänzen")}</h1>
+      <p className="lead" style={{ color: "var(--emerald)" }}><Icon name="check" size={13} /> {t("Beleg erkannt · Confidence ")}{form.confidence}%</p>
       {preview && <img className="preview" src={preview} alt="Beleg" style={{ marginBottom: 12 }} />}
       <div className="card">
-        <div className="field"><label>Händler</label><input value={form.merchant} onChange={(e) => setForm({ ...form, merchant: e.target.value })} /></div>
+        <div className="field"><label>{t("Händler")}</label><input value={form.merchant} onChange={(e) => setForm({ ...form, merchant: e.target.value })} /></div>
         <div className="row2">
-          <div className="field"><label>Datum</label><input type="date" value={form.doc_date} onChange={(e) => setForm({ ...form, doc_date: e.target.value })} /></div>
-          <div className="field"><label>Betrag brutto (€)</label><input type="number" step="0.01" value={form.gross} onChange={(e) => setForm({ ...form, gross: parseFloat(e.target.value) })} /></div>
+          <div className="field"><label>{t("Datum")}</label><input type="date" value={form.doc_date} onChange={(e) => setForm({ ...form, doc_date: e.target.value })} /></div>
+          <div className="field"><label>{t("Betrag brutto (€)")}</label><input type="number" step="0.01" value={form.gross} onChange={(e) => setForm({ ...form, gross: parseFloat(e.target.value) })} /></div>
         </div>
-        <div className="field"><label>MwSt-Satz (%)</label>
+        <div className="field"><label>{t("MwSt-Satz (%)")}</label>
           <select value={form.vat_rate} onChange={(e) => setForm({ ...form, vat_rate: parseFloat(e.target.value) })}>
             <option value="19">19 %</option><option value="7">7 %</option><option value="0">0 %</option></select></div>
-        <div className="field"><label>Kategorie</label>
+        <div className="field"><label>{t("Kategorie")}</label>
           <div className="chips">{Object.entries(CATS).map(([k, v]) => (
             <button key={k} className={"chip" + (form.category === k ? " on" : "")} onClick={() => setForm({ ...form, category: k })}>
-              <Icon name={v.icon} size={14} /> {v.label}</button>))}</div></div>
-        <div className="field"><label>Kostenstelle / Projekt</label>
+              <Icon name={v.icon} size={14} /> {t(v.label)}</button>))}</div></div>
+        <div className="field"><label>{t("Kostenstelle / Projekt")}</label>
           <select value={form.cost_center_id} onChange={(e) => setForm({ ...form, cost_center_id: e.target.value })}>
-            <option value="">— wählen —</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select></div>
-        <div className="field"><label>Zahlart</label>
+            <option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select></div>
+        <div className="field"><label>{t("Zahlart")}</label>
           <div className="chips">
-            <button className={"chip" + (form.payment_method === "company_card" ? " on" : "")} onClick={() => setForm({ ...form, payment_method: "company_card" })}><Icon name="wallet" size={14} /> Firmenkarte</button>
-            <button className={"chip" + (form.payment_method === "private" ? " on" : "")} onClick={() => setForm({ ...form, payment_method: "private" })}>Privat verauslagt</button>
+            <button className={"chip" + (form.payment_method === "company_card" ? " on" : "")} onClick={() => setForm({ ...form, payment_method: "company_card" })}><Icon name="wallet" size={14} /> {t("Firmenkarte")}</button>
+            <button className={"chip" + (form.payment_method === "private" ? " on" : "")} onClick={() => setForm({ ...form, payment_method: "private" })}>{t("Privat verauslagt")}</button>
           </div></div>
       </div>
       {err && <div className="err">{err}</div>}
-      <button className="btn" disabled={busy} onClick={save}>{busy ? <span className="spin" /> : <Icon name="arrowright" />} Einreichen</button>
-      <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setStage("pick"); setForm(null); setPreview(null); }}>Abbrechen</button>
+      <button className="btn" disabled={busy} onClick={save}>{busy ? <span className="spin" /> : <Icon name="arrowright" />} {t("Einreichen")}</button>
+      <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setStage("pick"); setForm(null); setPreview(null); }}>{t("Abbrechen")}</button>
     </>
   );
 }
