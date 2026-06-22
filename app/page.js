@@ -181,65 +181,75 @@ function Shell({ session }) {
   );
 }
 
+let _seq = 0;
 function Capture({ uid, onDone }) {
   const { t } = useT();
   const [stage, setStage] = useState("pick"); // pick | review
-  const [preview, setPreview] = useState(null);
-  const [filePath, setFilePath] = useState(null);
+  const [items, setItems] = useState([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [ccs, setCcs] = useState([]);
-  const [form, setForm] = useState(null);
   const [drag, setDrag] = useState(false);
 
   useEffect(() => { supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || [])); }, []);
 
-  function onFile(e) { const file = e.target.files?.[0]; if (file) handleFile(file); }
-  function onDrop(e) {
-    e.preventDefault(); setDrag(false);
-    const file = e.dataTransfer?.files?.[0]; if (file) handleFile(file);
+  const upd = (id, patch) => setItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
+
+  function onPick(e) { addFiles(Array.from(e.target.files || [])); e.target.value = ""; }
+  function onDrop(e) { e.preventDefault(); setDrag(false); addFiles(Array.from(e.dataTransfer?.files || [])); }
+
+  function addFiles(files) {
+    if (!files.length) return;
+    setErr(""); setStage("review");
+    const newItems = files.map((file) => ({
+      id: ++_seq, name: file.name, loading: true,
+      preview: file.type.startsWith("image/") ? URL.createObjectURL(file) : null,
+      filePath: null, merchant: "", doc_date: new Date().toISOString().slice(0, 10),
+      gross: null, currency: "EUR", vat_rate: null, category: "other",
+      payment_method: "company_card", cost_center_id: "", confidence: null,
+      source: file.type.includes("pdf") ? "upload" : "photo",
+    }));
+    setItems((prev) => [...prev, ...newItems]);
+    newItems.forEach((it, i) => processFile(it.id, files[i]));
   }
-  async function handleFile(file) {
-    if (busy) return;
-    setErr(""); setBusy(true);
+
+  async function processFile(id, file) {
     try {
-      if (file.type.startsWith("image/")) setPreview(URL.createObjectURL(file));
-      const path = `${uid}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
-      const { error } = await supabase.storage.from("receipts").upload(path, file, { upsert: false });
-      if (error) throw error;
-      setFilePath(path);
-      // Real OCR via Claude (server route); falls back to demo extraction if no API key.
+      const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+      const up = await supabase.storage.from("receipts").upload(path, file, { upsert: false });
       let ocr;
       try {
         const b64 = await fileToBase64(file);
-        const res = await fetch("/api/ocr", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ data: b64, mediaType: file.type, filename: file.name }),
-        });
-        const j = await res.json();
-        ocr = j.fields || mockOcr(file.name);
+        const res = await fetch("/api/ocr", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: b64, mediaType: file.type, filename: file.name }) });
+        ocr = (await res.json()).fields || mockOcr(file.name);
       } catch { ocr = mockOcr(file.name); }
-      setForm({ ...ocr, source: file.type.includes("pdf") ? "upload" : "photo", payment_method: "company_card", cost_center_id: ocr.cost_center_id || "" });
-      setStage("review");
-    } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
+      upd(id, { loading: false, filePath: up.error ? null : path, error: up.error ? up.error.message : null,
+        merchant: ocr.merchant || "", doc_date: ocr.doc_date, gross: ocr.gross, currency: ocr.currency || "EUR",
+        vat_rate: ocr.vat_rate, category: ocr.category || "other", confidence: ocr.confidence });
+    } catch (e) { upd(id, { loading: false, error: e.message }); }
   }
 
-  async function save() {
+  async function submitAll() {
+    const ready = items.filter((it) => !it.loading);
+    if (!ready.length) return;
     setBusy(true); setErr("");
     try {
-      const vat_amount = form.gross && form.vat_rate ? +(form.gross - form.gross / (1 + form.vat_rate / 100)).toFixed(2) : null;
-      const { error } = await supabase.from("receipts").insert({
-        user_id: uid, status: "submitted", source: form.source, file_path: filePath,
-        merchant: form.merchant, doc_date: form.doc_date, gross: form.gross, vat_rate: form.vat_rate,
-        currency: form.currency || "EUR",
-        vat_amount, category: form.category, payment_method: form.payment_method,
-        reimbursable: form.payment_method === "private", confidence: form.confidence,
-        cost_center_id: form.cost_center_id || null,
-      });
+      const rows = ready.map((it) => ({
+        user_id: uid, status: "submitted", source: it.source, file_path: it.filePath,
+        merchant: it.merchant, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
+        currency: it.currency || "EUR",
+        vat_amount: it.gross && it.vat_rate ? +(it.gross - it.gross / (1 + it.vat_rate / 100)).toFixed(2) : null,
+        category: it.category, payment_method: it.payment_method,
+        reimbursable: it.payment_method === "private", confidence: it.confidence,
+        cost_center_id: it.cost_center_id || null,
+      }));
+      const { error } = await supabase.from("receipts").insert(rows);
       if (error) throw error;
       onDone();
     } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
   }
+
+  const anyLoading = items.some((it) => it.loading);
 
   if (stage === "pick") return (
     <>
@@ -257,12 +267,12 @@ function Capture({ uid, onDone }) {
           onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
           onDrop={onDrop}>
           <span className="dz-ic"><Icon name="upload" size={30} /></span>
-          <span className="dz-h">{t("Beleg hierher ziehen oder auswählen")}</span>
-          <span className="dz-p">{t("JPG, PNG oder PDF · mehrseitige Belege werden zusammengeführt")}</span>
-          <span className="dz-btn">{busy ? <span className="spin" /> : <Icon name="camera" size={15} />} {busy ? t("Lade hoch & erkenne …") : t("Datei auswählen")}</span>
-          <input type="file" accept="image/*,application/pdf" capture="environment" hidden onChange={onFile} disabled={busy} />
+          <span className="dz-h">{t("Belege hierher ziehen oder auswählen")}</span>
+          <span className="dz-p">{t("Mehrere Dateien möglich · JPG, PNG oder PDF")}</span>
+          <span className="dz-btn"><Icon name="camera" size={15} /> {t("Dateien auswählen")}</span>
+          <input type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
         </label>
-        <div className="tip"><Icon name="scan" size={14} /> {t("OCR startet automatisch nach dem Hochladen — du prüfst nur die markierten Felder.")}</div>
+        <div className="tip"><Icon name="scan" size={14} /> {t("OCR startet automatisch — du prüfst nur die markierten Felder.")}</div>
         {err && <div className="err">{err}</div>}
       </div>
     </>
@@ -270,37 +280,50 @@ function Capture({ uid, onDone }) {
 
   return (
     <>
-      <h1 className="title">{t("Prüfen & ergänzen")}</h1>
-      <p className="lead" style={{ color: "var(--emerald)" }}><Icon name="check" size={13} /> {t("Beleg erkannt · Confidence ")}{form.confidence}%</p>
-      {preview && <img className="preview" src={preview} alt="Beleg" style={{ marginBottom: 12 }} />}
-      <div className="card">
-        <div className="field"><label>{t("Händler")}</label><input value={form.merchant} onChange={(e) => setForm({ ...form, merchant: e.target.value })} /></div>
-        <div className="row3">
-          <div className="field"><label>{t("Datum")}</label><input type="date" value={form.doc_date} onChange={(e) => setForm({ ...form, doc_date: e.target.value })} /></div>
-          <div className="field"><label>{t("Betrag brutto")}</label><input type="number" step="0.01" value={form.gross ?? ""} onChange={(e) => setForm({ ...form, gross: parseFloat(e.target.value) })} /></div>
-          <div className="field"><label>{t("Währung")}</label>
-            <select value={form.currency || "EUR"} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
-              {Array.from(new Set([form.currency || "EUR", "EUR", "USD", "RON"])).map((c) => <option key={c} value={c}>{c === "RON" ? "RON (Lei)" : c}</option>)}
-            </select></div>
-        </div>
-        <div className="field"><label>{t("MwSt-Satz (%)")}</label>
-          <input type="number" step="0.1" min="0" value={form.vat_rate ?? ""} onChange={(e) => setForm({ ...form, vat_rate: e.target.value === "" ? null : parseFloat(e.target.value) })} /></div>
-        <div className="field"><label>{t("Kategorie")}</label>
-          <div className="chips">{Object.entries(CATS).map(([k, v]) => (
-            <button key={k} className={"chip" + (form.category === k ? " on" : "")} onClick={() => setForm({ ...form, category: k })}>
-              <Icon name={v.icon} size={14} /> {t(v.label)}</button>))}</div></div>
-        <div className="field"><label>{t("Kostenstelle / Projekt")}</label>
-          <select value={form.cost_center_id} onChange={(e) => setForm({ ...form, cost_center_id: e.target.value })}>
-            <option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select></div>
-        <div className="field"><label>{t("Zahlart")}</label>
-          <div className="chips">
-            <button className={"chip" + (form.payment_method === "company_card" ? " on" : "")} onClick={() => setForm({ ...form, payment_method: "company_card" })}><Icon name="wallet" size={14} /> {t("Firmenkarte")}</button>
-            <button className={"chip" + (form.payment_method === "private" ? " on" : "")} onClick={() => setForm({ ...form, payment_method: "private" })}>{t("Privat verauslagt")}</button>
-          </div></div>
+      <div className="ahead">
+        <h1 className="title">{t("Prüfen & ergänzen")} ({items.length})</h1>
+        <label className="btn ghost csv" style={{ cursor: "pointer" }}>
+          <Icon name="plus" size={15} /> {t("Mehr hinzufügen")}
+          <input type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
+        </label>
       </div>
+      {items.map((it) => (
+        <div className="card bcard" key={it.id}>
+          <div className="bcard-head">
+            {it.preview ? <img className="bthumb" src={it.preview} alt="" /> : <span className="bthumb ph"><Icon name="file-text" size={18} /></span>}
+            <span className="bname">{it.name}</span>
+            {it.loading ? <span className="bstat"><span className="spin" /> {t("Lese …")}</span>
+              : <span className="bstat ok"><Icon name="check" size={12} /> {it.confidence ?? "—"}%</span>}
+            <button className="brem" onClick={() => setItems((p) => p.filter((x) => x.id !== it.id))} title={t("Entfernen")}>✕</button>
+          </div>
+          {!it.loading && (
+            <div className="bgrid">
+              <div className="field"><label>{t("Händler")}</label><input value={it.merchant} onChange={(e) => upd(it.id, { merchant: e.target.value })} /></div>
+              <div className="field"><label>{t("Datum")}</label><input type="date" value={it.doc_date || ""} onChange={(e) => upd(it.id, { doc_date: e.target.value })} /></div>
+              <div className="field"><label>{t("Betrag brutto")}</label><input type="number" step="0.01" value={it.gross ?? ""} onChange={(e) => upd(it.id, { gross: parseFloat(e.target.value) })} /></div>
+              <div className="field"><label>{t("Währung")}</label>
+                <select value={it.currency || "EUR"} onChange={(e) => upd(it.id, { currency: e.target.value })}>
+                  {Array.from(new Set([it.currency || "EUR", "EUR", "USD", "RON"])).map((c) => <option key={c} value={c}>{c === "RON" ? "RON (Lei)" : c}</option>)}
+                </select></div>
+              <div className="field"><label>{t("MwSt-Satz (%)")}</label><input type="number" step="0.1" min="0" value={it.vat_rate ?? ""} onChange={(e) => upd(it.id, { vat_rate: e.target.value === "" ? null : parseFloat(e.target.value) })} /></div>
+              <div className="field"><label>{t("Kategorie")}</label>
+                <select value={it.category} onChange={(e) => upd(it.id, { category: e.target.value })}>
+                  {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}</select></div>
+              <div className="field"><label>{t("Kostenstelle / Projekt")}</label>
+                <select value={it.cost_center_id} onChange={(e) => upd(it.id, { cost_center_id: e.target.value })}>
+                  <option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select></div>
+              <div className="field"><label>{t("Zahlart")}</label>
+                <select value={it.payment_method} onChange={(e) => upd(it.id, { payment_method: e.target.value })}>
+                  <option value="company_card">{t("Firmenkarte")}</option><option value="private">{t("Privat verauslagt")}</option></select></div>
+            </div>
+          )}
+        </div>
+      ))}
       {err && <div className="err">{err}</div>}
-      <button className="btn" disabled={busy} onClick={save}>{busy ? <span className="spin" /> : <Icon name="arrowright" />} {t("Einreichen")}</button>
-      <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setStage("pick"); setForm(null); setPreview(null); }}>{t("Abbrechen")}</button>
+      <button className="btn" disabled={busy || anyLoading || !items.length} onClick={submitAll}>
+        {busy ? <span className="spin" /> : <Icon name="arrowright" />} {anyLoading ? t("OCR läuft …") : `${t("Alle einreichen")} (${items.filter((i) => !i.loading).length})`}
+      </button>
+      <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setItems([]); setStage("pick"); }}>{t("Abbrechen")}</button>
     </>
   );
 }
