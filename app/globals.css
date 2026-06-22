@@ -172,7 +172,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .shell{min-height:100vh;display:flex;background:var(--bg)}
 .sidebar{display:none}
 .maincol{flex:1;display:flex;flex-direction:column;min-width:0}
-.content{flex:1;padding:18px 16px 94px}
+.content{flex:1;padding:26px 18px 96px}
 .container{width:100%;max-width:780px;margin:0 auto}
 .topbar .avatar{width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700;margin-left:4px}
 .sb-brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--green);font-size:16px;padding:4px 10px 12px}
@@ -188,7 +188,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   .sidebar{display:flex;flex-direction:column;gap:3px;width:236px;flex:0 0 236px;background:var(--surface);border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:0;height:100vh}
   .bottomnav{display:none}
   .brand.mob-only{display:none}
-  .content{padding:24px 30px 44px}
+  .content{padding:38px 36px 56px}
   .container{max-width:980px;margin:0}
 }
 
