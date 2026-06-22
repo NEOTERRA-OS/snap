@@ -1,1 +1,1 @@
-logo→home + brand clickable — Mon Jun 22 18:02:41 UTC 2026
+approvals: multi-select (checkboxes + bulk approve/reject) — Mon Jun 22 18:06:21 UTC 2026
