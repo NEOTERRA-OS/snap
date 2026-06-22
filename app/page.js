@@ -388,14 +388,31 @@ function Capture({ uid, onDone }) {
               <div className="field"><label>{t("Zahlart")}</label>
                 <select value={it.payment_method} onChange={(e) => upd(it.id, { payment_method: e.target.value })}>
                   <option value="company_card">{t("Firmenkarte")}</option><option value="private">{t("Privat verauslagt")}</option></select></div>
+              {it.category === "hospitality" && (
+                <>
+                  <div className="field wide"><label>{t("Anlass der Bewirtung")}</label><input value={it.occasion} onChange={(e) => upd(it.id, { occasion: e.target.value })} placeholder={t("z. B. Projektbesprechung mit Lieferant")} /></div>
+                  <div className="field wide"><label>{t("Teilnehmer")}</label><input value={it.attendees} onChange={(e) => upd(it.id, { attendees: e.target.value })} placeholder={t("Namen, kommagetrennt")} /></div>
+                </>
+              )}
             </div>
           )}
+          {!it.loading && it.duplicate_of && (
+            <div className="bflag dup"><Icon name="alert" size={13} /> {t("Mögliche Dublette — dieser Beleg existiert bereits.")}</div>
+          )}
+          {!it.loading && plausFlags(it).map((f) => (
+            <div className="bflag" key={f}><Icon name="alert" size={13} /> {t(f)}</div>
+          ))}
         </div>
       ))}
       {err && <div className="err">{err}</div>}
-      <button className="btn" disabled={busy || anyLoading || !items.length} onClick={submitAll}>
-        {busy ? <span className="spin" /> : <Icon name="arrowright" />} {anyLoading ? t("OCR läuft …") : `${t("Alle einreichen")} (${items.filter((i) => !i.loading).length})`}
-      </button>
+      <div className="row3" style={{ marginTop: 4 }}>
+        <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("submitted")}>
+          {busy ? <span className="spin" /> : <Icon name="arrowright" />} {anyLoading ? t("OCR läuft …") : `${t("Alle einreichen")} (${items.filter((i) => !i.loading).length})`}
+        </button>
+        <button className="btn ghost" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("draft")}>
+          <Icon name="filetext" size={15} /> {t("Als Entwurf speichern")}
+        </button>
+      </div>
       <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setItems([]); setStage("pick"); }}>{t("Abbrechen")}</button>
     </>
   );
