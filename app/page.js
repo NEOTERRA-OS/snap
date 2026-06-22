@@ -557,6 +557,18 @@ function Dashboard() {
         <div className="kpi"><div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div><div className="n">{eur(sum(booked))}</div></div>
       </div>
 
+      <div className="fxnote"><Icon name="banknote" size={12} /> {t("Beträge in EUR · EZB-Kurs zum Belegdatum")}{unconverted > 0 ? ` · ${unconverted} ${t("ohne Kurs")}` : ""}</div>
+
+      {curs.length > 1 && (
+        <div className="panel">
+          <div className="pw"><Icon name="wallet" /> {t("Nach Währung")}</div>
+          {curs.map(([c, v]) => (
+            <div className="bar" key={c}><div className="lab">{c === "RON" ? "RON (Lei)" : c}</div>
+              <div className="track"><div className="fill" style={{ width: (v.eur / (total || 1)) * 100 + "%" }} /></div>
+              <div className="v" style={{ width: "auto", whiteSpace: "nowrap" }}>{money(v.orig, c)} · {eur(v.eur)}</div></div>))}
+        </div>
+      )}
+
       <div className="panel">
         <div className="pw"><Icon name="trend" /> {t("Ausgaben pro Monat")}</div>
         {months.length === 0 ? <p className="lead">{t("Keine Daten im Filter.")}</p> : (
