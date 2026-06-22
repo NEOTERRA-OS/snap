@@ -129,7 +129,7 @@ function Shell({ session }) {
         {nav("capture", "camera", "Erfassen")}
         {nav("receipts", "receipt", "Belege")}
         <div className="sb-grp">Auswerten</div>
-        {nav("dashboard", "dashboard", "Übersicht")}
+        {nav("dashboard", "dashboard", "Auswertungen")}
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> Neuer Beleg</button>
         <div className="sb-foot">Neoterra · The Vegetable Company<br />NEOS Snap v0.1</div>
       </aside>
@@ -154,7 +154,7 @@ function Shell({ session }) {
       <div className="bottomnav">
         {bnav("capture", "plus", "Erfassen")}
         {bnav("receipts", "receipt", "Belege")}
-        {bnav("dashboard", "dashboard", "Übersicht")}
+        {bnav("dashboard", "dashboard", "Auswertungen")}
       </div>
     </div>
   );
@@ -416,7 +416,7 @@ function Dashboard() {
   const booked = f.filter((r) => r.status === "booked");
 
   const agg = (keyFn) => { const m = {}; f.forEach((r) => { const k = keyFn(r); if (k == null) return; m[k] = (m[k] || 0) + Number(r.gross || 0); }); return m; };
-  const byCat = agg((r) => r.category);
+  const byCat = agg((r) => (CATS[r.category] || CATS.other).label);
   const byCc = agg((r) => (r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "—") : "—"));
   const byMerch = agg((r) => r.merchant || "—");
   const byEmp = agg((r) => profiles[r.user_id] || "—");
