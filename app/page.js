@@ -75,6 +75,20 @@ async function saveVendorMemory(it) {
     currency: it.currency || null, hits: (prev?.hits || 0) + 1, updated_at: new Date().toISOString(),
   }, { onConflict: "merchant_key" });
 }
+// Beleg-Ablage: Original in den je-User-Inbox-Ordner des Shared Drive laden
+// (der NT Google Drive Scanner indexiert anschließend nach NEOS-Index-Schema).
+async function syncToDrive(receiptId) {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch("/api/drive", {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${session?.access_token || ""}` },
+      body: JSON.stringify({ receiptId }),
+    });
+    return await res.json();
+  } catch (e) { return { error: String(e?.message || e) }; }
+}
+
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const r = new FileReader();
   r.onload = () => resolve(String(r.result).split(",")[1] || "");
