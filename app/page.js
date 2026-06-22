@@ -467,37 +467,37 @@ function Dashboard() {
   return (
     <>
       <div className="ahead">
-        <h1 className="title">Auswertungen</h1>
-        <button className="btn ghost csv" onClick={exportCsv}><Icon name="upload" size={15} /> CSV-Export</button>
+        <h1 className="title">{t("Auswertungen")}</h1>
+        <button className="btn ghost csv" onClick={exportCsv}><Icon name="upload" size={15} /> {t("CSV-Export")}</button>
       </div>
       <div className="filterbar">
         <div className="fseg">
           {[["1m", "Monat"], ["3m", "3 Monate"], ["12m", "12 Monate"], ["all", "Alle"]].map(([k, l]) => (
-            <button key={k} className={"fs" + (period === k ? " on" : "")} onClick={() => setPeriod(k)}>{l}</button>))}
+            <button key={k} className={"fs" + (period === k ? " on" : "")} onClick={() => setPeriod(k)}>{t(l)}</button>))}
         </div>
         <select value={cc} onChange={(e) => setCc(e.target.value)}>
-          <option value="">Alle Kostenstellen</option>
+          <option value="">{t("Alle Kostenstellen")}</option>
           {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
         </select>
         <select value={cat} onChange={(e) => setCat(e.target.value)}>
-          <option value="">Alle Kategorien</option>
-          {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          <option value="">{t("Alle Kategorien")}</option>
+          {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}
         </select>
-        <span className="shown">{f.length} Belege</span>
+        <span className="shown">{f.length} {t("Belege")}</span>
       </div>
 
       <div className="kpis kx">
-        <div className="kpi"><div className="kt"><Icon name="banknote" />Volumen</div><div className="n">{eur(total)}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="receipt" />Belege</div><div className="n">{f.length}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="layers" />Ø Betrag</div><div className="n">{eur(avg)}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="receipt" />Vorsteuer</div><div className="n">{eur(vat)}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="wallet" />Offene Erstattung</div><div className="n">{eur(sum(openReimb))}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="checkcheck" />Gebucht</div><div className="n">{eur(sum(booked))}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="banknote" />{t("Volumen")}</div><div className="n">{eur(total)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Belege")}</div><div className="n">{f.length}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="layers" />{t("Ø Betrag")}</div><div className="n">{eur(avg)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Vorsteuer")}</div><div className="n">{eur(vat)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div><div className="n">{eur(sum(openReimb))}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div><div className="n">{eur(sum(booked))}</div></div>
       </div>
 
       <div className="panel">
-        <div className="pw"><Icon name="trend" /> Ausgaben pro Monat</div>
-        {months.length === 0 ? <p className="lead">Keine Daten im Filter.</p> : (
+        <div className="pw"><Icon name="trend" /> {t("Ausgaben pro Monat")}</div>
+        {months.length === 0 ? <p className="lead">{t("Keine Daten im Filter.")}</p> : (
           <div className="vbars">
             {months.map((k) => (
               <div className="vbar" key={k} title={`${monthLabel(k)}: ${eur(byMonth[k])}`}>
@@ -516,9 +516,9 @@ function Dashboard() {
       </div>
 
       <div className="panel">
-        <div className="pw"><Icon name="wallet" /> Zahlart</div>
+        <div className="pw"><Icon name="wallet" /> {t("Zahlart")}</div>
         {sorted(byPay).map(([k, v]) => { const mx = total || 1; return (
-          <div className="bar" key={k}><div className="lab">{k}</div><div className="track"><div className="fill" style={{ width: (v / mx) * 100 + "%" }} /></div><div className="v">{eur(v)}</div></div>); })}
+          <div className="bar" key={k}><div className="lab">{t(k)}</div><div className="track"><div className="fill" style={{ width: (v / mx) * 100 + "%" }} /></div><div className="v">{eur(v)}</div></div>); })}
       </div>
     </>
   );
