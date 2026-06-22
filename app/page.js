@@ -58,6 +58,7 @@ function App() {
 }
 
 function Login() {
+  const { t } = useT();
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [mode, setMode] = useState("signin");
@@ -74,7 +75,7 @@ function Login() {
       } else {
         const { error } = await supabase.auth.signUp({ email, password: pw });
         if (error) throw error;
-        setOk("Konto erstellt. Bitte E-Mail bestätigen, dann anmelden.");
+        setOk(t("Konto erstellt. Bitte E-Mail bestätigen, dann anmelden."));
       }
     } catch (e2) { setErr(e2.message || "Fehler"); } finally { setBusy(false); }
   }
