@@ -334,6 +334,7 @@ function Receipts({ uid, onOpen }) {
 }
 
 function Detail({ id, onBack }) {
+  const { t } = useT();
   const [r, setR] = useState(null);
   const [log, setLog] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -355,7 +356,7 @@ function Detail({ id, onBack }) {
       const j = await res.json();
       const { error } = await supabase.from("receipts").update({ status: "booked", erp_doctype: j.doctype, erp_docname: j.docname }).eq("id", id);
       if (error) throw error;
-      setMsg(`Übergeben an ERPNext: ${j.doctype} ${j.docname}`);
+      setMsg(`${j.doctype} · ${j.docname}`);
       load();
     } catch (e) { setMsg(e.message); } finally { setBusy(false); }
   }
