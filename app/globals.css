@@ -34,7 +34,7 @@ html,body{background:var(--bg);color:var(--ink);
 .bnav{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted2);font-size:10px;font-weight:600;cursor:pointer;background:none;border:0;font-family:inherit;padding-top:6px;border-top:2px solid transparent;margin-top:-2px;width:84px}
 .bnav.active{color:var(--green);border-top-color:var(--green)}
 
-h1.title{font-size:20px;font-weight:800;letter-spacing:.2px;margin-bottom:2px}
+h1.title{font-size:22px;font-weight:700;font-variation-settings:"opsz" 24,"wght" 650;letter-spacing:.2px;margin-bottom:2px}
 .lead{color:var(--muted);font-size:13px;margin-bottom:14px}
 
 /* cards / fields */
@@ -120,7 +120,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .mc-bar{fill:var(--r2)} .mc-bar.cur{fill:var(--r1)}
 .mc-val{fill:var(--muted);font-size:10px} .mc-lab{fill:var(--muted2);font-size:10px} .mc-lab.cur{fill:var(--ink);font-weight:600}
 
-.pw{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.pw{font-size:13.5px;font-weight:600;font-variation-settings:"opsz" 20,"wght" 600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .pw .i{color:var(--green)}
 .tl{display:flex;gap:10px;padding:6px 0;font-size:12.5px;align-items:flex-start}
 .tl .mk{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}
