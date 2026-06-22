@@ -480,15 +480,23 @@ function Dashboard() {
     return true;
   });
 
-  const sum = (a) => a.reduce((s, r) => s + Number(r.gross || 0), 0);
+  // EUR value per receipt (converted at the receipt-date ECB rate); EUR receipts pass through.
+  const eurOf = (r) => (r.gross_eur != null ? Number(r.gross_eur) : ((!r.currency || r.currency === "EUR") ? Number(r.gross || 0) : null));
+  const sum = (a) => a.reduce((s, r) => s + (eurOf(r) ?? 0), 0);
   const total = sum(f);
-  const vat = f.reduce((s, r) => s + Number(r.vat_amount || 0), 0);
+  const vat = f.reduce((s, r) => { const e = eurOf(r); return s + (e && r.vat_rate ? e - e / (1 + r.vat_rate / 100) : 0); }, 0);
   const avg = f.length ? total / f.length : 0;
   const openR = f.filter((r) => ["review", "submitted", "approved"].includes(r.status));
   const openReimb = openR.filter((r) => r.payment_method === "private");
   const booked = f.filter((r) => r.status === "booked");
+  const unconverted = f.filter((r) => eurOf(r) == null).length;
 
-  const agg = (keyFn) => { const m = {}; f.forEach((r) => { const k = keyFn(r); if (k == null) return; m[k] = (m[k] || 0) + Number(r.gross || 0); }); return m; };
+  // currency breakdown (original + EUR)
+  const byCur = {};
+  f.forEach((r) => { const c = r.currency || "EUR"; (byCur[c] ||= { count: 0, orig: 0, eur: 0 }); byCur[c].count++; byCur[c].orig += Number(r.gross || 0); byCur[c].eur += eurOf(r) ?? 0; });
+  const curs = Object.entries(byCur).sort((a, b) => b[1].eur - a[1].eur);
+
+  const agg = (keyFn) => { const m = {}; f.forEach((r) => { const k = keyFn(r); if (k == null) return; m[k] = (m[k] || 0) + (eurOf(r) ?? 0); }); return m; };
   const byCat = agg((r) => (CATS[r.category] || CATS.other).label);
   const byCc = agg((r) => (r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "—") : "—"));
   const byMerch = agg((r) => r.merchant || "—");
