@@ -75,6 +75,7 @@ export async function POST(req) {
 
     // Normalize
     const num = (v) => (v === null || v === undefined || v === "" || isNaN(Number(v)) ? null : Number(v));
+    const normCur = (c) => { let x = (c || "EUR").toString().toUpperCase().trim(); if (x === "LEI" || x === "RON LEI") x = "RON"; if (x === "$" || x === "USD$") x = "USD"; if (x === "€") x = "EUR"; return ["EUR", "USD", "RON"].includes(x) ? x : x; };
     const fields = {
       merchant: parsed.merchant || "",
       doc_date: /^\d{4}-\d{2}-\d{2}$/.test(parsed.doc_date) ? parsed.doc_date : new Date().toISOString().slice(0, 10),
@@ -82,7 +83,7 @@ export async function POST(req) {
       net: num(parsed.net),
       vat_rate: num(parsed.vat_rate) ?? 19,
       vat_amount: num(parsed.vat_amount),
-      currency: parsed.currency || "EUR",
+      currency: normCur(parsed.currency),
       invoice_no: parsed.invoice_no || null,
       category: CATS.includes(parsed.category) ? parsed.category : "other",
       confidence: num(parsed.confidence) ?? 80,
