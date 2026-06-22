@@ -40,6 +40,8 @@ h1.title{font-size:20px;font-weight:800;letter-spacing:.2px;margin-bottom:2px}
 input,select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:14px;color:var(--ink);font-family:inherit}
 input:focus,select:focus{outline:none;border-color:var(--green)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1.1fr 1fr 0.7fr;gap:10px}
+@media(max-width:520px){.row3{grid-template-columns:1fr 1fr}}
 
 .chips{display:flex;gap:7px;flex-wrap:wrap}
 .chip{background:#f3f4f6;border:1px solid transparent;border-radius:999px;padding:8px 12px;font-size:12px;cursor:pointer;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px}
