@@ -526,6 +526,52 @@ function Dashboard() {
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `snap-auswertung-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
   }
 
+  function exportPdf() {
+    const esc = (s) => String(s ?? "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    const periodLabel = { "1m": t("Monat"), "3m": t("3 Monate"), "12m": t("12 Monate"), all: t("Alle") }[period];
+    const ccLabel = cc ? (ccMap[cc]?.code + " · " + ccMap[cc]?.name) : t("Alle Kostenstellen");
+    const catLabel = cat ? t((CATS[cat] || CATS.other).label) : t("Alle Kategorien");
+    const kpiHtml = [[t("Volumen"), eur(total)], [t("Belege"), String(f.length)], [t("Ø Betrag"), eur(avg)], [t("Vorsteuer"), eur(vat)], [t("Offene Erstattung"), eur(sum(openReimb))], [t("Gebucht"), eur(sum(booked))]]
+      .map(([l, v]) => `<div class="k"><div class="kl">${esc(l)}</div><div class="kv">${esc(v)}</div></div>`).join("");
+    const barTable = (title, entries, fmt) => `<h2>${esc(title)}</h2><table class="dist">${entries.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="r">${fmt(v)}</td></tr>`).join("") || `<tr><td>${t("Keine Daten.")}</td><td></td></tr>`}</table>`;
+    const sortedE = (m) => Object.entries(m).sort((a, b) => b[1] - a[1]);
+    const rowsHtml = f.slice().sort((a, b) => (b.doc_date || "").localeCompare(a.doc_date || "")).map((r) => `<tr>
+      <td>${esc(r.doc_date || "")}</td><td>${esc(r.merchant || "")}</td><td>${esc(t((CATS[r.category] || CATS.other).label))}</td>
+      <td>${esc(r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "") : "")}</td><td>${esc(t(STATUS[r.status] || r.status))}</td>
+      <td class="r">${esc(money(r.gross, r.currency))}</td><td class="r">${eurOf(r) != null ? eur(eurOf(r)) : "—"}</td></tr>`).join("");
+    const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>NEOS Snap — ${t("Auswertungen")}</title>
+<style>
+@page{margin:18mm 14mm}
+*{box-sizing:border-box} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#111827;margin:0}
+.head{display:flex;align-items:center;gap:12px;border-bottom:3px solid #2C3C2B;padding-bottom:12px;margin-bottom:6px}
+.logo{width:34px;height:34px;border-radius:9px;background:#FAD201;display:flex;align-items:center;justify-content:center;font-weight:800;color:#2C3C2B;font-size:18px}
+.head h1{font-size:20px;margin:0;color:#2C3C2B} .head .sub{color:#6b7280;font-size:12px;margin-top:2px}
+.meta{color:#6b7280;font-size:11.5px;margin:8px 0 16px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.k{border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px} .kl{font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.4px} .kv{font-size:18px;font-weight:800;margin-top:3px}
+h2{font-size:13px;color:#2C3C2B;margin:16px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px 4px;border-bottom:1px solid #eef0f2}
+.list th{background:#f9fafb;text-align:left;padding:6px 5px;font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;color:#6b7280;border-bottom:1px solid #e5e7eb}
+.list td{padding:6px 5px;border-bottom:1px solid #f1f2f4} td.r{text-align:right;white-space:nowrap}
+.foot{margin-top:18px;color:#9ca3af;font-size:10px;border-top:1px solid #e5e7eb;padding-top:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+</style></head><body>
+<div class="head"><div class="logo">S</div><div><h1>NEOS Snap — ${t("Auswertungen")}</h1><div class="sub">Neoterra · The Vegetable Company</div></div></div>
+<div class="meta">${t("Zeitraum")}: ${esc(periodLabel)} · ${t("Kostenstelle")}: ${esc(ccLabel)} · ${t("Kategorie")}: ${esc(catLabel)} · ${f.length} ${t("Belege")} · ${t("Erstellt")}: ${new Date().toLocaleString("de-DE")}</div>
+<div class="kpis">${kpiHtml}</div>
+<div class="two"><div>${barTable(t("Nach Kategorie"), sortedE(byCat), eur)}${barTable(t("Nach Kostenstelle"), sortedE(byCc), eur)}</div>
+<div>${barTable(t("Top-Lieferanten"), sortedE(byMerch).slice(0, 8), eur)}${barTable(t("Nach Währung"), curs.map(([c, v]) => [c, v.eur]), eur)}</div></div>
+<h2>${t("Belege")}</h2>
+<table class="list"><thead><tr><th>${t("Datum")}</th><th>${t("Händler")}</th><th>${t("Kategorie")}</th><th>KSt</th><th>${t("Status")}</th><th class="r">${t("Betrag")}</th><th class="r">EUR</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+<div class="foot">${t("Beträge in EUR · EZB-Kurs zum Belegdatum")} · NEOS Snap</div>
+</body></html>`;
+    const ifr = document.createElement("iframe");
+    ifr.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0";
+    document.body.appendChild(ifr);
+    const d = ifr.contentWindow.document; d.open(); d.write(html); d.close();
+    ifr.onload = () => { try { ifr.contentWindow.focus(); ifr.contentWindow.print(); } catch {} setTimeout(() => ifr.remove(), 1500); };
+  }
+
   return (
     <>
       <div className="ahead">
