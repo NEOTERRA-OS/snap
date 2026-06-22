@@ -18,6 +18,12 @@ const STATUS = {
   approved: "Genehmigt", booked: "Gebucht", rejected: "Abgelehnt",
 };
 const eur = (n) => (n == null ? "—" : Number(n).toLocaleString("de-DE", { style: "currency", currency: "EUR" }));
+// Currency-aware money formatter — never assume EUR for foreign receipts.
+const money = (n, cur) => {
+  if (n == null) return "—";
+  try { return Number(n).toLocaleString("de-DE", { style: "currency", currency: (cur || "EUR") }); }
+  catch { return `${Number(n).toLocaleString("de-DE", { minimumFractionDigits: 2 })} ${cur || ""}`.trim(); }
+};
 const dDE = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "—");
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const r = new FileReader();
@@ -225,6 +231,7 @@ function Capture({ uid, onDone }) {
       const { error } = await supabase.from("receipts").insert({
         user_id: uid, status: "submitted", source: form.source, file_path: filePath,
         merchant: form.merchant, doc_date: form.doc_date, gross: form.gross, vat_rate: form.vat_rate,
+        currency: form.currency || "EUR",
         vat_amount, category: form.category, payment_method: form.payment_method,
         reimbursable: form.payment_method === "private", confidence: form.confidence,
         cost_center_id: form.cost_center_id || null,
