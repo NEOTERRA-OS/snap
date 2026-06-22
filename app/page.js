@@ -522,6 +522,15 @@ function Detail({ id, onBack }) {
     if (data?.signedUrl) window.open(data.signedUrl, "_blank"); else setMsg(error?.message || "—");
   }
 
+  async function setStatus(status, extra = {}) {
+    setBusy(true); setMsg("");
+    try {
+      const { error } = await supabase.from("receipts").update({ status, ...extra }).eq("id", id);
+      if (error) throw error;
+      load();
+    } catch (e) { setMsg(e.message); } finally { setBusy(false); }
+  }
+
   async function handoff() {
     setBusy(true); setMsg("");
     try {
