@@ -401,6 +401,53 @@ function Receipts({ uid, onOpen }) {
   );
 }
 
+function Approvals({ onOpen }) {
+  const { t } = useT();
+  const [rows, setRows] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const load = useCallback(() => {
+    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of").eq("status", "submitted").order("doc_date").then(({ data }) => setRows(data || []));
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  if (!rows) return <div className="center"><span className="spin" /></div>;
+
+  async function decide(id, decision, reason) {
+    const patch = decision === "approved" ? { status: "approved" } : { status: "rejected", reject_reason: reason || "" };
+    await supabase.from("receipts").update({ ...patch, decided_at: new Date().toISOString() }).eq("id", id);
+    load();
+  }
+  async function approveAll() {
+    setBusy(true);
+    await supabase.from("receipts").update({ status: "approved", decided_at: new Date().toISOString() }).in("id", rows.map((r) => r.id));
+    setBusy(false); load();
+  }
+  return (
+    <>
+      <h1 className="title">{t("Freigaben")}</h1>
+      <p className="lead">{rows.length} {t("zur Freigabe")}</p>
+      {rows.length === 0 && <div className="empty"><Icon name="checkcheck" size={28} /><p>{t("Nichts zur Freigabe.")}</p></div>}
+      {rows.length > 0 && <button className="btn" disabled={busy} onClick={approveAll} style={{ marginBottom: 14 }}>{busy ? <span className="spin" /> : <Icon name="checkcheck" />} {t("Alle freigeben")} ({rows.length})</button>}
+      {rows.map((r) => (
+        <div className="lcard" key={r.id} style={{ cursor: "default" }}>
+          <div className="lthumb" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
+          <div className="meta" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}>
+            <div className="t">{r.merchant}</div>
+            <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
+            {(r.flags?.length > 0 || r.duplicate_of) && <span className="st st-app" style={{ marginTop: 6 }}><Icon name="alert" size={11} /> {r.duplicate_of ? t("mögliche Dublette") : `${r.flags.length} ${t("Hinweise")}`}</span>}
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div className="amt">{money(r.gross, r.currency)}</div>
+            <div style={{ display: "flex", gap: 6, marginTop: 8, justifyContent: "flex-end" }}>
+              <button className="ap-ok" onClick={() => decide(r.id, "approved")} title={t("Freigeben")}><Icon name="check" size={15} /></button>
+              <button className="ap-no" onClick={() => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decide(r.id, "rejected", reason); }} title={t("Ablehnen")}>✕</button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
 function Detail({ id, onBack }) {
   const { t } = useT();
   const [r, setR] = useState(null);
