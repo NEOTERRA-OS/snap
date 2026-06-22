@@ -249,6 +249,41 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   padding:42px 16px;text-align:center}
 .empty svg{opacity:.5}
 
+/* ===== Belege — Journal-Tabelle + Filterbox ===== */
+.filterbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;margin:14px 0 8px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.srch{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:0 11px}
+.srch .i{color:var(--muted2)}
+.srch input{border:0;background:none;padding:10px 0;font-size:13.5px;width:100%}
+.srch input:focus{outline:none}
+.srt{display:flex;gap:6px}
+.srt select{width:auto;padding:9px 11px;font-size:12.5px;border-radius:10px}
+.dirbtn{width:38px;border:1px solid var(--line);background:var(--surface);border-radius:10px;color:var(--muted);
+  display:grid;place-items:center;cursor:pointer}
+.dirbtn:hover{color:var(--ink);border-color:var(--green)}
+.fchips{display:flex;flex-wrap:wrap;gap:7px;width:100%}
+.fchip{border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:12px;font-weight:500;
+  padding:6px 12px;border-radius:999px;cursor:pointer}
+.fchip.on{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
+[data-theme="dark"] .fchip.on{background:#2C3C2B;border-color:#2C3C2B}
+.shownline{font-size:12px;color:var(--muted);margin:0 0 12px;font-weight:500}
+.jtable{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.jtable thead{background:var(--thead)}
+.jtable th.thc{text-align:left;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;
+  color:var(--muted);padding:11px 14px;border-bottom:1px solid var(--line)}
+.jtable th.thc.r,.jtable td.r{text-align:right}
+.jtable td{padding:12px 14px;border-bottom:1px solid var(--line2);font-size:13px;cursor:pointer}
+.jtable tbody tr:last-child td{border-bottom:0}
+.jtable tbody tr:hover td{background:var(--line2)}
+.jtable .tdmerch{font-weight:500;display:flex;align-items:center;gap:7px}
+.jtable .catcell{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:12.5px}
+.jtable .amt{font-weight:600}
+.flagdot{color:var(--warn)}
+.only-desktop{display:none}
+.only-mobile{display:block}
+@media(min-width:760px){.only-desktop{display:table}.only-mobile{display:none}}
+
 /* ===== Analytics / Auswertungen ===== */
 .ahead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .ahead .title{margin:0}
