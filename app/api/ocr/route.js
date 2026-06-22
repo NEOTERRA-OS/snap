@@ -37,9 +37,9 @@ export async function POST(req) {
   const { data, mediaType, filename } = body;
   const key = process.env.ANTHROPIC_API_KEY;
 
-  // No key or no image → graceful fallback
+  // No key or no image → graceful fallback (debug flags carry no secret value)
   if (!key || !data) {
-    return NextResponse.json({ source: "mock", fields: mockFields(filename) });
+    return NextResponse.json({ source: "mock", debug: { keyPresent: !!key, dataPresent: !!data }, fields: mockFields(filename) });
   }
 
   try {

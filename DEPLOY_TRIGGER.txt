@@ -1,1 +1,1 @@
-redeploy: ANTHROPIC_API_KEY aktiviert — 2026-06-22
+redeploy diag: Mon Jun 22 12:39:32 UTC 2026
