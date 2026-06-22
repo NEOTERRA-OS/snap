@@ -229,7 +229,10 @@ function Capture({ uid, onDone }) {
           <div className="src"><Icon name="upload" size={20} /> Upload</div>
           <div className="src"><Icon name="mail" size={20} /> E-Mail</div>
         </div>
-        <label className="dropzone">
+        <label className={"dropzone" + (drag ? " over" : "")}
+          onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
+          onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
+          onDrop={onDrop}>
           <span className="dz-ic"><Icon name="upload" size={30} /></span>
           <span className="dz-h">Beleg hierher ziehen oder auswählen</span>
           <span className="dz-p">JPG, PNG oder PDF · mehrseitige Belege werden zusammengeführt</span>

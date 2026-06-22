@@ -172,6 +172,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .src.on .i{color:var(--green)}
 .dropzone{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--surface);border:2px dashed #d4d4cf;border-radius:18px;padding:42px 24px;cursor:pointer}
 .dropzone:hover{border-color:var(--green);background:#fcfcfb}
+.dropzone.over{border-color:var(--green);background:var(--emerald-bg);box-shadow:0 0 0 4px rgba(44,60,43,.08)}
+.dropzone *{pointer-events:none}
 .dz-ic{width:60px;height:60px;border-radius:16px;background:var(--emerald-bg);display:grid;place-items:center;color:var(--green);margin-bottom:14px}
 .dz-h{font-size:16px;font-weight:800;color:var(--ink)}
 .dz-p{font-size:12.5px;color:var(--muted);margin-top:5px;max-width:380px}
