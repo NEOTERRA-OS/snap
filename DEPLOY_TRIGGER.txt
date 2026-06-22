@@ -1,1 +1,1 @@
-redeploy diag: Mon Jun 22 12:39:32 UTC 2026
+redeploy key-check: Mon Jun 22 12:44:25 UTC 2026
