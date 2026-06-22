@@ -250,15 +250,19 @@ function Capture({ uid, onDone }) {
     if (!ready.length) return;
     setBusy(true); setErr("");
     try {
-      const rows = ready.map((it) => ({
-        user_id: uid, status: "submitted", source: it.source, file_path: it.filePath,
-        merchant: it.merchant, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
-        currency: it.currency || "EUR",
-        vat_amount: it.gross && it.vat_rate ? +(it.gross - it.gross / (1 + it.vat_rate / 100)).toFixed(2) : null,
-        category: it.category, payment_method: it.payment_method,
-        reimbursable: it.payment_method === "private", confidence: it.confidence,
-        cost_center_id: it.cost_center_id || null,
-      }));
+      const rows = [];
+      for (const it of ready) {
+        const { eur, rate } = await fxToEur(it.gross, it.currency, it.doc_date);
+        rows.push({
+          user_id: uid, status: "submitted", source: it.source, file_path: it.filePath,
+          merchant: it.merchant, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
+          currency: it.currency || "EUR", gross_eur: eur, fx_rate: rate,
+          vat_amount: it.gross && it.vat_rate ? +(it.gross - it.gross / (1 + it.vat_rate / 100)).toFixed(2) : null,
+          category: it.category, payment_method: it.payment_method,
+          reimbursable: it.payment_method === "private", confidence: it.confidence,
+          cost_center_id: it.cost_center_id || null,
+        });
+      }
       const { error } = await supabase.from("receipts").insert(rows);
       if (error) throw error;
       onDone();
