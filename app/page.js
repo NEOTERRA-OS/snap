@@ -38,6 +38,20 @@ function plausFlags(it) {
   if (it.category === "hospitality" && (!it.attendees || !String(it.attendees).trim())) f.push("Bewirtung: Teilnehmer fehlen");
   return f;
 }
+
+// Liefert die ID eines bereits vorhandenen Belegs, falls Datei-Hash gleich
+// ist ODER Händler+Datum+Betrag übereinstimmen.
+async function findDuplicate(hash, merchant, date, gross) {
+  if (hash) {
+    const { data } = await supabase.from("receipts").select("id").eq("file_hash", hash).limit(1);
+    if (data && data.length) return data[0].id;
+  }
+  if (merchant && date && gross != null) {
+    const { data } = await supabase.from("receipts").select("id").eq("merchant", merchant).eq("doc_date", date).eq("gross", gross).limit(1);
+    if (data && data.length) return data[0].id;
+  }
+  return null;
+}
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const r = new FileReader();
   r.onload = () => resolve(String(r.result).split(",")[1] || "");
@@ -270,6 +284,11 @@ function Capture({ uid, onDone }) {
       upd(id, { loading: false, filePath: up.error ? null : path, file_hash: hash, file_size: file.size, error: up.error ? up.error.message : null,
         merchant: ocr.merchant || "", doc_date: ocr.doc_date, gross: ocr.gross, currency: ocr.currency || "EUR",
         vat_rate: ocr.vat_rate, category: ocr.category || "other", confidence: ocr.confidence });
+      // Dublettenprüfung: gleicher Datei-Hash ODER gleicher Händler+Datum+Betrag.
+      try {
+        const dup = await findDuplicate(hash, ocr.merchant, ocr.doc_date, ocr.gross);
+        if (dup) upd(id, { duplicate_of: dup });
+      } catch {}
     } catch (e) { upd(id, { loading: false, error: e.message }); }
   }
 
