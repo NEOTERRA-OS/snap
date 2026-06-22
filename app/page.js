@@ -248,8 +248,10 @@ function Shell({ session }) {
     window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
   }, [detail]);
   const uid = session.user.id;
+  const email = session.user.email;
   const who = session.user.user_metadata?.full_name || session.user.email;
   const signOut = () => supabase.auth.signOut();
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
   const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
   useEffect(() => { supabase.from("profiles").select("role").eq("id", uid).single().then(({ data }) => setRole(data?.role || "employee")); }, [uid]);
   const nav = (v, ic, label) => (
@@ -270,9 +272,15 @@ function Shell({ session }) {
         {["approver", "accounting", "admin"].includes(role) && nav("approvals", "checkcheck", "Freigaben")}
         <div className="sb-grp">{t("Auswerten")}</div>
         {nav("dashboard", "dashboard", "Auswertungen")}
-        {role === "admin" && nav("admin", "user", "Admin")}
+        {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "user", "Admin")}</>}
+        <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
-        <div className="sb-foot">Neoterra · The Vegetable Company<br />NEOS Snap v0.1</div>
+        <div className="sb-user">
+          <span className="sb-av">{initials}</span>
+          <div className="sb-id"><div className="nm">{who}</div><div className="ml">{email}</div></div>
+          <button className="sb-theme" onClick={toggleTheme} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></button>
+        </div>
+        <button className="sb-logout" onClick={signOut}><Icon name="logout" size={14} /> {t("Abmelden")}</button>
       </aside>
       <div className="maincol">
         <div className="topbar">
