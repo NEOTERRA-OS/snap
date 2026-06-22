@@ -379,35 +379,131 @@ function Detail({ id, onBack }) {
   );
 }
 
+const MONTHS_DE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+const monthLabel = (k) => { const [y, m] = k.split("-"); return `${MONTHS_DE[(+m) - 1]} ${y.slice(2)}`; };
+
 function Dashboard() {
   const [rows, setRows] = useState(null);
-  useEffect(() => { supabase.from("receipts").select("gross,category,status").then(({ data }) => setRows(data || [])); }, []);
+  const [ccs, setCcs] = useState([]);
+  const [profiles, setProfiles] = useState({});
+  const [period, setPeriod] = useState("12m");
+  const [cc, setCc] = useState("");
+  const [cat, setCat] = useState("");
+
+  useEffect(() => {
+    supabase.from("receipts").select("id,merchant,doc_date,gross,net,vat_amount,category,status,payment_method,cost_center_id,user_id").then(({ data }) => setRows(data || []));
+    supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || []));
+    supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setProfiles(m); });
+  }, []);
   if (!rows) return <div className="center"><span className="spin" /></div>;
-  const total = rows.reduce((s, r) => s + Number(r.gross || 0), 0);
-  const booked = rows.filter((r) => r.status === "booked");
-  const open = rows.filter((r) => ["review", "submitted", "approved"].includes(r.status));
-  const byCat = {};
-  rows.forEach((r) => { byCat[r.category] = (byCat[r.category] || 0) + Number(r.gross || 0); });
-  const cats = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
-  const max = Math.max(1, ...cats.map((c) => c[1]));
+
+  const ccMap = {}; ccs.forEach((c) => (ccMap[c.id] = c));
+  const now = new Date();
+  const cutoff = period === "all" ? null : new Date(now.getFullYear(), now.getMonth() - (period === "1m" ? 1 : period === "3m" ? 3 : 12) + 1, 1);
+  const f = rows.filter((r) => {
+    if (cc && r.cost_center_id !== cc) return false;
+    if (cat && r.category !== cat) return false;
+    if (cutoff && r.doc_date && new Date(r.doc_date) < cutoff) return false;
+    return true;
+  });
+
+  const sum = (a) => a.reduce((s, r) => s + Number(r.gross || 0), 0);
+  const total = sum(f);
+  const vat = f.reduce((s, r) => s + Number(r.vat_amount || 0), 0);
+  const avg = f.length ? total / f.length : 0;
+  const openR = f.filter((r) => ["review", "submitted", "approved"].includes(r.status));
+  const openReimb = openR.filter((r) => r.payment_method === "private");
+  const booked = f.filter((r) => r.status === "booked");
+
+  const agg = (keyFn) => { const m = {}; f.forEach((r) => { const k = keyFn(r); if (k == null) return; m[k] = (m[k] || 0) + Number(r.gross || 0); }); return m; };
+  const byCat = agg((r) => r.category);
+  const byCc = agg((r) => (r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "—") : "—"));
+  const byMerch = agg((r) => r.merchant || "—");
+  const byEmp = agg((r) => profiles[r.user_id] || "—");
+  const byMonth = agg((r) => (r.doc_date ? r.doc_date.slice(0, 7) : null));
+  const byPay = agg((r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte"));
+
+  const sorted = (m) => Object.entries(m).sort((a, b) => b[1] - a[1]);
+  const months = Object.keys(byMonth).sort();
+  const mMax = Math.max(1, ...Object.values(byMonth));
+  const Bars = ({ map, label, limit }) => {
+    const items = sorted(map).slice(0, limit || 99); const mx = Math.max(1, ...items.map((i) => i[1]));
+    return (<div className="panel"><div className="pw"><Icon name="banknote" /> {label}</div>
+      {items.length === 0 && <p className="lead">Keine Daten im Filter.</p>}
+      {items.map(([k, v]) => (<div className="bar" key={k}><div className="lab" title={k}>{k}</div>
+        <div className="track"><div className="fill" style={{ width: (v / mx) * 100 + "%" }} /></div>
+        <div className="v">{eur(v)}</div></div>))}
+    </div>);
+  };
+
+  function exportCsv() {
+    const head = ["Datum", "Händler", "Kategorie", "Kostenstelle", "Mitarbeiter", "Status", "Brutto", "MwSt"];
+    const lines = f.map((r) => [r.doc_date || "", (r.merchant || "").replace(/;/g, ","), (CATS[r.category] || CATS.other).label,
+      r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "") : "", profiles[r.user_id] || "", STATUS[r.status] || r.status,
+      Number(r.gross || 0).toFixed(2), Number(r.vat_amount || 0).toFixed(2)].join(";"));
+    const blob = new Blob(["﻿" + [head.join(";"), ...lines].join("\n")], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `snap-auswertung-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+  }
+
   return (
     <>
-      <h1 className="title">Übersicht</h1>
-      <div className="kpis">
-        <div className="kpi"><div className="kt"><Icon name="receipt" />Belege gesamt</div><div className="n">{rows.length}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="banknote" />Volumen</div><div className="n">{eur(total)}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="clock" />Offen</div><div className="n">{open.length}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="checkcheck" />Gebucht</div><div className="n">{booked.length}</div></div>
+      <div className="ahead">
+        <h1 className="title">Auswertungen</h1>
+        <button className="btn ghost csv" onClick={exportCsv}><Icon name="upload" size={15} /> CSV-Export</button>
       </div>
-      <div className="card">
-        <div className="pw"><Icon name="banknote" /> Ausgaben nach Kategorie</div>
-        {cats.length === 0 && <p className="lead">Noch keine Daten.</p>}
-        {cats.map(([k, v]) => (
-          <div className="bar" key={k}><div className="lab">{(CATS[k] || CATS.other).label}</div>
-            <div className="track"><div className="fill" style={{ width: (v / max) * 100 + "%" }} /></div>
-            <div className="v">{eur(v)}</div></div>
-        ))}
+      <div className="filterbar">
+        <div className="fseg">
+          {[["1m", "Monat"], ["3m", "3 Monate"], ["12m", "12 Monate"], ["all", "Alle"]].map(([k, l]) => (
+            <button key={k} className={"fs" + (period === k ? " on" : "")} onClick={() => setPeriod(k)}>{l}</button>))}
+        </div>
+        <select value={cc} onChange={(e) => setCc(e.target.value)}>
+          <option value="">Alle Kostenstellen</option>
+          {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
+        </select>
+        <select value={cat} onChange={(e) => setCat(e.target.value)}>
+          <option value="">Alle Kategorien</option>
+          {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+        </select>
+        <span className="shown">{f.length} Belege</span>
+      </div>
+
+      <div className="kpis kx">
+        <div className="kpi"><div className="kt"><Icon name="banknote" />Volumen</div><div className="n">{eur(total)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="receipt" />Belege</div><div className="n">{f.length}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="layers" />Ø Betrag</div><div className="n">{eur(avg)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="receipt" />Vorsteuer</div><div className="n">{eur(vat)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="wallet" />Offene Erstattung</div><div className="n">{eur(sum(openReimb))}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="checkcheck" />Gebucht</div><div className="n">{eur(sum(booked))}</div></div>
+      </div>
+
+      <div className="panel">
+        <div className="pw"><Icon name="trend" /> Ausgaben pro Monat</div>
+        {months.length === 0 ? <p className="lead">Keine Daten im Filter.</p> : (
+          <div className="vbars">
+            {months.map((k) => (
+              <div className="vbar" key={k} title={`${monthLabel(k)}: ${eur(byMonth[k])}`}>
+                <div className="vbval">{Math.round(byMonth[k] / 1000) >= 1 ? Math.round(byMonth[k] / 1000) + "k" : Math.round(byMonth[k])}</div>
+                <div className="vbtrack"><div className="vbfill" style={{ height: (byMonth[k] / mMax) * 100 + "%" }} /></div>
+                <div className="vblab">{monthLabel(k)}</div>
+              </div>))}
+          </div>)}
+      </div>
+
+      <div className="agrid">
+        <Bars map={byCat} label="Nach Kategorie" />
+        <Bars map={byCc} label="Nach Kostenstelle" />
+        <Bars map={byEmp} label="Nach Mitarbeiter" />
+        <Bars map={byMerch} label="Top-Lieferanten" limit={6} />
+      </div>
+
+      <div className="panel">
+        <div className="pw"><Icon name="wallet" /> Zahlart</div>
+        {sorted(byPay).map(([k, v]) => { const mx = total || 1; return (
+          <div className="bar" key={k}><div className="lab">{k}</div><div className="track"><div className="fill" style={{ width: (v / mx) * 100 + "%" }} /></div><div className="v">{eur(v)}</div></div>); })}
       </div>
     </>
   );
 }
+
+// category labels for the byCat bars (override numeric keys with readable labels)
+
