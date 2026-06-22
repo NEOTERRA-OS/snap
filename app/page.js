@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import Icon, { Logo } from "@/components/Icon";
+import { LangProvider, useT } from "@/lib/i18n";
 
 const CATS = {
   fuel: { label: "Kraftstoff", icon: "fuel" },
@@ -41,6 +42,10 @@ function mockOcr(filename) {
 }
 
 export default function Page() {
+  return <LangProvider><App /></LangProvider>;
+}
+
+function App() {
   const [session, setSession] = useState(undefined);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
