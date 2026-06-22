@@ -109,9 +109,8 @@ export async function POST(req) {
     await s.from("drive_sync").update({ status: "done", drive_file_id: j.id, last_error: null, updated_at: new Date().toISOString() }).eq("receipt_id", r.id);
     return NextResponse.json({ ok: true, fileId: j.id, link: j.webViewLink || null });
   } catch (e) {
-    await s.from("drive_sync").upsert({ receipt_id: r.id, status: "error", last_error: String(e?.message || e), updated_at: new Date().toISOString() }, { onConflict: "receipt_id" }).then(() => {});
-    await s.rpc; // noop guard
-    await s.from("drive_sync").update({ attempts: undefined }).eq("receipt_id", r.id).then(() => {}).catch(() => {});
+    const { data: cur } = await s.from("drive_sync").select("attempts").eq("receipt_id", r.id).single();
+    await s.from("drive_sync").update({ status: "error", last_error: String(e?.message || e), attempts: (cur?.attempts || 0) + 1, updated_at: new Date().toISOString() }).eq("receipt_id", r.id);
     console.error("[/api/drive] Error:", e?.message);
     return NextResponse.json({ error: String(e?.message || e) }, { status: 500 });
   }
