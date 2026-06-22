@@ -35,7 +35,7 @@ const P = {
 export default function Icon({ name, size = 16, color, style, className }) {
   return (
     <svg className={"i " + (className || "")} width={size} height={size} viewBox="0 0 24 24"
-      style={{ color, ...(style || {}) }} aria-hidden="true"
+      style={{ color, width: size, height: size, ...(style || {}) }} aria-hidden="true"
       dangerouslySetInnerHTML={{ __html: P[name] || "" }} />
   );
 }

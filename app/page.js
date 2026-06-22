@@ -106,25 +106,49 @@ function Shell({ session }) {
   const uid = session.user.id;
   const who = session.user.user_metadata?.full_name || session.user.email;
   const signOut = () => supabase.auth.signOut();
+  const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
+  const nav = (v, ic, label) => (
+    <button className={"snav" + (view === v && !detail ? " on" : "")} onClick={() => { setDetail(null); setView(v); }}>
+      <Icon name={ic} size={18} /> <span>{label}</span>
+    </button>
+  );
+  const bnav = (v, ic, label) => (
+    <button className={"bnav" + (view === v && !detail ? " active" : "")} onClick={() => { setDetail(null); setView(v); }}><Icon name={ic} size={20} />{label}</button>
+  );
   return (
-    <div className="app">
-      <div className="topbar">
-        <span className="brand"><Logo size={20} /> NEOS <b>Snap</b></span>
-        <span className="spacer" />
-        <span className="who">{who}</span>
-        <button className="linkbtn" onClick={signOut}><Icon name="logout" size={14} /></button>
-      </div>
-      <div className="content">
-        {detail
-          ? <Detail id={detail} onBack={() => setDetail(null)} />
-          : view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
-          : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} />
-          : <Dashboard />}
+    <div className="shell">
+      <aside className="sidebar">
+        <div className="sb-brand"><Logo size={28} /> <span className="pn">NEOS <b>Snap</b></span></div>
+        <div className="sb-grp">Arbeiten</div>
+        {nav("capture", "camera", "Erfassen")}
+        {nav("receipts", "receipt", "Belege")}
+        <div className="sb-grp">Auswerten</div>
+        {nav("dashboard", "dashboard", "Übersicht")}
+        <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> Neuer Beleg</button>
+        <div className="sb-foot">Neoterra · The Vegetable Company<br />NEOS Snap v0.1</div>
+      </aside>
+      <div className="maincol">
+        <div className="topbar">
+          <span className="brand mob-only"><Logo size={22} /> NEOS <b>Snap</b></span>
+          <span className="spacer" />
+          <span className="who">{who}</span>
+          <span className="avatar">{initials}</span>
+          <button className="linkbtn" onClick={signOut} title="Abmelden"><Icon name="logout" size={15} /></button>
+        </div>
+        <div className="content">
+          <div className="container">
+            {detail
+              ? <Detail id={detail} onBack={() => setDetail(null)} />
+              : view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
+              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} />
+              : <Dashboard />}
+          </div>
+        </div>
       </div>
       <div className="bottomnav">
-        <button className={"bnav" + (view === "capture" && !detail ? " active" : "")} onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={20} />Erfassen</button>
-        <button className={"bnav" + (view === "receipts" && !detail ? " active" : "")} onClick={() => { setDetail(null); setView("receipts"); }}><Icon name="receipt" size={20} />Belege</button>
-        <button className={"bnav" + (view === "dashboard" && !detail ? " active" : "")} onClick={() => { setDetail(null); setView("dashboard"); }}><Icon name="dashboard" size={20} />Übersicht</button>
+        {bnav("capture", "plus", "Erfassen")}
+        {bnav("receipts", "receipt", "Belege")}
+        {bnav("dashboard", "dashboard", "Übersicht")}
       </div>
     </div>
   );
@@ -175,15 +199,24 @@ function Capture({ uid, onDone }) {
   if (stage === "pick") return (
     <>
       <h1 className="title">Beleg erfassen</h1>
-      <p className="lead">Foto, Scan oder PDF hochladen — OCR füllt die Felder automatisch.</p>
-      <label className="dropzone">
-        <Icon name="camera" /><div style={{ fontWeight: 700, color: "var(--ink)" }}>Beleg auswählen</div>
-        <div style={{ fontSize: 12, marginTop: 4 }}>Foto · Scan · PDF · JPG/PNG</div>
-        <input type="file" accept="image/*,application/pdf" capture="environment" hidden onChange={onFile} />
-      </label>
-      {busy && <p className="hint"><span className="spin" /> Lade hoch &amp; erkenne …</p>}
-      {err && <div className="err">{err}</div>}
-      <p className="hint">Tipp: Dateinamen mit „aral", „hotel", „aws", „restaurant" liefern passende Demo-Extraktion.</p>
+      <p className="lead">Foto, Scan, Upload oder per E-Mail — die OCR füllt die Felder automatisch.</p>
+      <div className="capwrap">
+        <div className="sources">
+          <div className="src on"><Icon name="camera" size={20} /> Foto</div>
+          <div className="src"><Icon name="scan" size={20} /> Scan</div>
+          <div className="src"><Icon name="upload" size={20} /> Upload</div>
+          <div className="src"><Icon name="mail" size={20} /> E-Mail</div>
+        </div>
+        <label className="dropzone">
+          <span className="dz-ic"><Icon name="upload" size={30} /></span>
+          <span className="dz-h">Beleg hierher ziehen oder auswählen</span>
+          <span className="dz-p">JPG, PNG oder PDF · mehrseitige Belege werden zusammengeführt</span>
+          <span className="dz-btn">{busy ? <span className="spin" /> : <Icon name="camera" size={15} />} {busy ? "Lade hoch & erkenne …" : "Datei auswählen"}</span>
+          <input type="file" accept="image/*,application/pdf" capture="environment" hidden onChange={onFile} disabled={busy} />
+        </label>
+        <div className="tip"><Icon name="scan" size={14} /> OCR startet automatisch nach dem Hochladen — du prüfst nur die markierten Felder.</div>
+        {err && <div className="err">{err}</div>}
+      </div>
     </>
   );
 
