@@ -2,8 +2,8 @@
    gray-50 page / white cards, yellow pill CTAs, underline tabs, neutral grays,
    semantic color sparingly, Lucide icons, no emojis. */
 :root{
-  --bg:#f6f6f4; --surface:#ffffff; --thead:#f9fafb;
-  --ink:#111827; --muted:#6b7280; --muted2:#9ca3af; --line:#e5e7eb; --line2:#eef0f2;
+  --bg:#f6f6f4; --surface:#ffffff; --thead:#f3f4f0;
+  --ink:#111827; --muted:#6b7280; --muted2:#9ca3af; --line:#e7e7e3; --line2:#f0f0ec;
   --green:#2C3C2B; --yellow:#FAD201;
   --emerald:#047857; --emerald-bg:#ecfdf5; --emerald-bd:#a7f3d0;
   --amber:#b45309; --amber-bg:#fffbeb; --amber-bd:#fde68a;
