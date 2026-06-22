@@ -25,7 +25,7 @@ const PROMPT = `Du bist ein Beleg-/Rechnungs-Extraktor. Lies den beigefügten Be
  "net": number|null,            // Nettobetrag falls erkennbar
  "vat_rate": number,            // MwSt-Satz in Prozent (z. B. 19, 7, 0)
  "vat_amount": number|null,     // MwSt-Betrag falls erkennbar
- "currency": string,            // ISO, z. B. "EUR", "RON"
+ "currency": string,            // ISO-Code: meist "EUR", "USD" oder "RON" (rumänische Lei = RON)
  "invoice_no": string|null,     // Beleg-/Rechnungsnummer
  "category": "fuel|travel|hospitality|it|lodging|office|other",
  "confidence": number           // 0-100, deine Gesamtsicherheit
