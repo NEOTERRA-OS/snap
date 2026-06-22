@@ -310,7 +310,7 @@ function Receipts({ uid, onOpen }) {
   const [rows, setRows] = useState(null);
   const [tab, setTab] = useState("all");
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category").order("doc_date", { ascending: false })
+    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency").order("doc_date", { ascending: false })
       .then(({ data }) => setRows(data || []));
   }, []);
   useEffect(() => { load(); }, [load]);
@@ -336,7 +336,7 @@ function Receipts({ uid, onOpen }) {
           <div className="meta"><div className="t">{r.merchant}</div>
             <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
             <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{t(STATUS[r.status])}</span></div>
-          <div className="amt">{eur(r.gross)}</div>
+          <div className="amt">{money(r.gross, r.currency)}</div>
         </div>
       ))}
     </>
