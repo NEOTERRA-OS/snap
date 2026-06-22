@@ -193,11 +193,46 @@ function Login() {
   );
 }
 
+// ===== Toasts (leichtes Pub/Sub) =====
+const _toastSubs = new Set();
+let _toastId = 0;
+function toast(text, type = "ok") { _toastSubs.forEach((fn) => fn({ id: ++_toastId, text, type })); }
+function Toasts() {
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    const fn = (tt) => { setList((l) => [...l, tt]); setTimeout(() => setList((l) => l.filter((x) => x.id !== tt.id)), 3800); };
+    _toastSubs.add(fn); return () => _toastSubs.delete(fn);
+  }, []);
+  if (!list.length) return null;
+  return <div className="toasts">{list.map((tt) => (
+    <div className={"toast " + tt.type} key={tt.id}><Icon name={tt.type === "err" ? "alert" : tt.type === "info" ? "sparkles" : "check"} size={15} /> {tt.text}</div>
+  ))}</div>;
+}
+
+// PWA: Service Worker registrieren (Installierbarkeit).
+function useServiceWorker() {
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
+}
+
 function Shell({ session }) {
   const { t, lang, setLang } = useT();
   const [view, setView] = useState("capture");
   const [detail, setDetail] = useState(null);
   const [role, setRole] = useState(null);
+  const [theme, setTheme] = useState("light");
+  useServiceWorker();
+  useEffect(() => { try { const s = localStorage.getItem("snap_theme"); if (s) setTheme(s); } catch {} }, []);
+  useEffect(() => { try { document.documentElement.dataset.theme = theme; localStorage.setItem("snap_theme", theme); } catch {} }, [theme]);
+  // Esc schließt das Detail-Slide-over.
+  useEffect(() => {
+    if (!detail) return;
+    const h = (e) => { if (e.key === "Escape") setDetail(null); };
+    window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
+  }, [detail]);
   const uid = session.user.id;
   const who = session.user.user_metadata?.full_name || session.user.email;
   const signOut = () => supabase.auth.signOut();
