@@ -627,15 +627,18 @@ function Approvals({ onOpen }) {
     const { error } = await supabase.from("receipts").update({ ...patch, decided_at: new Date().toISOString() }).eq("id", id);
     if (error) { toast(error.message, "err"); return; }
     toast(decision === "approved" ? t("Freigegeben") : t("Abgelehnt"));
+    if (decision === "approved") syncToDrive(id).then((d) => { if (d?.ok && !d.already) toast(t("In Drive abgelegt")); else if (d?.error) toast(t("Drive-Ablage fehlgeschlagen"), "err"); });
     load();
   }
   async function approveAll() {
     setBusy(true);
-    const n = rows.length;
-    const { error } = await supabase.from("receipts").update({ status: "approved", decided_at: new Date().toISOString() }).in("id", rows.map((r) => r.id));
+    const ids = rows.map((r) => r.id);
+    const { error } = await supabase.from("receipts").update({ status: "approved", decided_at: new Date().toISOString() }).in("id", ids);
     setBusy(false);
     if (error) { toast(error.message, "err"); return; }
-    toast(`${n} ${t("freigegeben")}`); load();
+    toast(`${ids.length} ${t("freigegeben")}`);
+    Promise.all(ids.map((id) => syncToDrive(id))).catch(() => {});
+    load();
   }
   return (
     <>
@@ -713,6 +716,7 @@ function Detail({ id, onBack }) {
       if (error) throw error;
       setMsg(`${j.doctype} · ${j.docname}`);
       toast(`ERPNext: ${j.doctype} · ${j.docname}`);
+      syncToDrive(id).then((d) => { if (d?.ok && !d.already) toast(t("In Drive abgelegt")); });
       load();
     } catch (e) { setMsg(e.message); toast(e.message, "err"); } finally { setBusy(false); }
   }
