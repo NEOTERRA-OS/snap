@@ -168,11 +168,17 @@ function Capture({ uid, onDone }) {
   const [err, setErr] = useState("");
   const [ccs, setCcs] = useState([]);
   const [form, setForm] = useState(null);
+  const [drag, setDrag] = useState(false);
 
   useEffect(() => { supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || [])); }, []);
 
-  async function onFile(e) {
-    const file = e.target.files?.[0]; if (!file) return;
+  function onFile(e) { const file = e.target.files?.[0]; if (file) handleFile(file); }
+  function onDrop(e) {
+    e.preventDefault(); setDrag(false);
+    const file = e.dataTransfer?.files?.[0]; if (file) handleFile(file);
+  }
+  async function handleFile(file) {
+    if (busy) return;
     setErr(""); setBusy(true);
     try {
       if (file.type.startsWith("image/")) setPreview(URL.createObjectURL(file));
