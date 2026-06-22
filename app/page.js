@@ -370,27 +370,27 @@ function Detail({ id, onBack }) {
   ];
   return (
     <>
-      <button className="linkbtn" onClick={onBack} style={{ marginBottom: 10 }}><Icon name="chevronleft" size={16} /> Zurück</button>
+      <button className="linkbtn" onClick={onBack} style={{ marginBottom: 10 }}><Icon name="chevronleft" size={16} /> {t("Zurück")}</button>
       <div className="lcard" style={{ cursor: "default" }}>
         <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
-        <div className="meta"><div className="t">{r.merchant}</div><div className="d">{(CATS[r.category] || CATS.other).label} · {r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte"}</div></div>
+        <div className="meta"><div className="t">{r.merchant}</div><div className="d">{t((CATS[r.category] || CATS.other).label)} · {r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte")}</div></div>
         <div className="amt">{eur(r.gross)}</div>
       </div>
       <div className="card">
-        <div className="kv"><span className="k">Datum</span><span className="v">{dDE(r.doc_date)}</span></div>
-        <div className="kv"><span className="k">MwSt</span><span className="v">{r.vat_rate}% · {eur(r.vat_amount)}</span></div>
-        <div className="kv"><span className="k">Status</span><span className="v">{STATUS[r.status]}</span></div>
+        <div className="kv"><span className="k">{t("Datum")}</span><span className="v">{dDE(r.doc_date)}</span></div>
+        <div className="kv"><span className="k">{t("MwSt")}</span><span className="v">{r.vat_rate}% · {eur(r.vat_amount)}</span></div>
+        <div className="kv"><span className="k">{t("Status")}</span><span className="v">{t(STATUS[r.status])}</span></div>
         {r.erp_docname && <div className="kv"><span className="k">ERPNext</span><span className="v">{r.erp_doctype} · {r.erp_docname}</span></div>}
       </div>
       <div className="card">
-        <div className="pw"><Icon name="filetext" /> Verlauf (Audit-Trail)</div>
+        <div className="pw"><Icon name="filetext" /> {t("Verlauf (Audit-Trail)")}</div>
         {steps.map((s, i) => (
           <div className="tl" key={i}><div className={"mk " + (s.done ? "done" : "pending")}><Icon name={s.done ? "check" : "clock"} size={12} /></div>
-            <div><b>{s.label}</b></div></div>
+            <div><b>{t(s.label)}</b></div></div>
         ))}
       </div>
       {["submitted", "approved"].includes(r.status) && (
-        <button className="btn" disabled={busy} onClick={handoff}>{busy ? <span className="spin" /> : <Icon name="link" />} An ERPNext übergeben</button>
+        <button className="btn" disabled={busy} onClick={handoff}>{busy ? <span className="spin" /> : <Icon name="link" />} {t("An ERPNext übergeben")}</button>
       )}
       {msg && <div className="ok">{msg}</div>}
     </>
