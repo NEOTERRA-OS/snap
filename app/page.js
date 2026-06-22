@@ -32,6 +32,22 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
   r.readAsDataURL(file);
 });
 
+// Convert an amount to EUR using the ECB rate on the receipt date (cached).
+const _fxCache = {};
+async function fxToEur(amount, cur, date) {
+  if (amount == null) return { eur: null, rate: null };
+  cur = (cur || "EUR").toUpperCase();
+  if (cur === "EUR") return { eur: +Number(amount).toFixed(2), rate: 1 };
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "latest";
+  const key = d + "|" + cur;
+  if (_fxCache[key] === undefined) {
+    try { _fxCache[key] = (await (await fetch(`/api/fx?from=${cur}&date=${d}`)).json()).rate ?? null; }
+    catch { _fxCache[key] = null; }
+  }
+  const rate = _fxCache[key];
+  return rate ? { eur: +(amount * rate).toFixed(2), rate } : { eur: null, rate: null };
+}
+
 // Mock OCR — simulates a Document-AI extraction from the uploaded file.
 function mockOcr(filename) {
   const f = (filename || "").toLowerCase();
