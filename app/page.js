@@ -174,8 +174,18 @@ function Capture({ uid, onDone }) {
       const { error } = await supabase.storage.from("receipts").upload(path, file, { upsert: false });
       if (error) throw error;
       setFilePath(path);
-      const ocr = mockOcr(file.name);
-      setForm({ ...ocr, source: file.type.includes("pdf") ? "upload" : "photo", payment_method: "company_card", cost_center_id: "" });
+      // Real OCR via Claude (server route); falls back to demo extraction if no API key.
+      let ocr;
+      try {
+        const b64 = await fileToBase64(file);
+        const res = await fetch("/api/ocr", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: b64, mediaType: file.type, filename: file.name }),
+        });
+        const j = await res.json();
+        ocr = j.fields || mockOcr(file.name);
+      } catch { ocr = mockOcr(file.name); }
+      setForm({ ...ocr, source: file.type.includes("pdf") ? "upload" : "photo", payment_method: "company_card", cost_center_id: ocr.cost_center_id || "" });
       setStage("review");
     } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
   }
