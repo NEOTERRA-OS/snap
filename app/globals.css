@@ -198,6 +198,29 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .bgrid .field{margin:0}
 .bgrid .field:first-child{grid-column:1/-1}
 @media(min-width:760px){.bgrid{grid-template-columns:1fr 1fr 1fr}.bgrid .field:first-child{grid-column:auto}}
+.bgrid .field.wide{grid-column:1/-1}
+
+/* Plausibilitäts-/Dubletten-Hinweise */
+.bflag{display:flex;align-items:center;gap:7px;margin-top:8px;padding:8px 11px;border-radius:9px;font-size:12.5px;
+  background:#FEF6E0;color:#8a6d00;border:1px solid #F2DE9A}
+.bflag.dup{background:#FCEAEA;color:#a23030;border-color:#F1C7C7}
+
+/* Submit-Zeile (Einreichen + Entwurf) */
+.submitrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+@media(max-width:520px){.submitrow{grid-template-columns:1fr}}
+
+/* Freigaben: Aktions-Buttons + Hinweis-Chip + Empty-State */
+.ap-ok,.ap-no{width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;border:1px solid transparent;font-size:14px;line-height:1}
+.ap-ok{background:var(--green);color:#fff}
+.ap-ok:hover{filter:brightness(1.08)}
+.ap-no{background:#fff;color:var(--red);border-color:#F1C7C7}
+.ap-no:hover{background:#FCEAEA}
+.st{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:7px}
+.st-app{background:#FEF6E0;color:#8a6d00}
+.empty{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted);
+  padding:42px 16px;text-align:center}
+.empty svg{opacity:.5}
 
 /* ===== Analytics / Auswertungen ===== */
 .ahead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
