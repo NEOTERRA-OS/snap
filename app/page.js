@@ -310,22 +310,22 @@ function Receipts({ uid, onOpen }) {
   const openSum = open.reduce((s, r) => s + Number(r.gross || 0), 0);
   return (
     <>
-      <h1 className="title">Meine Belege</h1>
+      <h1 className="title">{t("Meine Belege")}</h1>
       <div className="kpis">
-        <div className="kpi"><div className="kt"><Icon name="receipt" />Offen</div><div className="n">{open.length}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="wallet" />Offenes Volumen</div><div className="n">{eur(openSum)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n">{open.length}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n">{eur(openSum)}</div></div>
       </div>
       <div className="seg">
         {[["all", "Alle"], ["open", "In Prüfung"], ["booked", "Gebucht"]].map(([k, l]) => (
-          <button key={k} className={"s" + (tab === k ? " on" : "")} onClick={() => setTab(k)}>{l}</button>))}
+          <button key={k} className={"s" + (tab === k ? " on" : "")} onClick={() => setTab(k)}>{t(l)}</button>))}
       </div>
-      {filtered.length === 0 && <p className="lead">Keine Belege in dieser Ansicht.</p>}
+      {filtered.length === 0 && <p className="lead">{t("Keine Belege in dieser Ansicht.")}</p>}
       {filtered.map((r) => (
         <div key={r.id} className="lcard" onClick={() => onOpen(r.id)}>
           <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
           <div className="meta"><div className="t">{r.merchant}</div>
-            <div className="d">{dDE(r.doc_date)} · {(CATS[r.category] || CATS.other).label}</div>
-            <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{STATUS[r.status]}</span></div>
+            <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
+            <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{t(STATUS[r.status])}</span></div>
           <div className="amt">{eur(r.gross)}</div>
         </div>
       ))}
