@@ -280,7 +280,7 @@ function Capture({ uid, onDone }) {
           <div className="field"><label>{t("Betrag brutto")}</label><input type="number" step="0.01" value={form.gross ?? ""} onChange={(e) => setForm({ ...form, gross: parseFloat(e.target.value) })} /></div>
           <div className="field"><label>{t("Währung")}</label>
             <select value={form.currency || "EUR"} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
-              {Array.from(new Set([form.currency || "EUR", "EUR", "USD", "RON", "CHF", "GBP"])).map((c) => <option key={c} value={c}>{c}</option>)}
+              {Array.from(new Set([form.currency || "EUR", "EUR", "USD", "RON"])).map((c) => <option key={c} value={c}>{c === "RON" ? "RON (Lei)" : c}</option>)}
             </select></div>
         </div>
         <div className="field"><label>{t("MwSt-Satz (%)")}</label>
