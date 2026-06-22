@@ -604,11 +604,19 @@ function Detail({ id, onBack }) {
   const [log, setLog] = useState([]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
+  const [preview, setPreview] = useState(null);
   const load = useCallback(() => {
     supabase.from("receipts").select("*").eq("id", id).single().then(({ data }) => setR(data));
     supabase.from("audit_log").select("action,detail,created_at").eq("receipt_id", id).order("created_at").then(({ data }) => setLog(data || []));
   }, [id]);
   useEffect(() => { load(); }, [load]);
+  // Inline-Vorschau (signierter Link) für Bild-Belege.
+  useEffect(() => {
+    if (!r?.file_path) return;
+    const isImg = /\.(png|jpe?g|webp|gif|heic)$/i.test(r.file_path);
+    if (!isImg) { setPreview(null); return; }
+    supabase.storage.from("receipts").createSignedUrl(r.file_path, 300).then(({ data }) => setPreview(data?.signedUrl || null));
+  }, [r?.file_path]);
   if (!r) return <div className="center"><span className="spin" /></div>;
 
   async function openOriginal() {
@@ -658,6 +666,11 @@ function Detail({ id, onBack }) {
         <div className="meta"><div className="t">{r.merchant}</div><div className="d">{t((CATS[r.category] || CATS.other).label)} · {r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte")}</div></div>
         <div className="amt">{money(r.gross, r.currency)}</div>
       </div>
+      {preview && (
+        <a className="rcpt-prev" href={preview} target="_blank" rel="noreferrer" title={t("Öffnen")}>
+          <img src={preview} alt={t("Originalbeleg")} />
+        </a>
+      )}
       <div className="card">
         <div className="kv"><span className="k">{t("Datum")}</span><span className="v">{dDE(r.doc_date)}</span></div>
         <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
