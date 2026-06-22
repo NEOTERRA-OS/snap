@@ -1,1 +1,1 @@
-logo glyph: larger + centered to match NEOS Index — Mon Jun 22 17:54:03 UTC 2026
+logo→home + brand clickable — Mon Jun 22 18:02:41 UTC 2026
