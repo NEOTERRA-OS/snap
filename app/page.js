@@ -176,6 +176,7 @@ function Shell({ session }) {
 }
 
 function Capture({ uid, onDone }) {
+  const { t } = useT();
   const [stage, setStage] = useState("pick"); // pick | review
   const [preview, setPreview] = useState(null);
   const [filePath, setFilePath] = useState(null);
