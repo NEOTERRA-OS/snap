@@ -204,3 +204,13 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .vbtrack{flex:1;width:100%;display:flex;align-items:flex-end}
 .vbfill{width:100%;max-width:46px;margin:0 auto;background:var(--green);border-radius:7px 7px 0 0;min-height:3px;transition:height .3s}
 .vblab{font-size:10px;color:var(--muted);margin-top:7px;white-space:nowrap}
+
+/* language toggle + admin table */
+.langtog{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.langtog button{border:0;background:var(--surface);color:var(--muted);font-size:11px;font-weight:700;padding:5px 9px;cursor:pointer;font-family:inherit}
+.langtog button.on{background:var(--green);color:#fff}
+.utable{width:100%;border-collapse:collapse;font-size:13px}
+.utable th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;padding:8px;border-bottom:1px solid var(--line)}
+.utable td{padding:10px 8px;border-bottom:1px solid var(--line2)}
+.utable td.muted{color:var(--muted)}
+.utable select{width:auto;min-width:150px;padding:7px 9px;font-size:12.5px}
