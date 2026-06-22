@@ -263,7 +263,7 @@ function Shell({ session }) {
   return (
     <div className="shell">
       <aside className="sidebar">
-        <div className="sb-brand"><Logo size={28} /> <span className="pn">NEOS <b>Snap</b></span></div>
+        <div className="sb-brand"><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></div>
         <div className="sb-grp">{t("Arbeiten")}</div>
         {nav("capture", "camera", "Erfassen")}
         {nav("receipts", "receipt", "Belege")}
@@ -276,7 +276,7 @@ function Shell({ session }) {
       </aside>
       <div className="maincol">
         <div className="topbar">
-          <span className="brand mob-only"><Logo size={22} /> NEOS <b>Snap</b></span>
+          <span className="brand mob-only"><Logo size={22} /> <b>NEOS</b> <span className="sub">Snap</span></span>
           <span className="spacer" />
           <span className="langtog">
             <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
