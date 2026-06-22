@@ -32,6 +32,15 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
   r.readAsDataURL(file);
 });
 
+// SHA-256 hash of a file (for revision-safe storage / tamper detection).
+async function sha256(file) {
+  try {
+    const buf = await file.arrayBuffer();
+    const h = await crypto.subtle.digest("SHA-256", buf);
+    return Array.from(new Uint8Array(h)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  } catch { return null; }
+}
+
 // Convert an amount to EUR using the ECB rate on the receipt date (cached).
 const _fxCache = {};
 async function fxToEur(amount, cur, date) {
@@ -220,7 +229,7 @@ function Capture({ uid, onDone }) {
     const newItems = files.map((file) => ({
       id: ++_seq, name: file.name, loading: true,
       preview: file.type.startsWith("image/") ? URL.createObjectURL(file) : null,
-      filePath: null, merchant: "", doc_date: new Date().toISOString().slice(0, 10),
+      filePath: null, file_hash: null, file_size: null, merchant: "", doc_date: new Date().toISOString().slice(0, 10),
       gross: null, currency: "EUR", vat_rate: null, category: "other",
       payment_method: "company_card", cost_center_id: "", confidence: null,
       source: file.type.includes("pdf") ? "upload" : "photo",
