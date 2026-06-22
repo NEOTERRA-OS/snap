@@ -1,1 +1,1 @@
-sidebar unify w/ NEOS Index: groups, spacing, user card + theme toggle, logout — Mon Jun 22 17:46:23 UTC 2026
+logo glyph: larger + centered to match NEOS Index — Mon Jun 22 17:54:03 UTC 2026
