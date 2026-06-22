@@ -168,6 +168,7 @@ function Shell({ session }) {
         <div className="sb-grp">{t("Arbeiten")}</div>
         {nav("capture", "camera", "Erfassen")}
         {nav("receipts", "receipt", "Belege")}
+        {["approver", "accounting", "admin"].includes(role) && nav("approvals", "checkcheck", "Freigaben")}
         <div className="sb-grp">{t("Auswerten")}</div>
         {nav("dashboard", "dashboard", "Auswertungen")}
         {role === "admin" && nav("admin", "user", "Admin")}
@@ -192,6 +193,7 @@ function Shell({ session }) {
               ? <Detail id={detail} onBack={() => setDetail(null)} />
               : view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
               : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} />
+              : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "admin" ? <Admin session={session} />
               : <Dashboard />}
           </div>
