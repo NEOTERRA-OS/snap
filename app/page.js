@@ -112,39 +112,47 @@ function Login() {
 }
 
 function Shell({ session }) {
+  const { t, lang, setLang } = useT();
   const [view, setView] = useState("capture");
   const [detail, setDetail] = useState(null);
+  const [role, setRole] = useState(null);
   const uid = session.user.id;
   const who = session.user.user_metadata?.full_name || session.user.email;
   const signOut = () => supabase.auth.signOut();
   const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
+  useEffect(() => { supabase.from("profiles").select("role").eq("id", uid).single().then(({ data }) => setRole(data?.role || "employee")); }, [uid]);
   const nav = (v, ic, label) => (
     <button className={"snav" + (view === v && !detail ? " on" : "")} onClick={() => { setDetail(null); setView(v); }}>
-      <Icon name={ic} size={18} /> <span>{label}</span>
+      <Icon name={ic} size={18} /> <span>{t(label)}</span>
     </button>
   );
   const bnav = (v, ic, label) => (
-    <button className={"bnav" + (view === v && !detail ? " active" : "")} onClick={() => { setDetail(null); setView(v); }}><Icon name={ic} size={20} />{label}</button>
+    <button className={"bnav" + (view === v && !detail ? " active" : "")} onClick={() => { setDetail(null); setView(v); }}><Icon name={ic} size={20} />{t(label)}</button>
   );
   return (
     <div className="shell">
       <aside className="sidebar">
         <div className="sb-brand"><Logo size={28} /> <span className="pn">NEOS <b>Snap</b></span></div>
-        <div className="sb-grp">Arbeiten</div>
+        <div className="sb-grp">{t("Arbeiten")}</div>
         {nav("capture", "camera", "Erfassen")}
         {nav("receipts", "receipt", "Belege")}
-        <div className="sb-grp">Auswerten</div>
+        <div className="sb-grp">{t("Auswerten")}</div>
         {nav("dashboard", "dashboard", "Auswertungen")}
-        <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> Neuer Beleg</button>
+        {role === "admin" && nav("admin", "user", "Admin")}
+        <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
         <div className="sb-foot">Neoterra · The Vegetable Company<br />NEOS Snap v0.1</div>
       </aside>
       <div className="maincol">
         <div className="topbar">
           <span className="brand mob-only"><Logo size={22} /> NEOS <b>Snap</b></span>
           <span className="spacer" />
+          <span className="langtog">
+            <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
+            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
+          </span>
           <span className="who">{who}</span>
           <span className="avatar">{initials}</span>
-          <button className="linkbtn" onClick={signOut} title="Abmelden"><Icon name="logout" size={15} /></button>
+          <button className="linkbtn" onClick={signOut} title={t("Abmelden")}><Icon name="logout" size={15} /></button>
         </div>
         <div className="content">
           <div className="container">
@@ -152,6 +160,7 @@ function Shell({ session }) {
               ? <Detail id={detail} onBack={() => setDetail(null)} />
               : view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
               : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} />
+              : view === "admin" ? <Admin session={session} />
               : <Dashboard />}
           </div>
         </div>
