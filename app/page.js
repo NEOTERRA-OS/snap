@@ -268,15 +268,16 @@ function Shell({ session }) {
             <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
             <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
           </span>
+          <button className="themetog" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme">
+            <Icon name={theme === "dark" ? "sun" : "moon"} size={16} />
+          </button>
           <span className="who">{who}</span>
           <span className="avatar">{initials}</span>
           <button className="linkbtn" onClick={signOut} title={t("Abmelden")}><Icon name="logout" size={15} /></button>
         </div>
         <div className="content">
           <div className="container">
-            {detail
-              ? <Detail id={detail} onBack={() => setDetail(null)} />
-              : view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
+            {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
               : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "admin" ? <Admin session={session} />
@@ -289,6 +290,18 @@ function Shell({ session }) {
         {bnav("receipts", "receipt", "Belege")}
         {bnav("dashboard", "dashboard", "Auswertungen")}
       </div>
+      {detail && (
+        <div className="sheet-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
+          <div className="sheet">
+            <div className="sheet-bar">
+              <span className="sheet-title">{t("Beleg-Status")}</span>
+              <button className="sheet-x" onClick={() => setDetail(null)} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
+            </div>
+            <div className="sheet-body"><Detail id={detail} onBack={() => setDetail(null)} /></div>
+          </div>
+        </div>
+      )}
+      <Toasts />
     </div>
   );
 }
