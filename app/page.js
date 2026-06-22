@@ -624,38 +624,49 @@ function Approvals({ onOpen }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [sel, setSel] = useState(() => new Set());
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of").eq("status", "submitted").order("doc_date").then(({ data }) => setRows(data || []));
+    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
   }, []);
   useEffect(() => { load(); }, [load]);
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
-  async function decide(id, decision, reason) {
-    const patch = decision === "approved" ? { status: "approved" } : { status: "rejected", reject_reason: reason || "" };
-    const { error } = await supabase.from("receipts").update({ ...patch, decided_at: new Date().toISOString() }).eq("id", id);
-    if (error) { toast(error.message, "err"); return; }
-    toast(decision === "approved" ? t("Freigegeben") : t("Abgelehnt"));
-    if (decision === "approved") syncToDrive(id).then((d) => { if (d?.ok && !d.already) toast(t("In Drive abgelegt")); else if (d?.error) toast(t("Drive-Ablage fehlgeschlagen"), "err"); });
-    load();
-  }
-  async function approveAll() {
+  const toggle = (id) => setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const allSel = rows.length > 0 && sel.size === rows.length;
+  const toggleAll = () => setSel(allSel ? new Set() : new Set(rows.map((r) => r.id)));
+
+  async function decideMany(ids, decision, reason) {
+    if (!ids.length) return;
     setBusy(true);
-    const ids = rows.map((r) => r.id);
-    const { error } = await supabase.from("receipts").update({ status: "approved", decided_at: new Date().toISOString() }).in("id", ids);
+    const patch = decision === "approved" ? { status: "approved" } : { status: "rejected", reject_reason: reason || "" };
+    const { error } = await supabase.from("receipts").update({ ...patch, decided_at: new Date().toISOString() }).in("id", ids);
     setBusy(false);
     if (error) { toast(error.message, "err"); return; }
-    toast(`${ids.length} ${t("freigegeben")}`);
-    Promise.all(ids.map((id) => syncToDrive(id))).catch(() => {});
+    toast(`${ids.length} ${decision === "approved" ? t("freigegeben") : t("abgelehnt")}`);
+    if (decision === "approved") Promise.all(ids.map((id) => syncToDrive(id))).catch(() => {});
     load();
   }
+  const decide = (id, decision, reason) => decideMany([id], decision, reason);
+  const bulkApprove = () => decideMany([...sel], "approved");
+  const bulkReject = () => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decideMany([...sel], "rejected", reason); };
+
   return (
     <>
       <h1 className="title">{t("Freigaben")}</h1>
       <p className="lead">{rows.length} {t("zur Freigabe")}</p>
       {rows.length === 0 && <div className="empty"><Icon name="checkcheck" size={28} /><p>{t("Nichts zur Freigabe.")}</p></div>}
-      {rows.length > 0 && <button className="btn" disabled={busy} onClick={approveAll} style={{ marginBottom: 14 }}>{busy ? <span className="spin" /> : <Icon name="checkcheck" />} {t("Alle freigeben")} ({rows.length})</button>}
+      {rows.length > 0 && (
+        <div className="bulkbar">
+          <label className="selall"><input type="checkbox" checked={allSel} onChange={toggleAll} />{sel.size > 0 ? `${sel.size} ${t("ausgewählt")}` : t("Alle auswählen")}</label>
+          <div className="bulkacts">
+            <button className="btn ghost" disabled={busy || !sel.size} onClick={bulkReject}><Icon name="x" size={15} /> {t("Ablehnen")}</button>
+            <button className="btn" disabled={busy || !sel.size} onClick={bulkApprove}>{busy ? <span className="spin" /> : <Icon name="checkcheck" size={15} />} {t("Freigeben")}{sel.size ? ` (${sel.size})` : ""}</button>
+          </div>
+        </div>
+      )}
       {rows.map((r) => (
-        <div className="lcard" key={r.id} style={{ cursor: "default" }}>
+        <div className={"lcard" + (sel.has(r.id) ? " selrow" : "")} key={r.id} style={{ cursor: "default" }}>
+          <label className="selbox" onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={sel.has(r.id)} onChange={() => toggle(r.id)} /></label>
           <div className="lthumb" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
           <div className="meta" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}>
             <div className="t">{r.merchant}</div>
@@ -665,8 +676,8 @@ function Approvals({ onOpen }) {
           <div style={{ textAlign: "right" }}>
             <div className="amt">{money(r.gross, r.currency)}</div>
             <div style={{ display: "flex", gap: 6, marginTop: 8, justifyContent: "flex-end" }}>
-              <button className="ap-ok" onClick={() => decide(r.id, "approved")} title={t("Freigeben")}><Icon name="check" size={15} /></button>
-              <button className="ap-no" onClick={() => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decide(r.id, "rejected", reason); }} title={t("Ablehnen")}>✕</button>
+              <button className="ap-ok" disabled={busy} onClick={() => decide(r.id, "approved")} title={t("Freigeben")}><Icon name="check" size={15} /></button>
+              <button className="ap-no" disabled={busy} onClick={() => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decide(r.id, "rejected", reason); }} title={t("Ablehnen")}>✕</button>
             </div>
           </div>
         </div>
