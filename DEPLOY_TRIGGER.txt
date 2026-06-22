@@ -1,1 +1,1 @@
-brand wordmark: NEOS bold ink / Snap normal muted — Mon Jun 22 17:18:13 UTC 2026
+sidebar unify w/ NEOS Index: groups, spacing, user card + theme toggle, logout — Mon Jun 22 17:46:23 UTC 2026

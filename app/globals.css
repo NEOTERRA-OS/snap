@@ -204,6 +204,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   .brand.mob-only{display:none}
   .content{padding:38px 36px 56px}
   .container{max-width:980px;margin:0}
+  /* Theme/User/Logout liegen auf Desktop in der Sidebar-Karte → Topbar nicht doppeln */
+  .topbar .themetog,.topbar .who,.topbar .avatar,.topbar .linkbtn{display:none}
 }
 
 /* capture: sources + big dropzone */
