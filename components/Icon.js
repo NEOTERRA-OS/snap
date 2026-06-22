@@ -63,7 +63,7 @@ export function Logo({ size = 26, box = true, tile = "#FAD201", glyph = "#2C3C2B
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" aria-label="NEOS Snap">
       <rect x="2" y="2" width="96" height="96" rx="24" fill={tile} />
-      <g transform="translate(28 28) scale(0.29)">
+      <g transform="translate(21.1 21.1) scale(0.38)">
         <path fill={glyph} d={EXPENSES_D} />
       </g>
     </svg>
