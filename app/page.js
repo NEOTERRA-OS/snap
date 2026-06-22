@@ -85,27 +85,27 @@ function Login() {
         <div className="auth-glow" />
         <Logo size={46} />
         <div className="ah-name">NEOS <span>Snap</span></div>
-        <div className="ah-tag">Belege &amp; Spesen — erfasst, geprüft, gebucht.</div>
+        <div className="ah-tag">{t("Belege & Spesen — erfasst, geprüft, gebucht.")}</div>
       </div>
       <div className="auth-card">
         <div className="panel-card">
-          <h3 className="auth-h">{mode === "signin" ? "Anmelden" : "Konto erstellen"}</h3>
-          <p className="auth-sub">{mode === "signin" ? "Melde dich an, um Belege zu erfassen und freizugeben." : "Lege ein Konto für die Belegerfassung an."}</p>
+          <h3 className="auth-h">{mode === "signin" ? t("Anmelden") : t("Konto erstellen")}</h3>
+          <p className="auth-sub">{mode === "signin" ? t("Melde dich an, um Belege zu erfassen und freizugeben.") : t("Lege ein Konto für die Belegerfassung an.")}</p>
           <form onSubmit={submit}>
-            <div className="field"><label>E-Mail</label>
+            <div className="field"><label>{t("E-Mail")}</label>
               <div className="inp"><Icon name="mail" /><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="name@neoterra.ag" /></div></div>
-            <div className="field"><label>Passwort</label>
+            <div className="field"><label>{t("Passwort")}</label>
               <div className="inp"><Icon name="lock" /><input type={show ? "text" : "password"} value={pw} onChange={(e) => setPw(e.target.value)} required placeholder="••••••••" />
-                <button type="button" className="eye" onClick={() => setShow(!show)} aria-label="Passwort anzeigen"><Icon name="eye" /></button></div></div>
-            <button className="btn" disabled={busy}>{busy ? <span className="spin" /> : <Icon name="arrowright" />} {mode === "signin" ? "Anmelden" : "Registrieren"}</button>
+                <button type="button" className="eye" onClick={() => setShow(!show)} aria-label="show password"><Icon name="eye" /></button></div></div>
+            <button className="btn" disabled={busy}>{busy ? <span className="spin" /> : <Icon name="arrowright" />} {mode === "signin" ? t("Anmelden") : t("Registrieren")}</button>
           </form>
           {err && <div className="err">{err}</div>}
           {ok && <div className="ok">{ok}</div>}
-          <p className="switch">{mode === "signin" ? "Noch kein Konto? " : "Bereits registriert? "}
+          <p className="switch">{mode === "signin" ? t("Noch kein Konto? ") : t("Bereits registriert? ")}
             <button className="linkbtn" onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setErr(""); setOk(""); }}>
-              {mode === "signin" ? "Registrieren" : "Anmelden"}</button></p>
-          <div className="demo"><Icon name="check" size={15} /><div><b>Demo-Zugang</b><br /><span className="mono">demo@belegflow.neoterra.ag</span> · <span className="mono">belegflow2026</span></div></div>
-          <div className="trust"><Icon name="shield" size={13} /> GoBD-konform · Daten in der EU</div>
+              {mode === "signin" ? t("Registrieren") : t("Anmelden")}</button></p>
+          <div className="demo"><Icon name="check" size={15} /><div><b>{t("Demo-Zugang")}</b><br /><span className="mono">demo@belegflow.neoterra.ag</span> · <span className="mono">belegflow2026</span></div></div>
+          <div className="trust"><Icon name="shield" size={13} /> {t("GoBD-konform · Daten in der EU")}</div>
         </div>
       </div>
     </div>
