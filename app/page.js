@@ -529,6 +529,13 @@ function Capture({ uid, onDone }) {
           <input type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
         </label>
         <div className="tip"><Icon name="scan" size={14} /> {t("OCR startet automatisch — du prüfst nur die markierten Felder.")}</div>
+        <div className="capdiv"><span>{t("oder")}</span></div>
+        <div className="capalt">
+          <button type="button" className="btn ghost" onClick={addManual}><Icon name="plus" size={15} /> {t("Manuell erfassen")}</button>
+          <label className="btn ghost" style={{ cursor: "pointer" }}><Icon name="filetext" size={15} /> {t("Excel/CSV importieren")}
+            <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} /></label>
+        </div>
+        <div className="tip"><Icon name="filetext" size={14} /> {t("Import-Spalten: Datum, Händler, Brutto, Währung, MwSt, Kategorie, Kostenstelle, Zahlart, Anlass, Teilnehmer.")}</div>
         {err && <div className="err">{err}</div>}
       </div>
     </>
@@ -549,6 +556,8 @@ function Capture({ uid, onDone }) {
             {it.preview ? <img className="bthumb" src={it.preview} alt="" /> : <span className="bthumb ph"><Icon name="file-text" size={18} /></span>}
             <span className="bname">{it.name}</span>
             {it.loading ? <span className="bstat"><span className="spin" /> {t("Lese …")}</span>
+              : it.source === "manual" ? <span className="bstat man">{t("Manuell")}</span>
+              : it.source === "import" ? <span className="bstat man">{t("Import")}</span>
               : <span className="bstat ok"><Icon name="check" size={12} /> {it.confidence ?? "—"}%</span>}
             <button className="brem" onClick={() => setItems((p) => p.filter((x) => x.id !== it.id))} title={t("Entfernen")}>✕</button>
           </div>
