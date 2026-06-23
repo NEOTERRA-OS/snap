@@ -1,1 +1,1 @@
-manual entry + Excel/CSV import (xlsx, dynamic) — Tue Jun 23 06:42:51 UTC 2026
+manual entry + Excel/CSV import (xlsx dynamic) — Tue Jun 23 06:43:25 UTC 2026
