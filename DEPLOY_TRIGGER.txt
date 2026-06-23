@@ -1,1 +1,1 @@
-approvals: multi-select (checkboxes + bulk approve/reject) — Mon Jun 22 18:06:21 UTC 2026
+mobile: role-aware bottom-nav (Freigaben/Admin) + topbar declutter — Tue Jun 23 06:22:06 UTC 2026
