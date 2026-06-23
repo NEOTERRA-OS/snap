@@ -1176,7 +1176,15 @@ function Admin({ session }) {
         )}
       </div>
 
-      <div className="panel">
+      <div className="card">
+        <div className="pw"><Icon name="layers" /> {t("Beleg-Ablage (Google Drive)")}</div>
+        <div className="field"><label>{t("Inbox-Ordner-ID (Shared Drive)")}</label>
+          <input value={drive} onChange={(e) => setDrive(e.target.value)} placeholder="z. B. 1Sx7gRp7-…" className="mono" /></div>
+        <p className="hint" style={{ margin: "2px 0 12px" }}>{t("ID aus der Drive-URL …/folders/<ID>. Pro Mitarbeiter wird darunter automatisch ein Unterordner angelegt. Service-Account & Schlüssel bleiben in den Servervariablen.")}</p>
+        <button type="button" className="btn" disabled={driveBusy} onClick={saveDrive} style={{ width: "auto", padding: "11px 18px" }}>{driveBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
+      </div>
+
+      <div className="card">
         <div className="pw"><Icon name="user" /> {t("Nutzer")} {users ? `(${users.length})` : ""}</div>
         {!users ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div> : (
           <table className="utable">
