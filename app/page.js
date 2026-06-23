@@ -381,6 +381,7 @@ function Capture({ uid, onDone }) {
   const [err, setErr] = useState("");
   const [ccs, setCcs] = useState([]);
   const [drag, setDrag] = useState(false);
+  const [draftFirst, setDraftFirst] = useState(false); // Import → Entwurf als Standardaktion
 
   useEffect(() => { supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || [])); }, []);
 
@@ -414,6 +415,7 @@ function Capture({ uid, onDone }) {
       if (!rows.length) { setErr(t("Keine Zeilen in der Datei.")); return; }
       const ccByCode = {}; ccs.forEach((c) => (ccByCode[String(c.code).toLowerCase().trim()] = c.id));
       const newItems = rows.map((r) => importRow(r, ccByCode));
+      setDraftFirst(true);
       setStage("review"); setItems((p) => [...p, ...newItems]);
       toast(`${newItems.length} ${t("Zeilen importiert")}`);
       newItems.forEach(enrichImported);
