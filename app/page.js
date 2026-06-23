@@ -308,9 +308,11 @@ function Shell({ session }) {
         </div>
       </div>
       <div className="bottomnav">
-        {bnav("capture", "plus", "Erfassen")}
+        {bnav("capture", "camera", "Erfassen")}
         {bnav("receipts", "receipt", "Belege")}
-        {bnav("dashboard", "dashboard", "Auswertungen")}
+        {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
+        {bnav("dashboard", "dashboard", "Analyse")}
+        {role === "admin" && bnav("admin", "user", "Admin")}
       </div>
       {detail && (
         <div className="sheet-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
