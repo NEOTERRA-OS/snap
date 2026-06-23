@@ -1135,13 +1135,25 @@ function Admin({ session }) {
     load();
   }
 
+  const [drive, setDrive] = useState("");
+  const [driveBusy, setDriveBusy] = useState(false);
+  useEffect(() => {
+    supabase.from("app_settings").select("value").eq("key", "gdrive_inbox_folder_id").maybeSingle().then(({ data }) => setDrive(data?.value || ""));
+  }, []);
+  async function saveDrive() {
+    setDriveBusy(true);
+    const { error } = await supabase.from("app_settings").upsert({ key: "gdrive_inbox_folder_id", value: drive.trim() || null, updated_at: new Date().toISOString() }, { onConflict: "key" });
+    setDriveBusy(false);
+    if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
+  }
+
   return (
     <>
       <h1 className="title">{t("Nutzerverwaltung")}</h1>
-      <p className="lead">{t("Nutzer anlegen")} · {t("Rolle")}</p>
+      <p className="lead">{t("Nutzer & Rollen verwalten und die Beleg-Ablage konfigurieren.")}</p>
       {err && <div className="err" style={{ marginBottom: 12 }}>{err}</div>}
 
-      <div className="panel">
+      <div className="card">
         <div className="pw"><Icon name="user" /> {t("Nutzer anlegen")}</div>
         <form onSubmit={createUser}>
           <div className="row2">
