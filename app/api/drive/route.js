@@ -79,11 +79,13 @@ async function requireUser(req) {
 export async function POST(req) {
   const gate = await requireUser(req);
   if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
-  if (!SA_EMAIL || !SA_KEY || !INBOX) return NextResponse.json({ skipped: true, reason: "Drive nicht konfiguriert" });
+  if (!SA_EMAIL || !SA_KEY) return NextResponse.json({ skipped: true, reason: "Service-Account nicht konfiguriert" });
 
   const { receiptId } = await req.json().catch(() => ({}));
   if (!receiptId) return NextResponse.json({ error: "receiptId fehlt" }, { status: 400 });
   const s = svc();
+  const inbox = await resolveInbox(s);
+  if (!inbox) return NextResponse.json({ skipped: true, reason: "Kein Inbox-Ordner gesetzt" });
   const { data: r } = await s.from("receipts").select("id,user_id,merchant,doc_date,gross,currency,category,file_path,drive_file_id").eq("id", receiptId).single();
   if (!r) return NextResponse.json({ error: "Beleg nicht gefunden" }, { status: 404 });
   if (r.drive_file_id) return NextResponse.json({ ok: true, already: true, fileId: r.drive_file_id });
@@ -96,7 +98,7 @@ export async function POST(req) {
     let email = "";
     try { const { data: gu } = await s.auth.admin.getUserById(r.user_id); email = gu?.user?.email || ""; } catch {}
     const folderName = (prof?.full_name || email || r.user_id).toString();
-    const folderId = await ensureUserFolder(token, folderName, prof?.drive_folder_id, s, r.user_id);
+    const folderId = await ensureUserFolder(token, folderName, prof?.drive_folder_id, s, r.user_id, inbox);
     if (!folderId) throw new Error("Inbox-Ordner konnte nicht angelegt werden");
 
     const dl = await s.storage.from("receipts").download(r.file_path);
