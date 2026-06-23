@@ -238,6 +238,13 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .bname{font-size:13px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bstat{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:5px;white-space:nowrap}
 .bstat.ok{color:var(--emerald);background:var(--emerald-bg);border:1px solid var(--emerald-bd);padding:3px 9px;border-radius:999px}
+.bstat.man{color:var(--muted);background:var(--line2);border:1px solid var(--line);padding:3px 9px;border-radius:999px;font-size:10.5px}
+/* Erfassen — Manuell/Import-Alternativen */
+.capdiv{display:flex;align-items:center;gap:12px;margin:16px 0 14px;color:var(--muted2);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.capdiv::before,.capdiv::after{content:"";flex:1;height:1px;background:var(--line)}
+.capalt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.capalt .btn{width:auto}
+@media(max-width:520px){.capalt{grid-template-columns:1fr}}
 .brem{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;flex:0 0 auto}
 .brem:hover{color:var(--red);border-color:var(--red)}
 .bgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin-top:12px}
