@@ -1,1 +1,1 @@
-desktop: remove topbar; lang+theme into sidebar prefs row — Tue Jun 23 09:05:58 UTC 2026
+desktop cmdbar (Mandant + globale Suche); Receipts query lifted — Tue Jun 23 09:11:35 UTC 2026
