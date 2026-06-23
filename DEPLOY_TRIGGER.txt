@@ -1,1 +1,1 @@
-manual entry + Excel/CSV import (xlsx dynamic) — Tue Jun 23 06:43:25 UTC 2026
+import → draft default — Tue Jun 23 06:46:31 UTC 2026

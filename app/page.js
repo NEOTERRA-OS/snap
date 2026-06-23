@@ -604,14 +604,23 @@ function Capture({ uid, onDone }) {
       ))}
       {err && <div className="err">{err}</div>}
       <div className="submitrow">
-        <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("submitted")}>
-          {busy ? <span className="spin" /> : <Icon name="arrowright" />} {anyLoading ? t("OCR läuft …") : `${t("Alle einreichen")} (${items.filter((i) => !i.loading).length})`}
-        </button>
-        <button className="btn ghost" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("draft")}>
-          <Icon name="filetext" size={15} /> {t("Als Entwurf speichern")}
-        </button>
+        {draftFirst ? (<>
+          <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("draft")}>
+            {busy ? <span className="spin" /> : <Icon name="filetext" size={15} />} {`${t("Als Entwürfe speichern")} (${items.filter((i) => !i.loading).length})`}
+          </button>
+          <button className="btn ghost" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("submitted")}>
+            <Icon name="arrowright" size={15} /> {t("Direkt einreichen")}
+          </button>
+        </>) : (<>
+          <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("submitted")}>
+            {busy ? <span className="spin" /> : <Icon name="arrowright" />} {anyLoading ? t("OCR läuft …") : `${t("Alle einreichen")} (${items.filter((i) => !i.loading).length})`}
+          </button>
+          <button className="btn ghost" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("draft")}>
+            <Icon name="filetext" size={15} /> {t("Als Entwurf speichern")}
+          </button>
+        </>)}
       </div>
-      <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setItems([]); setStage("pick"); }}>{t("Abbrechen")}</button>
+      <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setItems([]); setDraftFirst(false); setStage("pick"); }}>{t("Abbrechen")}</button>
     </>
   );
 }
