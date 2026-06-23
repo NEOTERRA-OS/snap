@@ -1,1 +1,1 @@
-mobile: compact stacked analytics filterbar — Tue Jun 23 06:25:43 UTC 2026
+admin: card spacing + Drive inbox folder setting; route reads app_settings — Tue Jun 23 06:35:50 UTC 2026
