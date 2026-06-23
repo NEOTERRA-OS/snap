@@ -389,6 +389,36 @@ function Capture({ uid, onDone }) {
   function onPick(e) { addFiles(Array.from(e.target.files || [])); e.target.value = ""; }
   function onDrop(e) { e.preventDefault(); setDrag(false); addFiles(Array.from(e.dataTransfer?.files || [])); }
 
+  function addManual() {
+    setErr(""); setStage("review");
+    setItems((p) => [...p, {
+      id: ++_seq, name: t("Manueller Beleg"), loading: false, preview: null, filePath: null, file_hash: null, file_size: null,
+      merchant: "", doc_date: new Date().toISOString().slice(0, 10), gross: null, currency: "EUR", vat_rate: null, category: "other",
+      payment_method: "company_card", cost_center_id: "", confidence: null, occasion: "", attendees: "", duplicate_of: null, source: "manual",
+    }]);
+  }
+  async function enrichImported(it) {
+    try { const dup = await findDuplicate(null, it.merchant, it.doc_date, it.gross); if (dup) upd(it.id, { duplicate_of: dup }); } catch {}
+    try { const mem = await loadVendorMemory(it.merchant); if (mem) { const p = { memoryHit: true }; if (!it.cost_center_id && mem.cost_center_id) p.cost_center_id = mem.cost_center_id; if (mem.payment_method && it.payment_method === "company_card") p.payment_method = mem.payment_method; upd(it.id, p); } } catch {}
+  }
+  async function onImport(e) {
+    const file = e.target.files?.[0]; e.target.value = "";
+    if (!file) return;
+    setErr("");
+    try {
+      const XLSX = await import("xlsx");
+      const wb = XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+      if (!rows.length) { setErr(t("Keine Zeilen in der Datei.")); return; }
+      const ccByCode = {}; ccs.forEach((c) => (ccByCode[String(c.code).toLowerCase().trim()] = c.id));
+      const newItems = rows.map((r) => importRow(r, ccByCode));
+      setStage("review"); setItems((p) => [...p, ...newItems]);
+      toast(`${newItems.length} ${t("Zeilen importiert")}`);
+      newItems.forEach(enrichImported);
+    } catch (e2) { setErr(`${t("Import fehlgeschlagen")}: ${e2?.message || e2}`); }
+  }
+
   function addFiles(files) {
     if (!files.length) return;
     setErr(""); setStage("review");
