@@ -317,10 +317,16 @@ function Shell({ session }) {
         {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "user", "Admin")}</>}
         <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
+        <div className="sb-prefs">
+          <span className="langtog">
+            <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
+            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
+          </span>
+          <button className="sb-theme" onClick={toggleTheme} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></button>
+        </div>
         <div className="sb-user">
           <span className="sb-av">{initials}</span>
           <div className="sb-id"><div className="nm">{who}</div><div className="ml">{email}</div></div>
-          <button className="sb-theme" onClick={toggleTheme} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></button>
         </div>
         <button className="sb-logout" onClick={signOut}><Icon name="logout" size={14} /> {t("Abmelden")}</button>
       </aside>
