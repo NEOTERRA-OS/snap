@@ -643,11 +643,10 @@ function Capture({ uid, onDone }) {
 
 const dShort = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—");
 
-function Receipts({ uid, onOpen }) {
+function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [statusF, setStatusF] = useState("all");
-  const [q, setQ] = useState("");
   const [sortBy, setSortBy] = useState("date");
   const [dir, setDir] = useState("desc");
   const load = useCallback(() => {
