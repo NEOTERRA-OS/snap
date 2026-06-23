@@ -41,20 +41,29 @@ async function getToken() {
 
 const DRIVE_Q = "supportsAllDrives=true&includeItemsFromAllDrives=true&corpora=allDrives";
 
-async function ensureUserFolder(token, name, cached, s, userId) {
+async function ensureUserFolder(token, name, cached, s, userId, root) {
   if (cached) return cached;
-  const q = encodeURIComponent(`name='${name.replace(/'/g, "\\'")}' and '${INBOX}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const q = encodeURIComponent(`name='${name.replace(/'/g, "\\'")}' and '${root}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
   const found = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)&${DRIVE_Q}`, { headers: { authorization: `Bearer ${token}` } })).json();
   let id = found.files?.[0]?.id;
   if (!id) {
     const created = await (await fetch(`https://www.googleapis.com/drive/v3/files?fields=id&supportsAllDrives=true`, {
       method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
-      body: JSON.stringify({ name, mimeType: "application/vnd.google-apps.folder", parents: [INBOX] }),
+      body: JSON.stringify({ name, mimeType: "application/vnd.google-apps.folder", parents: [root] }),
     })).json();
     id = created.id;
   }
   if (id) await s.from("profiles").update({ drive_folder_id: id }).eq("id", userId);
   return id;
+}
+
+// Inbox-Ordner: App-Einstellung (admin-setzbar) vor Env-Variable.
+async function resolveInbox(s) {
+  try {
+    const { data } = await s.from("app_settings").select("value").eq("key", "gdrive_inbox_folder_id").maybeSingle();
+    if (data?.value && data.value.trim()) return data.value.trim();
+  } catch {}
+  return INBOX;
 }
 
 async function requireUser(req) {
