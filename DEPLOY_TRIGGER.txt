@@ -1,1 +1,1 @@
-desktop cmdbar (Mandant + globale Suche); Receipts query lifted — Tue Jun 23 09:11:35 UTC 2026
+kill PWA service worker (self-unregister) — stop stale cache — Tue Jun 23 12:53:16 UTC 2026

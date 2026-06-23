@@ -7,9 +7,9 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const SA_EMAIL = process.env.GOOGLE_SA_EMAIL;
-const SA_KEY = (process.env.GOOGLE_SA_PRIVATE_KEY || "").replace(/\\n/g, "\n");
-const INBOX = process.env.GDRIVE_INBOX_FOLDER_ID; // Ordner im Shared Drive
+const CID = process.env.GOOGLE_OAUTH_CLIENT_ID;
+const CSEC = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+const INBOX = process.env.GDRIVE_INBOX_FOLDER_ID; // Ordner im Shared Drive (Fallback)
 
 const svc = () => createClient(SUPA_URL, SERVICE, { auth: { persistSession: false } });
 
@@ -25,17 +25,14 @@ function seedName(r, ext) {
   return parts.join(" ") + ext;
 }
 
-async function getToken() {
-  const now = Math.floor(Date.now() / 1000);
-  const b64 = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
-  const signed = `${b64({ alg: "RS256", typ: "JWT" })}.${b64({ iss: SA_EMAIL, scope: "https://www.googleapis.com/auth/drive", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600 })}`;
-  const sig = crypto.createSign("RSA-SHA256").update(signed).sign(SA_KEY).toString("base64url");
+// Access-Token aus dem gespeicherten Refresh-Token des verbundenen Google-Kontos (Weg 2, schlüsselfrei).
+async function getToken(refreshToken) {
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: `${signed}.${sig}` }),
+    body: new URLSearchParams({ client_id: CID, client_secret: CSEC, refresh_token: refreshToken, grant_type: "refresh_token" }),
   });
   const j = await res.json();
-  if (!j.access_token) throw new Error("Drive-Auth fehlgeschlagen: " + (j.error_description || j.error || "unbekannt"));
+  if (!j.access_token) throw new Error("Token-Refresh fehlgeschlagen: " + (j.error_description || j.error || "unbekannt"));
   return j.access_token;
 }
 
@@ -79,13 +76,15 @@ async function requireUser(req) {
 export async function POST(req) {
   const gate = await requireUser(req);
   if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
-  if (!SA_EMAIL || !SA_KEY) return NextResponse.json({ skipped: true, reason: "Service-Account nicht konfiguriert" });
+  if (!CID || !CSEC) return NextResponse.json({ skipped: true, reason: "OAuth nicht konfiguriert" });
 
   const { receiptId } = await req.json().catch(() => ({}));
   if (!receiptId) return NextResponse.json({ error: "receiptId fehlt" }, { status: 400 });
   const s = svc();
   const inbox = await resolveInbox(s);
   if (!inbox) return NextResponse.json({ skipped: true, reason: "Kein Inbox-Ordner gesetzt" });
+  const { data: conn } = await s.from("google_connection").select("refresh_token").eq("id", 1).maybeSingle();
+  if (!conn?.refresh_token) return NextResponse.json({ skipped: true, reason: "Google nicht verbunden" });
   const { data: r } = await s.from("receipts").select("id,user_id,merchant,doc_date,gross,currency,category,file_path,drive_file_id").eq("id", receiptId).single();
   if (!r) return NextResponse.json({ error: "Beleg nicht gefunden" }, { status: 404 });
   if (r.drive_file_id) return NextResponse.json({ ok: true, already: true, fileId: r.drive_file_id });
@@ -93,7 +92,7 @@ export async function POST(req) {
 
   await s.from("drive_sync").upsert({ receipt_id: r.id, status: "pending", updated_at: new Date().toISOString() }, { onConflict: "receipt_id" });
   try {
-    const token = await getToken();
+    const token = await getToken(conn.refresh_token);
     const { data: prof } = await s.from("profiles").select("full_name,drive_folder_id").eq("id", r.user_id).single();
     let email = "";
     try { const { data: gu } = await s.auth.admin.getUserById(r.user_id); email = gu?.user?.email || ""; } catch {}

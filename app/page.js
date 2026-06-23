@@ -282,7 +282,8 @@ function Shell({ session }) {
   const [theme, setTheme] = useState("light");
   const [searchQ, setSearchQ] = useState("");
   const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
-  useServiceWorker();
+  // Service Worker bewusst NICHT mehr registrieren (Stale-Cache vermeiden);
+  // ein bereits installierter SW wird über /sw.js automatisch abgemeldet.
   useEffect(() => { try { const s = localStorage.getItem("snap_theme"); if (s) setTheme(s); } catch {} }, []);
   useEffect(() => { try { document.documentElement.dataset.theme = theme; localStorage.setItem("snap_theme", theme); } catch {} }, [theme]);
   // Esc schließt das Detail-Slide-over.
@@ -319,18 +320,18 @@ function Shell({ session }) {
         {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "user", "Admin")}</>}
         <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
-        <div className="sb-prefs">
+        <div className="sb-user">
+          <span className="sb-av">{initials}</span>
+          <div className="sb-id"><div className="nm">{who}</div><div className="ml">{email}</div></div>
+          <button className="sb-theme" onClick={toggleTheme} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></button>
+        </div>
+        <div className="sb-foot-row">
+          <button className="sb-logout" onClick={signOut}><Icon name="logout" size={14} /> {t("Abmelden")}</button>
           <span className="langtog">
             <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
             <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
           </span>
-          <button className="sb-theme" onClick={toggleTheme} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></button>
         </div>
-        <div className="sb-user">
-          <span className="sb-av">{initials}</span>
-          <div className="sb-id"><div className="nm">{who}</div><div className="ml">{email}</div></div>
-        </div>
-        <button className="sb-logout" onClick={signOut}><Icon name="logout" size={14} /> {t("Abmelden")}</button>
       </aside>
       <div className="maincol">
         <div className="topbar">
@@ -1255,6 +1256,26 @@ function Admin({ session }) {
     if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
   }
 
+  const [g, setG] = useState(null);
+  useEffect(() => {
+    fetch("/api/google", { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()).then(setG).catch(() => {});
+    try {
+      const p = new URLSearchParams(window.location.search); const s = p.get("gdrive");
+      if (s === "ok") toast(t("Google-Konto verbunden"));
+      else if (s) toast(t("Google-Verbindung fehlgeschlagen"), "err");
+      if (s) window.history.replaceState({}, "", window.location.pathname);
+    } catch {}
+  }, [token]);
+  async function connectGoogle() {
+    const r = await fetch("/api/google", { method: "POST", headers: auth, body: JSON.stringify({ action: "start" }) });
+    const j = await r.json();
+    if (j.url) window.location.href = j.url; else toast(j.error || "Fehler", "err");
+  }
+  async function disconnectGoogle() {
+    await fetch("/api/google", { method: "POST", headers: auth, body: JSON.stringify({ action: "disconnect" }) });
+    setG({ connected: false, email: null }); toast(t("Verbindung getrennt"));
+  }
+
   return (
     <>
       <h1 className="title">{t("Nutzerverwaltung")}</h1>
@@ -1286,9 +1307,15 @@ function Admin({ session }) {
 
       <div className="card">
         <div className="pw"><Icon name="layers" /> {t("Beleg-Ablage (Google Drive)")}</div>
+        <div className="kv" style={{ borderBottom: "1px solid var(--line2)", paddingBottom: 12, marginBottom: 12 }}>
+          <span className="k">{t("Google-Konto")}</span>
+          <span className="v">{g?.connected
+            ? <><Icon name="check" size={13} style={{ color: "var(--emerald)", verticalAlign: "-2px" }} /> {g.email || t("verbunden")} · <button className="linkbtn" onClick={disconnectGoogle}>{t("Trennen")}</button></>
+            : <button className="linkbtn" style={{ color: "var(--green)" }} onClick={connectGoogle}><Icon name="link" size={13} /> {t("Mit Google verbinden")}</button>}</span>
+        </div>
         <div className="field"><label>{t("Inbox-Ordner-ID (Shared Drive)")}</label>
           <input value={drive} onChange={(e) => setDrive(e.target.value)} placeholder="z. B. 1Sx7gRp7-…" className="mono" /></div>
-        <p className="hint" style={{ margin: "2px 0 12px" }}>{t("ID aus der Drive-URL …/folders/<ID>. Pro Mitarbeiter wird darunter automatisch ein Unterordner angelegt. Service-Account & Schlüssel bleiben in den Servervariablen.")}</p>
+        <p className="hint" style={{ margin: "2px 0 12px" }}>{t("ID aus der Drive-URL …/folders/<ID>. Pro Mitarbeiter wird darunter automatisch ein Unterordner angelegt. Das verbundene Google-Konto muss Zugriff auf den Ordner haben.")}</p>
         <button type="button" className="btn" disabled={driveBusy} onClick={saveDrive} style={{ width: "auto", padding: "11px 18px" }}>{driveBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
       </div>
 
