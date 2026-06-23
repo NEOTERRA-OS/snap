@@ -53,6 +53,48 @@ async function findDuplicate(hash, merchant, date, gross) {
   return null;
 }
 
+// ===== Import (Excel/CSV) + Manuell — Parsing & Spalten-Mapping =====
+function parseAmount(v) {
+  if (v == null || v === "") return null;
+  if (typeof v === "number") return v;
+  let s = String(v).replace(/[^0-9.,-]/g, "");
+  if (s.includes(".") && s.includes(",")) s = s.replace(/\./g, "").replace(",", ".");
+  else if (s.includes(",")) s = s.replace(",", ".");
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+function parseDateAny(v) {
+  const today = () => new Date().toISOString().slice(0, 10);
+  if (v == null || v === "") return today();
+  if (v instanceof Date && !isNaN(v)) return v.toISOString().slice(0, 10);
+  if (typeof v === "number") { const d = new Date(Math.round((v - 25569) * 86400 * 1000)); return isNaN(d) ? today() : d.toISOString().slice(0, 10); }
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/); if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  m = s.match(/^(\d{1,2})[.\/](\d{1,2})[.\/](\d{2,4})/); if (m) { let [, d, mo, y] = m; if (y.length === 2) y = "20" + y; return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`; }
+  const d = new Date(s); return isNaN(d) ? today() : d.toISOString().slice(0, 10);
+}
+function normCurC(v) { let x = String(v || "EUR").toUpperCase().trim(); if (x === "LEI" || x === "RON LEI") x = "RON"; if (x === "$" || x === "USD$") x = "USD"; if (x === "€") x = "EUR"; return ["EUR", "USD", "RON"].includes(x) ? x : (x || "EUR"); }
+const _catByLabel = {}; Object.entries(CATS).forEach(([k, v]) => { _catByLabel[k] = k; _catByLabel[v.label.toLowerCase()] = k; });
+function mapCategory(v) { if (!v) return "other"; return _catByLabel[String(v).toLowerCase().trim()] || "other"; }
+function mapPayment(v) { return /privat|private|verausl|own/.test(String(v || "").toLowerCase()) ? "private" : "company_card"; }
+function pickField(row, names) { for (const k of Object.keys(row)) { if (names.includes(k.toLowerCase().trim())) return row[k]; } return ""; }
+function importRow(row, ccByCode) {
+  const merchant = String(pickField(row, ["händler", "haendler", "merchant", "vendor", "lieferant"]) || "").trim();
+  const ccRaw = String(pickField(row, ["kostenstelle", "kst", "cost center", "cost_center", "costcenter"]) || "").toLowerCase().trim();
+  return {
+    id: ++_seq, name: merchant || "Import", loading: false, preview: null, filePath: null, file_hash: null, file_size: null,
+    merchant, doc_date: parseDateAny(pickField(row, ["datum", "date", "belegdatum"])),
+    gross: parseAmount(pickField(row, ["brutto", "betrag", "amount", "gross", "summe", "total"])),
+    currency: normCurC(pickField(row, ["währung", "waehrung", "currency", "whg"])),
+    vat_rate: parseAmount(pickField(row, ["mwst", "mwst-satz", "mwst_satz", "vat", "ust", "steuer", "vat_rate"])),
+    category: mapCategory(pickField(row, ["kategorie", "category", "art"])),
+    payment_method: mapPayment(pickField(row, ["zahlart", "payment", "zahlung", "payment_method"])),
+    cost_center_id: ccByCode[ccRaw] || "", confidence: null,
+    occasion: String(pickField(row, ["anlass", "occasion"]) || ""), attendees: String(pickField(row, ["teilnehmer", "attendees"]) || ""),
+    duplicate_of: null, source: "import",
+  };
+}
+
 // ===== Lieferanten-Gedächtnis (Learning Phase 1) =====
 // Normalisierter Händler-Schlüssel (Groß/Klein, Sonderzeichen, GmbH-Suffixe egal).
 const vendorKey = (m) => String(m || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").replace(/\b(gmbh|ag|kg|srl|sa|ltd|inc|llc|co|the)\b/g, "").trim().replace(/\s+/g, " ");
