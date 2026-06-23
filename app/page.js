@@ -406,7 +406,8 @@ function Capture({ uid, onDone }) {
     if (!file) return;
     setErr("");
     try {
-      const XLSX = await import("xlsx");
+      const mod = await import("xlsx");
+      const XLSX = mod.read ? mod : mod.default;
       const wb = XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
       const ws = wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
