@@ -1,1 +1,1 @@
-mobile: role-aware bottom-nav (Freigaben/Admin) + topbar declutter — Tue Jun 23 06:22:06 UTC 2026
+mobile: compact stacked analytics filterbar — Tue Jun 23 06:25:43 UTC 2026
