@@ -280,6 +280,8 @@ function Shell({ session }) {
   const [detail, setDetail] = useState(null);
   const [role, setRole] = useState(null);
   const [theme, setTheme] = useState("light");
+  const [searchQ, setSearchQ] = useState("");
+  const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
   useServiceWorker();
   useEffect(() => { try { const s = localStorage.getItem("snap_theme"); if (s) setTheme(s); } catch {} }, []);
   useEffect(() => { try { document.documentElement.dataset.theme = theme; localStorage.setItem("snap_theme", theme); } catch {} }, [theme]);
@@ -345,10 +347,18 @@ function Shell({ session }) {
           <span className="avatar">{initials}</span>
           <button className="linkbtn" onClick={signOut} title={t("Abmelden")}><Icon name="logout" size={15} /></button>
         </div>
+        <div className="cmdbar">
+          <span className="mandant"><Icon name="building" size={15} /> Neoterra <span className="mut">· The Vegetable Company</span></span>
+          <span className="spacer" />
+          <div className="cmdsearch">
+            <Icon name="search" size={15} />
+            <input value={searchQ} onChange={(e) => goSearch(e.target.value)} placeholder={t("Beleg oder Händler suchen …")} aria-label={t("Suchen")} />
+          </div>
+        </div>
         <div className="content">
           <div className="container">
             {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
-              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} />
+              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "admin" ? <Admin session={session} />
               : <Dashboard />}
