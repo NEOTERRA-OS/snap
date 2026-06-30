@@ -1243,6 +1243,16 @@ function Admin({ session }) {
     await fetch("/api/admin/users", { method: "PATCH", headers: auth, body: JSON.stringify({ id, role }) });
     load();
   }
+  const adminCount = (users || []).filter((u) => u.role === "admin").length;
+  async function delUser(u) {
+    if (u.id === session.user.id) { toast(t("Du kannst dich nicht selbst löschen."), "err"); return; }
+    if (u.role === "admin" && adminCount <= 1) { toast(t("Der letzte Administrator kann nicht gelöscht werden."), "err"); return; }
+    if (!window.confirm(t("«{name}» wirklich löschen? Die erfassten Belege bleiben erhalten.").replace("{name}", u.full_name || u.email || "?"))) return;
+    const res = await fetch("/api/admin/users", { method: "DELETE", headers: auth, body: JSON.stringify({ id: u.id }) });
+    const j = await res.json().catch(() => ({}));
+    if (j.error) { toast(j.error, "err"); return; }
+    toast(t("Nutzer gelöscht")); load();
+  }
 
   const [drive, setDrive] = useState("");
   const [driveBusy, setDriveBusy] = useState(false);
