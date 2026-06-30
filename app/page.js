@@ -658,6 +658,18 @@ function Capture({ uid, onDone }) {
         <div className="tip"><Icon name="filetext" size={14} /> {t("Import-Spalten: Datum, Händler, Brutto, Währung, MwSt, Kategorie, Kostenstelle, Zahlart, Anlass, Teilnehmer.")}</div>
         {err && <div className="err">{err}</div>}
       </div>
+      {emailInfo && (
+        <div className="modal-wrap" onClick={() => setEmailInfo(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-ic" style={{ background: "rgba(44,60,43,.1)", color: "var(--green)" }}><Icon name="mail" size={20} /></div>
+            <h3>{t("E-Mail-Inbox")}</h3>
+            <p>{t("Diese Funktion folgt in Kürze: Du kannst Belege dann einfach an eine persönliche Sammeladresse weiterleiten — sie werden automatisch ausgelesen und hier erfasst. Nutze bis dahin Foto, Scan oder Upload.")}</p>
+            <div className="modal-actions">
+              <button type="button" className="modal-btn ghost" onClick={() => setEmailInfo(false)}>{t("Verstanden")}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 
