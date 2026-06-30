@@ -308,6 +308,7 @@ function Shell({ session }) {
   const bnav = (v, ic, label) => (
     <button className={"bnav" + (view === v && !detail ? " active" : "")} onClick={() => { setDetail(null); setView(v); }}><Icon name={ic} size={20} />{t(label)}</button>
   );
+  if (mustChange) return <PasswordGate session={session} who={who} t={t} onDone={() => setMustChange(false)} />;
   return (
     <div className="shell">
       <aside className="sidebar">
