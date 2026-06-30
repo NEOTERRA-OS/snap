@@ -52,8 +52,8 @@ export async function POST(req) {
     email, password, email_confirm: true, user_metadata: { full_name: full_name || email },
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  // ensure profile + role (trigger creates the profile row)
-  await s.from("profiles").upsert({ id: data.user.id, full_name: full_name || email, role }, { onConflict: "id" });
+  // ensure profile + role (trigger creates the profile row); Nutzer muss Temp-Passwort beim ersten Login ändern
+  await s.from("profiles").upsert({ id: data.user.id, full_name: full_name || email, role, must_change_password: true }, { onConflict: "id" });
   return NextResponse.json({ ok: true, user: { id: data.user.id, email, full_name, role }, password });
 }
 
