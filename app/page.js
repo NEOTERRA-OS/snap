@@ -981,7 +981,7 @@ function Dashboard() {
   const [cat, setCat] = useState("");
 
   useEffect(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,net,vat_amount,category,status,payment_method,cost_center_id,user_id,currency,gross_eur,fx_rate").then(({ data }) => setRows(data || []));
+    supabase.from("receipts").select("id,merchant,doc_date,gross,net,vat_amount,category,status,payment_method,cost_center_id,user_id,creator_name,currency,gross_eur,fx_rate").then(({ data }) => setRows(data || []));
     supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || []));
     supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setProfiles(m); });
   }, []);
