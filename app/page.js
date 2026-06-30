@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import Icon, { Logo } from "@/components/Icon";
 import { LangProvider, useT } from "@/lib/i18n";
