@@ -1333,17 +1333,28 @@ function Admin({ session }) {
         <div className="pw"><Icon name="user" /> {t("Nutzer")} {users ? `(${users.length})` : ""}</div>
         {!users ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div> : (
           <table className="utable">
-            <thead><tr><th>{t("Name")}</th><th>{t("E-Mail")}</th><th>{t("Rolle")}</th></tr></thead>
+            <thead><tr><th>{t("Name")}</th><th>{t("E-Mail")}</th><th>{t("Rolle")}</th><th aria-label={t("Aktionen")} /></tr></thead>
             <tbody>
-              {users.map((u) => (
+              {users.map((u) => {
+                const isSelf = u.id === session.user.id;
+                const lastAdmin = u.role === "admin" && adminCount <= 1;
+                const blocked = isSelf || lastAdmin;
+                return (
                 <tr key={u.id}>
                   <td>{u.full_name || "—"}</td>
                   <td className="muted">{u.email}</td>
                   <td><select value={u.role} onChange={(e) => changeRole(u.id, e.target.value)}>
                     {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
                   </select></td>
+                  <td style={{ textAlign: "right", width: 44 }}>
+                    <button type="button" className="brem" onClick={() => delUser(u)} disabled={blocked}
+                      title={isSelf ? t("Du kannst dich nicht selbst löschen.") : lastAdmin ? t("Der letzte Administrator kann nicht gelöscht werden.") : t("Nutzer löschen")}
+                      style={blocked ? { opacity: 0.35, cursor: "not-allowed" } : undefined}>
+                      <Icon name="trash" size={15} />
+                    </button>
+                  </td>
                 </tr>
-              ))}
+              );})}
             </tbody>
           </table>
         )}
