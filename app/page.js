@@ -279,6 +279,7 @@ function Shell({ session }) {
   const [view, setView] = useState("capture");
   const [detail, setDetail] = useState(null);
   const [role, setRole] = useState(null);
+  const [mustChange, setMustChange] = useState(false);
   const [theme, setTheme] = useState("light");
   const [searchQ, setSearchQ] = useState("");
   const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
@@ -298,7 +299,7 @@ function Shell({ session }) {
   const signOut = () => supabase.auth.signOut();
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
   const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
-  useEffect(() => { supabase.from("profiles").select("role").eq("id", uid).single().then(({ data }) => setRole(data?.role || "employee")); }, [uid]);
+  useEffect(() => { supabase.from("profiles").select("role,must_change_password").eq("id", uid).single().then(({ data }) => { setRole(data?.role || "employee"); setMustChange(!!data?.must_change_password); }); }, [uid]);
   const nav = (v, ic, label) => (
     <button className={"snav" + (view === v && !detail ? " on" : "")} onClick={() => { setDetail(null); setView(v); }}>
       <Icon name={ic} size={18} /> <span>{t(label)}</span>
