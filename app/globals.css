@@ -228,8 +228,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 
 /* capture: sources + big dropzone */
 .capwrap{max-width:680px}
-.sources{display:flex;gap:10px;margin-bottom:14px}
-.src{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:13px 6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+.sources{display:flex;gap:10px;margin-bottom:14px;min-width:0}
+.src{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:13px 6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;overflow-wrap:anywhere}
 .src .i{color:var(--muted)}
 .src.on{border-color:var(--green);color:var(--ink)}
 .src.on .i{color:var(--green)}
