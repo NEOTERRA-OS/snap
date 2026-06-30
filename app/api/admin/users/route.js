@@ -66,3 +66,36 @@ export async function PATCH(req) {
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true });
 }
+
+export async function DELETE(req) {
+  const gate = await requireAdmin(req);
+  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: gate.status });
+  const body = await req.json().catch(() => ({}));
+  const id = (body.id || "").trim();
+  if (!id) return NextResponse.json({ error: "id fehlt" }, { status: 400 });
+  if (id === gate.uid) return NextResponse.json({ error: "Du kannst dich nicht selbst löschen." }, { status: 400 });
+
+  const s = svc();
+  const { data: target } = await s.from("profiles").select("id,full_name,role").eq("id", id).single();
+  if (!target) return NextResponse.json({ error: "Nutzer nicht gefunden." }, { status: 404 });
+
+  // Letzten Administrator schützen
+  if (target.role === "admin") {
+    const { count } = await s.from("profiles").select("id", { count: "exact", head: true }).eq("role", "admin");
+    if ((count ?? 0) <= 1) return NextResponse.json({ error: "Der letzte Administrator kann nicht gelöscht werden." }, { status: 400 });
+  }
+
+  // Ersteller-Namen auf den Belegen sichern (GoBD: Belege bleiben erhalten, user_id wird via FK auf NULL gesetzt)
+  let creatorName = (target.full_name || "").trim();
+  if (!creatorName) {
+    try { const { data: au } = await s.auth.admin.getUserById(id); creatorName = au?.user?.email || ""; } catch {}
+  }
+  if (creatorName) {
+    await s.from("receipts").update({ creator_name: creatorName }).eq("user_id", id).or("creator_name.is.null,creator_name.eq.");
+  }
+
+  // Auth-User löschen → Profil cascadet, Belege bleiben (user_id = NULL, creator_name erhalten)
+  const { error } = await s.auth.admin.deleteUser(id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  return NextResponse.json({ ok: true });
+}
