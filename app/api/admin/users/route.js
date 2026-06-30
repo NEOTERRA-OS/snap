@@ -24,7 +24,7 @@ async function requireAdmin(req) {
   if (error || !u?.user) return { error: "Ungültige Sitzung", status: 401 };
   const { data: prof } = await svc().from("profiles").select("role").eq("id", u.user.id).single();
   if (prof?.role !== "admin") return { error: "Nur Administratoren.", status: 403 };
-  return { ok: true };
+  return { ok: true, uid: u.user.id };
 }
 
 export async function GET(req) {
