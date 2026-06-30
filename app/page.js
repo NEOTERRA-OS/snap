@@ -1404,7 +1404,11 @@ function Admin({ session }) {
                   <td><select value={u.role} onChange={(e) => changeRole(u.id, e.target.value)}>
                     {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
                   </select></td>
-                  <td style={{ textAlign: "right", width: 44 }}>
+                  <td style={{ textAlign: "right", width: 84, whiteSpace: "nowrap" }}>
+                    <button type="button" className="brem" onClick={() => askReset(u)}
+                      title={t("Passwort zurücksetzen")} style={{ marginRight: 6 }}>
+                      <Icon name="key" size={15} />
+                    </button>
                     <button type="button" className="brem" onClick={() => delUser(u)} disabled={blocked}
                       title={isSelf ? t("Du kannst dich nicht selbst löschen.") : lastAdmin ? t("Der letzte Administrator kann nicht gelöscht werden.") : t("Nutzer löschen")}
                       style={blocked ? { opacity: 0.35, cursor: "not-allowed" } : undefined}>
