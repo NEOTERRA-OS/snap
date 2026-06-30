@@ -1283,6 +1283,19 @@ function Admin({ session }) {
   const adminCount = (users || []).filter((u) => u.role === "admin").length;
   const [confirmUser, setConfirmUser] = useState(null);
   const [delBusy, setDelBusy] = useState(false);
+  const [resetTarget, setResetTarget] = useState(null);
+  const [resetBusy, setResetBusy] = useState(false);
+  const [resetPw, setResetPw] = useState("");
+  function askReset(u) { setResetPw(""); setResetTarget(u); }
+  async function doReset() {
+    if (!resetTarget) return;
+    setResetBusy(true);
+    const res = await fetch("/api/admin/users/reset", { method: "POST", headers: auth, body: JSON.stringify({ id: resetTarget.id }) });
+    const j = await res.json().catch(() => ({}));
+    setResetBusy(false);
+    if (j.error) { toast(j.error, "err"); return; }
+    setResetPw(j.password);
+  }
   function delUser(u) {
     if (u.id === session.user.id) { toast(t("Du kannst dich nicht selbst löschen."), "err"); return; }
     if (u.role === "admin" && adminCount <= 1) { toast(t("Der letzte Administrator kann nicht gelöscht werden."), "err"); return; }
