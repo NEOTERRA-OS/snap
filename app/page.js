@@ -1244,13 +1244,21 @@ function Admin({ session }) {
     load();
   }
   const adminCount = (users || []).filter((u) => u.role === "admin").length;
-  async function delUser(u) {
+  const [confirmUser, setConfirmUser] = useState(null);
+  const [delBusy, setDelBusy] = useState(false);
+  function delUser(u) {
     if (u.id === session.user.id) { toast(t("Du kannst dich nicht selbst löschen."), "err"); return; }
     if (u.role === "admin" && adminCount <= 1) { toast(t("Der letzte Administrator kann nicht gelöscht werden."), "err"); return; }
-    if (!window.confirm(t("«{name}» wirklich löschen? Die erfassten Belege bleiben erhalten.").replace("{name}", u.full_name || u.email || "?"))) return;
-    const res = await fetch("/api/admin/users", { method: "DELETE", headers: auth, body: JSON.stringify({ id: u.id }) });
+    setConfirmUser(u);
+  }
+  async function doDelete() {
+    if (!confirmUser) return;
+    setDelBusy(true);
+    const res = await fetch("/api/admin/users", { method: "DELETE", headers: auth, body: JSON.stringify({ id: confirmUser.id }) });
     const j = await res.json().catch(() => ({}));
+    setDelBusy(false);
     if (j.error) { toast(j.error, "err"); return; }
+    setConfirmUser(null);
     toast(t("Nutzer gelöscht")); load();
   }
 
@@ -1359,6 +1367,20 @@ function Admin({ session }) {
           </table>
         )}
       </div>
+
+      {confirmUser && (
+        <div className="modal-wrap" onClick={() => { if (!delBusy) setConfirmUser(null); }}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-ic"><Icon name="trash" size={20} /></div>
+            <h3>{t("Nutzer löschen")}</h3>
+            <p>{t("«{name}» wirklich löschen? Die erfassten Belege bleiben erhalten.").replace("{name}", confirmUser.full_name || confirmUser.email || "?")}</p>
+            <div className="modal-actions">
+              <button type="button" className="modal-btn ghost" disabled={delBusy} onClick={() => setConfirmUser(null)}>{t("Abbrechen")}</button>
+              <button type="button" className="modal-btn danger" disabled={delBusy} onClick={doDelete}>{delBusy ? <span className="spin" /> : <Icon name="trash" size={14} />} {t("Löschen")}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
