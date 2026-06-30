@@ -188,9 +188,9 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 /* ===== App shell (responsive: sidebar on desktop, bottom-nav on mobile) ===== */
 .shell{min-height:100vh;display:flex;background:var(--bg)}
 .sidebar{display:none}
-.maincol{flex:1;display:flex;flex-direction:column;min-width:0}
-.content{flex:1;padding:26px 18px 96px}
-.container{width:100%;max-width:780px;margin:0 auto}
+.maincol{flex:1;display:flex;flex-direction:column;min-width:0;max-width:100%}
+.content{flex:1;padding:26px 18px 96px;min-width:0}
+.container{width:100%;max-width:780px;margin:0 auto;min-width:0}
 .topbar .avatar{width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700;margin-left:4px}
 .sb-brand{display:flex;align-items:center;gap:10px;font-weight:400;color:var(--ink);font-size:16px;padding:4px 10px 12px;background:none;border:0;font-family:inherit;cursor:pointer;text-align:left;width:100%}
 .sb-brand:hover{opacity:.8}
