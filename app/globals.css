@@ -413,6 +413,12 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @media(max-width:760px){.sheet-wrap{justify-content:stretch}.sheet{width:100%}}
 
+/* ===== Pull-to-Refresh-Indikator ===== */
+.ptr{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;z-index:60;pointer-events:none}
+.ptr-ic{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.14);display:grid;place-items:center;color:var(--green)}
+@keyframes ptrspin{to{transform:rotate(360deg)}}
+.ptr-ic.go{animation:ptrspin .7s linear infinite}
+
 /* ===== Mobile-Feinschliff: klare Seitenränder, Topbar passt sauber ===== */
 @media(max-width:760px){
   .content{padding-left:18px;padding-right:18px;padding-bottom:108px}
