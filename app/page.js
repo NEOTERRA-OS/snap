@@ -274,6 +274,41 @@ function useServiceWorker() {
   }, []);
 }
 
+function PasswordGate({ session, who, t, onDone }) {
+  const [pw, setPw] = useState("");
+  const [pw2, setPw2] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  async function submit(e) {
+    e.preventDefault();
+    setErr("");
+    if (pw.length < 8) { setErr(t("Mindestens 8 Zeichen.")); return; }
+    if (pw !== pw2) { setErr(t("Passwörter stimmen nicht überein.")); return; }
+    setBusy(true);
+    const { error } = await supabase.auth.updateUser({ password: pw });
+    if (error) { setBusy(false); setErr(error.message); return; }
+    try { await fetch("/api/account/password-set", { method: "POST", headers: { Authorization: `Bearer ${session.access_token}` } }); } catch {}
+    setBusy(false);
+    onDone();
+  }
+  return (
+    <div className="gate-wrap">
+      <form className="card" style={{ maxWidth: 400, width: "100%" }} onSubmit={submit}>
+        <div className="modal-ic" style={{ background: "rgba(44,60,43,.1)", color: "var(--green)" }}><Icon name="key" size={20} /></div>
+        <h1 className="title" style={{ marginBottom: 4 }}>{t("Neues Passwort festlegen")}</h1>
+        <p className="lead">{t("Bitte vergib zur Sicherheit ein eigenes Passwort, um fortzufahren.")}</p>
+        <div className="field"><label>{t("Neues Passwort")}</label>
+          <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoFocus placeholder="••••••••" /></div>
+        <div className="field"><label>{t("Passwort bestätigen")}</label>
+          <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="••••••••" /></div>
+        {err && <div className="err" style={{ marginBottom: 10 }}>{err}</div>}
+        <button className="btn" disabled={busy} style={{ width: "100%" }}>{busy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Passwort speichern")}</button>
+        <p className="hint" style={{ textAlign: "center", marginTop: 12 }}>{who}</p>
+      </form>
+    </div>
+  );
+}
+
 function Shell({ session }) {
   const { t, lang, setLang } = useT();
   const [view, setView] = useState("capture");
