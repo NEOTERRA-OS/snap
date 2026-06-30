@@ -303,7 +303,9 @@ function PasswordGate({ session, who, t, onDone }) {
           <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="••••••••" /></div>
         {err && <div className="err" style={{ marginBottom: 10 }}>{err}</div>}
         <button className="btn" disabled={busy} style={{ width: "100%" }}>{busy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Passwort speichern")}</button>
-        <p className="hint" style={{ textAlign: "center", marginTop: 12 }}>{who}</p>
+        <p className="hint" style={{ textAlign: "center", marginTop: 12 }}>
+          {who} · <button type="button" className="linkbtn" onClick={() => supabase.auth.signOut()}>{t("Abmelden")}</button>
+        </p>
       </form>
     </div>
   );
