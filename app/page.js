@@ -1435,6 +1435,33 @@ function Admin({ session }) {
           </div>
         </div>
       )}
+
+      {resetTarget && (
+        <div className="modal-wrap" onClick={() => { if (!resetBusy) setResetTarget(null); }}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-ic" style={{ background: "rgba(44,60,43,.1)", color: "var(--green)" }}><Icon name="key" size={20} /></div>
+            {!resetPw ? (
+              <>
+                <h3>{t("Passwort zurücksetzen")}</h3>
+                <p>{t("Für «{name}» ein neues Temp-Passwort erzeugen? Der Nutzer muss es beim nächsten Login ändern.").replace("{name}", resetTarget.full_name || resetTarget.email || "?")}</p>
+                <div className="modal-actions">
+                  <button type="button" className="modal-btn ghost" disabled={resetBusy} onClick={() => setResetTarget(null)}>{t("Abbrechen")}</button>
+                  <button type="button" className="modal-btn" style={{ background: "var(--green)", color: "#fff" }} disabled={resetBusy} onClick={doReset}>{resetBusy ? <span className="spin" /> : <Icon name="key" size={14} />} {t("Zurücksetzen")}</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3>{t("Neues Passwort")}</h3>
+                <p>{t("Temp-Passwort für")} <b>{resetTarget.full_name || resetTarget.email}</b> — {t("nur jetzt sichtbar:")}</p>
+                <div className="ok" style={{ marginBottom: 16 }}><span className="mono" style={{ fontSize: 15 }}>{resetPw}</span></div>
+                <div className="modal-actions">
+                  <button type="button" className="modal-btn ghost" onClick={() => setResetTarget(null)}>{t("Fertig")}</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
