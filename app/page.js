@@ -311,6 +311,61 @@ function PasswordGate({ session, who, t, onDone }) {
   );
 }
 
+// Pull-to-Refresh (mobil): am Seitenanfang nach unten ziehen → Rädchen → neu laden.
+function PullToRefresh() {
+  const [pull, setPull] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const start = useRef(0);
+  const pulling = useRef(false);
+  const dist = useRef(0);
+  const refRefreshing = useRef(false);
+  const THRESHOLD = 72;
+  useEffect(() => {
+    const onStart = (e) => {
+      if (window.scrollY <= 0 && e.touches.length === 1 && !refRefreshing.current) {
+        start.current = e.touches[0].clientY; pulling.current = true;
+      } else pulling.current = false;
+    };
+    const onMove = (e) => {
+      if (!pulling.current || refRefreshing.current) return;
+      const dy = e.touches[0].clientY - start.current;
+      if (dy > 0 && window.scrollY <= 0) {
+        const d = Math.min(dy * 0.5, 110);
+        dist.current = d; setPull(d);
+        if (d > 6 && e.cancelable) e.preventDefault();
+      } else { dist.current = 0; setPull(0); }
+    };
+    const onEnd = () => {
+      if (!pulling.current) return;
+      pulling.current = false;
+      if (dist.current >= THRESHOLD) {
+        refRefreshing.current = true; setRefreshing(true);
+        setTimeout(() => window.location.reload(), 320);
+      } else { dist.current = 0; setPull(0); }
+    };
+    window.addEventListener("touchstart", onStart, { passive: true });
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onEnd, { passive: true });
+    window.addEventListener("touchcancel", onEnd, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onStart);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onEnd);
+      window.removeEventListener("touchcancel", onEnd);
+    };
+  }, []);
+  if (pull <= 0 && !refreshing) return null;
+  const progress = Math.min(pull / THRESHOLD, 1);
+  const y = refreshing ? 14 : Math.min(pull - 30, 16);
+  return (
+    <div className="ptr" style={{ transform: `translateY(${y}px)`, opacity: refreshing ? 1 : Math.min(pull / 36, 1) }}>
+      <span className={"ptr-ic" + (refreshing ? " go" : "")} style={refreshing ? undefined : { transform: `rotate(${progress * 280}deg)` }}>
+        <Icon name="refresh" size={18} />
+      </span>
+    </div>
+  );
+}
+
 function Shell({ session }) {
   const { t, lang, setLang } = useT();
   const [view, setView] = useState("capture");
@@ -348,6 +403,7 @@ function Shell({ session }) {
   if (mustChange) return <PasswordGate session={session} who={who} t={t} onDone={() => setMustChange(false)} />;
   return (
     <div className="shell">
+      <PullToRefresh />
       <aside className="sidebar">
         <button type="button" className="sb-brand" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
         <div className="sb-grp">{t("Arbeiten")}</div>
