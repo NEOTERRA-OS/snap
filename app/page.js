@@ -632,10 +632,10 @@ function Capture({ uid, onDone }) {
       <p className="lead">{t("Foto, Scan, Upload oder per E-Mail — die OCR füllt die Felder automatisch.")}</p>
       <div className="capwrap">
         <div className="sources">
-          <div className="src on"><Icon name="camera" size={20} /> {t("Foto")}</div>
-          <div className="src"><Icon name="scan" size={20} /> {t("Scan")}</div>
-          <div className="src"><Icon name="upload" size={20} /> {t("Upload")}</div>
-          <div className="src"><Icon name="mail" size={20} /> {t("E-Mail-Inbox")}</div>
+          <button type="button" className={"src" + (activeSrc === "foto" ? " on" : "")} onClick={() => { setActiveSrc("foto"); camRef.current?.click(); }}><Icon name="camera" size={20} /> {t("Foto")}</button>
+          <button type="button" className={"src" + (activeSrc === "scan" ? " on" : "")} onClick={() => { setActiveSrc("scan"); camRef.current?.click(); }}><Icon name="scan" size={20} /> {t("Scan")}</button>
+          <button type="button" className={"src" + (activeSrc === "upload" ? " on" : "")} onClick={() => { setActiveSrc("upload"); upRef.current?.click(); }}><Icon name="upload" size={20} /> {t("Upload")}</button>
+          <button type="button" className={"src" + (activeSrc === "email" ? " on" : "")} onClick={() => { setActiveSrc("email"); setEmailInfo(true); }}><Icon name="mail" size={20} /> {t("E-Mail-Inbox")}</button>
         </div>
         <label className={"dropzone" + (drag ? " over" : "")}
           onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
@@ -645,8 +645,9 @@ function Capture({ uid, onDone }) {
           <span className="dz-h">{t("Belege hierher ziehen oder auswählen")}</span>
           <span className="dz-p">{t("Mehrere Dateien möglich · JPG, PNG oder PDF")}</span>
           <span className="dz-btn"><Icon name="camera" size={15} /> {t("Dateien auswählen")}</span>
-          <input type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
+          <input ref={camRef} type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
         </label>
+        <input ref={upRef} type="file" accept="image/*,application/pdf" multiple hidden onChange={onPick} />
         <div className="tip"><Icon name="scan" size={14} /> {t("OCR startet automatisch — du prüfst nur die markierten Felder.")}</div>
         <div className="capdiv"><span>{t("oder")}</span></div>
         <div className="capalt">
