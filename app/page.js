@@ -1032,7 +1032,7 @@ function Dashboard() {
   const byCat = agg((r) => (CATS[r.category] || CATS.other).label);
   const byCc = agg((r) => (r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "—") : "—"));
   const byMerch = agg((r) => r.merchant || "—");
-  const byEmp = agg((r) => profiles[r.user_id] || "—");
+  const byEmp = agg((r) => profiles[r.user_id] || r.creator_name || "—");
   const byMonth = agg((r) => (r.doc_date ? r.doc_date.slice(0, 7) : null));
   const byPay = agg((r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte"));
 
@@ -1059,7 +1059,7 @@ function Dashboard() {
   function exportCsv() {
     const head = ["Datum", "Händler", "Kategorie", "Kostenstelle", "Mitarbeiter", "Status", "Währung", "Brutto", "Brutto_EUR", "MwSt"];
     const lines = f.map((r) => [r.doc_date || "", (r.merchant || "").replace(/;/g, ","), (CATS[r.category] || CATS.other).label,
-      r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "") : "", profiles[r.user_id] || "", STATUS[r.status] || r.status,
+      r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "") : "", profiles[r.user_id] || r.creator_name || "", STATUS[r.status] || r.status,
       r.currency || "EUR", Number(r.gross || 0).toFixed(2), (eurOf(r) != null ? eurOf(r).toFixed(2) : ""), Number(r.vat_amount || 0).toFixed(2)].join(";"));
     const blob = new Blob(["﻿" + [head.join(";"), ...lines].join("\n")], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `snap-auswertung-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
