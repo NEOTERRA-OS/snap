@@ -494,6 +494,10 @@ function Capture({ uid, onDone }) {
   const [ccs, setCcs] = useState([]);
   const [drag, setDrag] = useState(false);
   const [draftFirst, setDraftFirst] = useState(false); // Import → Entwurf als Standardaktion
+  const camRef = useRef(null);   // Kamera (Foto/Scan)
+  const upRef = useRef(null);    // Datei-Upload (ohne Kamera-Zwang)
+  const [activeSrc, setActiveSrc] = useState("foto");
+  const [emailInfo, setEmailInfo] = useState(false);
 
   useEffect(() => { supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || [])); }, []);
 
