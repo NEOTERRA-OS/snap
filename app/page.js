@@ -525,6 +525,7 @@ function Shell({ session }) {
         <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="plus" size={26} /></button>
         <div className="bnav-side">
           {bnav("dashboard", "barchart", "Analyse")}
+          <button type="button" className="bnav" onClick={() => setDelegModal(true)}><Icon name="user" size={20} />{t("Vertretungen")}</button>
         </div>
       </div>
       {detail && (
