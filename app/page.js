@@ -744,6 +744,7 @@ function Capture({ uid, onDone }) {
           <button type="button" className="btn ghost" onClick={addManual}><Icon name="plus" size={15} /> {t("Manuell erfassen")}</button>
           <label className="btn ghost" style={{ cursor: "pointer" }}><Icon name="filetext" size={15} /> {t("Excel/CSV importieren")}
             <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} /></label>
+          <button type="button" className="btn ghost" onClick={addCash}><Icon name="banknote" size={15} /> {t("Barauslage erfassen")}</button>
         </div>
         <div className="tip"><Icon name="filetext" size={14} /> {t("Import-Spalten: Datum, Händler, Brutto, Währung, MwSt, Kategorie, Kostenstelle, Zahlart, Anlass, Teilnehmer.")}</div>
         <button type="button" className="delegcta" onClick={() => setDelegOpen(true)}>
