@@ -1204,7 +1204,7 @@ function MonthlyChart({ months, data }) {
   );
 }
 
-function Dashboard() {
+function Dashboard({ onOpen }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [ccs, setCcs] = useState([]);
@@ -1271,10 +1271,14 @@ function Dashboard() {
   const curs = Object.entries(byCur).sort((a, b) => b[1].eur - a[1].eur);
 
   const agg = (keyFn) => { const m = {}; f.forEach((r) => { const k = keyFn(r); if (k == null) return; m[k] = (m[k] || 0) + (eurOf(r) ?? 0); }); return m; };
-  const byCat = agg((r) => (CATS[r.category] || CATS.other).label);
-  const byCc = agg((r) => (r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "—") : "—"));
-  const byMerch = agg((r) => r.merchant || "—");
-  const byEmp = agg((r) => profiles[r.user_id] || r.creator_name || "—");
+  const keyCat = (r) => (CATS[r.category] || CATS.other).label;
+  const keyCc = (r) => (r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "—") : "—");
+  const keyMerch = (r) => r.merchant || "—";
+  const keyEmp = (r) => profiles[r.user_id] || r.creator_name || "—";
+  const byCat = agg(keyCat);
+  const byCc = agg(keyCc);
+  const byMerch = agg(keyMerch);
+  const byEmp = agg(keyEmp);
   const byMonth = agg((r) => (r.doc_date ? r.doc_date.slice(0, 7) : null));
   const byPay = agg((r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte"));
 
