@@ -17,7 +17,7 @@ html,body{background:var(--bg);color:var(--ink);overflow-x:clip;
   font-variation-settings:"opsz" 16;-webkit-font-smoothing:antialiased}
 .mono,.neos-mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
 /* NEOS: alle Zahlen (Beträge, Balken- & Chart-Werte, Zähler) in JetBrains Mono */
-.amt,.rv,.rpct,.mc2-val,.mc2-avg span,.filterbar .shown,.kv .v .num{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+.amt,.rv,.rpct,.mc2-val,.mc2-avg span,.filterbar .shown,.num{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
 .i{width:16px;height:16px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:middle}
 
 /* shell */
