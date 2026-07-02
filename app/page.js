@@ -797,6 +797,7 @@ function Capture({ uid, onDone }) {
             {it.preview ? <img className="bthumb" src={it.preview} alt="" /> : <span className="bthumb ph"><Icon name="file-text" size={18} /></span>}
             <span className="bname">{it.name}</span>
             {it.loading ? <span className="bstat"><span className="spin" /> {t("Lese …")}</span>
+              : it.source === "cash" ? <span className="bstat man">{t("Barauslage")}</span>
               : it.source === "manual" ? <span className="bstat man">{t("Manuell")}</span>
               : it.source === "import" ? <span className="bstat man">{t("Import")}</span>
               : <span className="bstat ok"><Icon name="check" size={12} /> {it.confidence ?? "—"}%</span>}
