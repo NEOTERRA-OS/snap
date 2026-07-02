@@ -1330,9 +1330,15 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
       </div>
 
       <div className="panel">
-        <div className="pw"><Icon name="wallet" /> {t("Zahlart")}</div>
-        {sorted(byPay).map(([k, v]) => { const mx = total || 1; return (
-          <div className="bar" key={k}><div className="lab">{t(k)}</div><div className="track"><div className="fill" style={{ width: (v / mx) * 100 + "%" }} /></div><div className="v">{eur(v)}</div></div>); })}
+        <div className="pw"><Icon name="wallet" /> {t("Zahlart")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
+        {sorted(byPay).map(([k, v], i) => { const mx = total || 1; return (
+          <div className="rrow" key={k}>
+            <div className="rmain">
+              <div className="rlab">{t(k)}</div>
+              <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
+            </div>
+            <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / mx * 100)}%</span></div>
+          </div>); })}
       </div>
     </>
   );
