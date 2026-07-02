@@ -1220,7 +1220,7 @@ function Detail({ id, onBack }) {
               <button className="btn" disabled={saving} onClick={saveEdit}>{saving ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
             </div>
           </div>
-        ) : (<></>)}
+        ) : (<>
         <div className="kv"><span className="k">{t("Datum")}</span><span className="v">{dDE(r.doc_date)}</span></div>
         <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
         <div className="kv"><span className="k">{t("MwSt")}</span><span className="v">{r.vat_rate}% · {money(r.vat_amount, r.currency)}</span></div>
@@ -1246,6 +1246,7 @@ function Detail({ id, onBack }) {
           <div className="kv"><span className="k">{t("Anlass der Bewirtung")}</span><span className="v">{r.occasion || "—"}</span></div>
           <div className="kv"><span className="k">{t("Teilnehmer")}</span><span className="v">{r.attendees || "—"}</span></div>
         </>}
+        </>)}
       </div>
       {r.status === "rejected" && r.reject_reason && (
         <div className="bflag dup" style={{ marginBottom: 12 }}><Icon name="alert" size={13} /> {t("Abgelehnt")}: {r.reject_reason}</div>
