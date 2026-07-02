@@ -963,7 +963,7 @@ function Approvals({ onOpen }) {
   const [sel, setSel] = useState(() => new Set());
   const [names, setNames] = useState({});
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of,user_id,created_by,creator_name").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
+    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of,user_id,created_by,creator_name,source,recipient").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
   }, []);
   useEffect(() => { load(); }, [load]);
   useEffect(() => { supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); }); }, []);
@@ -1007,8 +1007,8 @@ function Approvals({ onOpen }) {
           <label className="selbox" onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={sel.has(r.id)} onChange={() => toggle(r.id)} /></label>
           <div className="lthumb" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
           <div className="meta" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}>
-            <div className="t">{r.merchant}</div>
-            <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
+            <div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "")}</div>
+            <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
             <div className="d">{names[r.user_id] || r.creator_name || "—"}{r.created_by && r.created_by !== r.user_id ? <span className="mut"> · {t("im Auftrag von")} {names[r.created_by] || "—"}</span> : ""}</div>
             {(r.flags?.length > 0 || r.duplicate_of) && <span className="st st-app" style={{ marginTop: 6 }}><Icon name="alert" size={11} /> {r.duplicate_of ? t("mögliche Dublette") : `${r.flags.length} ${t("Hinweise")}`}</span>}
           </div>
