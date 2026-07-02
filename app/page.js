@@ -30,7 +30,7 @@ const dDE = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "numeric"
 function plausFlags(it) {
   const f = [];
   const today = new Date().toISOString().slice(0, 10);
-  if (!it.merchant || !String(it.merchant).trim()) f.push("Händler fehlt");
+  if (!it.merchant || !String(it.merchant).trim()) f.push(it.source === "cash" ? "Zweck fehlt" : "Händler fehlt");
   if (it.gross == null || Number(it.gross) <= 0) f.push("Betrag fehlt");
   if (it.doc_date && it.doc_date > today) f.push("Datum in der Zukunft");
   if (it.vat_rate != null && (Number(it.vat_rate) < 0 || Number(it.vat_rate) > 27)) f.push("MwSt-Satz unplausibel");
