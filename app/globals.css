@@ -264,6 +264,11 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .capdiv::before,.capdiv::after{content:"";flex:1;height:1px;background:var(--line)}
 .capalt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .capalt .btn{width:auto}
+.capalt .btn.ghost{background:var(--surface);border:1.5px solid var(--green);color:var(--green);font-weight:700}
+.capalt .btn.ghost .i{color:var(--green)}
+.capalt .btn.ghost:hover{background:rgba(44,60,43,.06)}
+[data-theme="dark"] .capalt .btn.ghost{border-color:var(--emerald);color:var(--emerald)}
+[data-theme="dark"] .capalt .btn.ghost .i{color:var(--emerald)}
 @media(max-width:520px){.capalt{grid-template-columns:1fr}}
 .brem{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;flex:0 0 auto}
 .brem:hover{color:var(--red);border-color:var(--red)}
