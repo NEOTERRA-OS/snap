@@ -647,6 +647,11 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
 
   function onPick(e) { addFiles(Array.from(e.target.files || [])); e.target.value = ""; }
   function onDrop(e) { e.preventDefault(); setDrag(false); addFiles(Array.from(e.dataTransfer?.files || [])); }
+  // Vom zentralen +-Button (App-Ebene) aufgenommene Fotos übernehmen.
+  useEffect(() => {
+    if (inbound && inbound.length) { addFiles(inbound); onInboundHandled?.(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inbound]);
 
   function addManual() {
     setErr(""); setStage("review");
