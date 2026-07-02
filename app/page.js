@@ -876,7 +876,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
   const [sortBy, setSortBy] = useState("date");
   const [dir, setDir] = useState("desc");
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency,flags,duplicate_of").order("doc_date", { ascending: false })
+    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency,flags,duplicate_of,source,recipient").order("doc_date", { ascending: false })
       .then(({ data }) => setRows(data || []));
   }, []);
   useEffect(() => { load(); }, [load]);
