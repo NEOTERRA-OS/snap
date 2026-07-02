@@ -595,6 +595,15 @@ function Capture({ uid, onDone }) {
       payment_method: "company_card", cost_center_id: "", confidence: null, occasion: "", attendees: "", duplicate_of: null, source: "manual",
     }]);
   }
+  // Barauslage / Sonderfall: Bargeld ausgelegt (kein Foto). Auslegender bekommt erstattet (privat).
+  function addCash() {
+    setErr(""); setStage("review");
+    setItems((p) => [...p, {
+      id: ++_seq, name: t("Barauslage"), loading: false, preview: null, filePath: null, file_hash: null, file_size: null,
+      merchant: "", recipient: "", doc_date: new Date().toISOString().slice(0, 10), gross: null, currency: "EUR", vat_rate: null, category: "other",
+      payment_method: "private", cost_center_id: "", confidence: null, occasion: "", attendees: "", duplicate_of: null, source: "cash",
+    }]);
+  }
   async function enrichImported(it) {
     try { const dup = await findDuplicate(null, it.merchant, it.doc_date, it.gross); if (dup) upd(it.id, { duplicate_of: dup }); } catch {}
     try { const mem = await loadVendorMemory(it.merchant); if (mem) { const p = {}; const m = {}; if (!it.cost_center_id && mem.cost_center_id) { p.cost_center_id = mem.cost_center_id; m.cost_center_id = true; } if (mem.payment_method && it.payment_method === "company_card") { p.payment_method = mem.payment_method; m.payment_method = true; } if (Object.keys(m).length) { p.mem = m; upd(it.id, p); } } } catch {}
