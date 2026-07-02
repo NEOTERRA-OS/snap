@@ -691,7 +691,7 @@ function Capture({ uid, onDone }) {
         const { eur, rate } = await fxToEur(it.gross, it.currency, it.doc_date);
         const flags = plausFlags(it);
         rows.push({
-          user_id: forUser || uid, created_by: uid, status, source: it.source, file_path: it.filePath,
+          user_id: forUser || uid, created_by: uid, status, source: it.source, recipient: it.recipient || null, file_path: it.filePath,
           merchant: it.merchant, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
           currency: it.currency || "EUR", gross_eur: eur, fx_rate: rate,
           file_hash: it.file_hash, file_size: it.file_size,
