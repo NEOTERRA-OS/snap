@@ -518,10 +518,14 @@ function Shell({ session }) {
         </div>
       </div>
       <div className="bottomnav">
-        {bnav("receipts", "receipt", "Belege")}
-        {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
+        <div className="bnav-side">
+          {bnav("receipts", "receipt", "Belege")}
+          {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
+        </div>
         <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="plus" size={26} /></button>
-        {bnav("dashboard", "barchart", "Analyse")}
+        <div className="bnav-side">
+          {bnav("dashboard", "barchart", "Analyse")}
+        </div>
       </div>
       {detail && (
         <div className="sheet-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
