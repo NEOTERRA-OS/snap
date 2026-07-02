@@ -1285,19 +1285,21 @@ function Dashboard({ onOpen }) {
   const sorted = (m) => Object.entries(m).sort((a, b) => b[1] - a[1]);
   const months = Object.keys(byMonth).sort();
   const rampClass = (i) => (i === 0 ? "f1" : i <= 2 ? "f2" : "f3");
-  const Bars = ({ map, label, limit }) => {
+  const Bars = ({ map, label, limit, keyOf }) => {
     const items = sorted(map).slice(0, limit || 99);
     const mx = Math.max(1, ...items.map((i) => i[1]));
     const tot = items.reduce((s, i) => s + i[1], 0) || 1;
     return (<div className="panel"><div className="pw">{t(label)}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
       {items.length === 0 && <div className="empty"><Icon name="banknote" size={26} /><p>{t("Keine Daten im Filter.")}</p></div>}
       {items.map(([k, v], i) => (
-        <div className="rrow" key={k}>
+        <div className={"rrow" + (keyOf ? " rrow-clk" : "")} key={k}
+          onClick={keyOf ? () => setDrill({ title: `${t(label)}: ${t(k)}`, predicate: (r) => keyOf(r) === k }) : undefined}
+          title={keyOf ? t("Belege anzeigen & Zahlart ändern") : undefined}>
           <div className="rmain">
             <div className="rlab" title={k}>{t(k)}</div>
             <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
           </div>
-          <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / tot * 100)}%</span></div>
+          <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / tot * 100)}%</span>{keyOf && <Icon name="chevronleft" size={14} style={{ transform: "rotate(180deg)", color: "var(--muted2)" }} />}</div>
         </div>))}
     </div>);
   };
