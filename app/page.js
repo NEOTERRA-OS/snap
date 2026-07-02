@@ -1458,7 +1458,7 @@ const ROLE_LABELS = { employee: "Mitarbeiter", approver: "Genehmiger", accountin
 function Admin({ session }) {
   const { t } = useT();
   const [users, setUsers] = useState(null);
-  const [form, setForm] = useState({ email: "", full_name: "", role: "employee" });
+  const [form, setForm] = useState({ email: "", first_name: "", last_name: "", role: "employee" });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [created, setCreated] = useState(null);
