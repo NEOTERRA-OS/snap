@@ -425,6 +425,7 @@ function Shell({ session }) {
   const [detail, setDetail] = useState(null);
   const [role, setRole] = useState(null);
   const [mustChange, setMustChange] = useState(false);
+  const [delegModal, setDelegModal] = useState(false);
   const [theme, setTheme] = useState("light");
   const [searchQ, setSearchQ] = useState("");
   const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
@@ -468,6 +469,7 @@ function Shell({ session }) {
         {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "user", "Admin")}</>}
         <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
+        <button className="sb-sub" onClick={() => setDelegModal(true)}><Icon name="user" size={15} /> <span>{t("Vertretungen")}</span></button>
         <div className="sb-user">
           <span className="sb-av">{initials}</span>
           <div className="sb-id"><div className="nm">{who}</div><div className="ml">{email}</div></div>
