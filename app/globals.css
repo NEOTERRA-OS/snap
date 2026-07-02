@@ -127,6 +127,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .rtrack > i{display:block;height:100%;border-radius:999px}
 .rtrack > i.f1{background:var(--r1)} .rtrack > i.f2{background:var(--r2)} .rtrack > i.f3{background:var(--r3)}
 .rrgt{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.rrow-clk{cursor:pointer}
 .rrgt .rv{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
 .rrgt .rpct{font-size:11.5px;color:var(--muted2);font-variant-numeric:tabular-nums;min-width:34px;text-align:right}
 
