@@ -1494,8 +1494,8 @@ function Admin({ session }) {
         <div className="pw"><Icon name="layers" /> {t("Kostenstellen")}</div>
         <form onSubmit={addCc}>
           <div className="row2">
-            <div className="field"><label>{t("Code")}</label>
-              <input value={ccForm.code} onChange={(e) => setCcForm({ ...ccForm, code: e.target.value })} placeholder="z. B. 1000" className="mono" required /></div>
+            <div className="field"><label>{t("Code")} <span className="mut" style={{ fontWeight: 400 }}>({t("optional")})</span></label>
+              <input value={ccForm.code} onChange={(e) => setCcForm({ ...ccForm, code: e.target.value })} placeholder={t("wird sonst generiert")} className="mono" /></div>
             <div className="field"><label>{t("Bezeichnung")}</label>
               <input value={ccForm.name} onChange={(e) => setCcForm({ ...ccForm, name: e.target.value })} placeholder={t("z. B. Vertrieb")} required /></div>
           </div>
