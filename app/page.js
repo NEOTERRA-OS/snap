@@ -518,9 +518,9 @@ function Shell({ session }) {
         </div>
       </div>
       <div className="bottomnav">
-        {bnav("capture", "camera", "Erfassen")}
         {bnav("receipts", "receipt", "Belege")}
         {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
+        <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="plus" size={26} /></button>
         {bnav("dashboard", "barchart", "Analyse")}
       </div>
       {detail && (
