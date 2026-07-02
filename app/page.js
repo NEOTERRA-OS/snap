@@ -1231,6 +1231,17 @@ function Dashboard({ onOpen }) {
     if (error) { toast(error.message, "err"); return; }
     setRows((prev) => (prev || []).map((r) => (r.id === rid ? { ...r, ...patch } : r)));
   }
+  const [drillSel, setDrillSel] = useState(() => new Set());
+  useEffect(() => { setDrillSel(new Set()); }, [drill]);
+  async function bulkApply(patch) {
+    const ids = [...drillSel];
+    if (!ids.length) return;
+    const { error } = await supabase.from("receipts").update(patch).in("id", ids);
+    if (error) { toast(error.message, "err"); return; }
+    setRows((prev) => (prev || []).map((r) => (ids.includes(r.id) ? { ...r, ...patch } : r)));
+    setDrillSel(new Set());
+    toast(`${ids.length} ${t("geändert")}`);
+  }
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const ccMap = {}; ccs.forEach((c) => (ccMap[c.id] = c));
