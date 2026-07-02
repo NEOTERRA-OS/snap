@@ -1226,10 +1226,10 @@ function Dashboard({ onOpen }) {
     supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || []));
     supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setProfiles(m); });
   }, [loadRows]);
-  async function changePay(rid, pm) {
-    const { error } = await supabase.from("receipts").update({ payment_method: pm }).eq("id", rid);
+  async function changeField(rid, patch) {
+    const { error } = await supabase.from("receipts").update(patch).eq("id", rid);
     if (error) { toast(error.message, "err"); return; }
-    setRows((prev) => (prev || []).map((r) => (r.id === rid ? { ...r, payment_method: pm } : r)));
+    setRows((prev) => (prev || []).map((r) => (r.id === rid ? { ...r, ...patch } : r)));
   }
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
