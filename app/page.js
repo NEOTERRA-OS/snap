@@ -1340,6 +1340,34 @@ function Admin({ session }) {
   }, [token]);
   useEffect(() => { load(); }, [load]);
 
+  // ---- Kostenstellen ----
+  const [ccList, setCcList] = useState(null);
+  const [ccForm, setCcForm] = useState({ code: "", name: "" });
+  const [ccBusy, setCcBusy] = useState(false);
+  const loadCc = useCallback(() => {
+    supabase.from("cost_centers").select("id,code,name,active").order("code").then(({ data }) => setCcList(data || []));
+  }, []);
+  useEffect(() => { loadCc(); }, [loadCc]);
+  async function addCc(e) {
+    e.preventDefault(); setCcBusy(true);
+    const res = await fetch("/api/admin/cost-centers", { method: "POST", headers: auth, body: JSON.stringify(ccForm) });
+    const j = await res.json().catch(() => ({}));
+    setCcBusy(false);
+    if (j.error) { toast(j.error, "err"); return; }
+    setCcForm({ code: "", name: "" }); toast(t("Kostenstelle angelegt")); loadCc();
+  }
+  async function toggleCc(cc) {
+    await fetch("/api/admin/cost-centers", { method: "PATCH", headers: auth, body: JSON.stringify({ id: cc.id, active: !cc.active }) });
+    loadCc();
+  }
+  async function delCc(cc) {
+    const res = await fetch("/api/admin/cost-centers", { method: "DELETE", headers: auth, body: JSON.stringify({ id: cc.id }) });
+    const j = await res.json().catch(() => ({}));
+    if (j.error) { toast(j.error, "err"); return; }
+    toast(j.deactivated ? t("Kostenstelle deaktiviert (in Belegen verwendet)") : t("Kostenstelle gelöscht"));
+    loadCc();
+  }
+
   async function createUser(e) {
     e.preventDefault(); setBusy(true); setErr(""); setCreated(null);
     try {
