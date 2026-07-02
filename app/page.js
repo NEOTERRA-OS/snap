@@ -513,6 +513,7 @@ function Capture({ uid, onDone }) {
     }
     return next;
   }));
+  const mb = (it, k) => (it.mem?.[k] ? <span className="memb"><Icon name="sparkles" size={10} /> {t("gemerkt")}</span> : null);
 
   function onPick(e) { addFiles(Array.from(e.target.files || [])); e.target.value = ""; }
   function onDrop(e) { e.preventDefault(); setDrag(false); addFiles(Array.from(e.dataTransfer?.files || [])); }
