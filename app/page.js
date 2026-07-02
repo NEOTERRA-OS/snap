@@ -1649,50 +1649,19 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
           <div className="modal-wrap" onClick={() => setDrill(null)}>
             <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 600, maxHeight: "84vh", display: "flex", flexDirection: "column" }}>
               <h3>{drill.title}</h3>
-              <p>{list.length} {t("Belege")} · {t("einzeln oder mehrere ändern")}</p>
-              <div className="drillbulk">
-                <label className="selall"><input type="checkbox" checked={allSel} onChange={toggleAll} />{drillSel.size ? `${drillSel.size} ${t("ausgewählt")}` : t("Alle auswählen")}</label>
-                {drillSel.size > 0 && (
-                  <div className="drillbulk-acts">
-                    <select value="" onChange={(e) => { if (e.target.value) bulkApply({ payment_method: e.target.value }); }}>
-                      <option value="">{t("Zahlart setzen …")}</option>
-                      <option value="company_card">{t("Firmenkarte")}</option>
-                      <option value="private">{t("Privat verauslagt")}</option>
-                    </select>
-                    <select value="" onChange={(e) => { if (e.target.value) bulkApply({ category: e.target.value }); }}>
-                      <option value="">{t("Kategorie setzen …")}</option>
-                      {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}
-                    </select>
-                    <select value="" onChange={(e) => { if (e.target.value) bulkApply({ cost_center_id: e.target.value === "__none" ? null : e.target.value }); }}>
-                      <option value="">{t("Kostenstelle setzen …")}</option>
-                      <option value="__none">{t("— keine —")}</option>
-                      {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
-                    </select>
-                  </div>
-                )}
-              </div>
+              <p>{list.length} {t("Belege")}{onOpen ? ` · ${t("zum Öffnen antippen")}` : ""}</p>
               <div className="dlist" style={{ overflowY: "auto", flex: 1, margin: "4px 0 12px" }}>
                 {list.map((r) => (
-                  <div className={"drow drow-edit" + (drillSel.has(r.id) ? " selrow" : "")} key={r.id}>
-                    <div className="drow-head">
-                      <input type="checkbox" checked={drillSel.has(r.id)} onChange={() => toggleOne(r.id)} />
-                      <div className="drow-main" style={{ cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}>
-                        <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
-                        <span className="mut num" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span>
-                      </div>
+                  <div className={"drow drow-read" + (onOpen ? " drow-clk" : "")} key={r.id}
+                    onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined}
+                    title={onOpen ? t("Beleg öffnen") : undefined}>
+                    <div className="drow-main">
+                      <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
+                      <span className="mut num" style={{ fontSize: 12 }}>{r.doc_date} · {t((CATS[r.category] || CATS.other).label)}</span>
                     </div>
-                    <div className="drow-edits">
-                      <select value={r.payment_method} onChange={(e) => changeField(r.id, { payment_method: e.target.value })}>
-                        <option value="company_card">{t("Firmenkarte")}</option>
-                        <option value="private">{t("Privat verauslagt")}</option>
-                      </select>
-                      <select value={r.category} onChange={(e) => changeField(r.id, { category: e.target.value })}>
-                        {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}
-                      </select>
-                      <select value={r.cost_center_id || ""} onChange={(e) => changeField(r.id, { cost_center_id: e.target.value || null })}>
-                        <option value="">{t("— Kostenstelle —")}</option>
-                        {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
-                      </select>
+                    <div className="drow-rgt">
+                      <span className="amt">{money(r.gross, r.currency)}</span>
+                      {onOpen && <Icon name="chevronleft" size={14} style={{ transform: "rotate(180deg)", color: "var(--muted2)" }} />}
                     </div>
                   </div>
                 ))}
