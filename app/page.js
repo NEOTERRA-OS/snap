@@ -1367,6 +1367,15 @@ function Admin({ session }) {
     toast(j.deactivated ? t("Kostenstelle deaktiviert (in Belegen verwendet)") : t("Kostenstelle gelöscht"));
     loadCc();
   }
+  const [ccEdit, setCcEdit] = useState(null); // { id, code, name }
+  async function saveCcEdit() {
+    if (!ccEdit) return;
+    if (!ccEdit.name.trim()) { toast(t("Bezeichnung erforderlich."), "err"); return; }
+    const res = await fetch("/api/admin/cost-centers", { method: "PATCH", headers: auth, body: JSON.stringify({ id: ccEdit.id, code: ccEdit.code, name: ccEdit.name }) });
+    const j = await res.json().catch(() => ({}));
+    if (j.error) { toast(j.error, "err"); return; }
+    setCcEdit(null); toast(t("Gespeichert")); loadCc();
+  }
 
   async function createUser(e) {
     e.preventDefault(); setBusy(true); setErr(""); setCreated(null);
