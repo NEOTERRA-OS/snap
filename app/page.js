@@ -1316,6 +1316,7 @@ function Dashboard({ onOpen }) {
   const [period, setPeriod] = useState("12m");
   const [cc, setCc] = useState("");
   const [cat, setCat] = useState("");
+  const [emp, setEmp] = useState("");
   const [drill, setDrill] = useState(null); // { title, predicate }
 
   const loadRows = useCallback(() => {
@@ -1350,9 +1351,14 @@ function Dashboard({ onOpen }) {
   const f = rows.filter((r) => {
     if (cc && r.cost_center_id !== cc) return false;
     if (cat && r.category !== cat) return false;
+    if (emp && r.user_id !== emp) return false;
     if (cutoff && r.doc_date && new Date(r.doc_date) < cutoff) return false;
     return true;
   });
+  // Mitarbeiterliste aus vorhandenen Belegen (owner = user_id), Namen via profiles.
+  const empList = [...new Set(rows.map((r) => r.user_id).filter(Boolean))]
+    .map((uid) => ({ id: uid, name: profiles[uid] || t("Unbekannt") }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   // EUR value per receipt (converted at the receipt-date ECB rate); EUR receipts pass through.
   const eurOf = (r) => (r.gross_eur != null ? Number(r.gross_eur) : ((!r.currency || r.currency === "EUR") ? Number(r.gross || 0) : null));
