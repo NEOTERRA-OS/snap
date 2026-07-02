@@ -1098,12 +1098,16 @@ function Detail({ id, onBack }) {
         .then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); });
     } else setNames(null);
   }, [r?.created_by, r?.user_id]);
-  // Inline-Vorschau (signierter Link) für Bild-Belege.
+  // Inline-Vorschau (signierter Link) des abgelegten Originalbelegs — Bild oder PDF.
+  const [previewKind, setPreviewKind] = useState(null); // "img" | "pdf"
   useEffect(() => {
-    if (!r?.file_path) return;
+    if (!r?.file_path) { setPreview(null); setPreviewKind(null); return; }
     const isImg = /\.(png|jpe?g|webp|gif|heic)$/i.test(r.file_path);
-    if (!isImg) { setPreview(null); return; }
-    supabase.storage.from("receipts").createSignedUrl(r.file_path, 300).then(({ data }) => setPreview(data?.signedUrl || null));
+    const isPdf = /\.pdf$/i.test(r.file_path);
+    if (!isImg && !isPdf) { setPreview(null); setPreviewKind(null); return; }
+    supabase.storage.from("receipts").createSignedUrl(r.file_path, 300).then(({ data }) => {
+      setPreview(data?.signedUrl || null); setPreviewKind(data?.signedUrl ? (isPdf ? "pdf" : "img") : null);
+    });
   }, [r?.file_path]);
   if (!r) return <div className="center"><span className="spin" /></div>;
 
