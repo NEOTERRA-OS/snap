@@ -1447,10 +1447,10 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
       </div>
 
       <div className="agrid">
-        <Bars map={byCat} label="Nach Kategorie" />
-        <Bars map={byCc} label="Nach Kostenstelle" />
-        <Bars map={byEmp} label="Nach Mitarbeiter" />
-        <Bars map={byMerch} label="Top-Lieferanten" limit={6} />
+        <Bars map={byCat} label="Nach Kategorie" keyOf={keyCat} />
+        <Bars map={byCc} label="Nach Kostenstelle" keyOf={keyCc} />
+        <Bars map={byEmp} label="Nach Mitarbeiter" keyOf={keyEmp} />
+        <Bars map={byMerch} label="Top-Lieferanten" limit={6} keyOf={keyMerch} />
       </div>
 
       <div className="panel">
