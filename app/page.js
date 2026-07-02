@@ -811,8 +811,16 @@ function Capture({ uid, onDone }) {
             <div className="bgrid">
               {it.source === "cash" && (
                 <div className="field"><label>{t("Empfänger")}</label>
-                  <input list="cash-emps" value={it.recipient || ""} onChange={(e) => upd(it.id, { recipient: e.target.value })} placeholder={t("z. B. Bojan")} />
-                  <datalist id="cash-emps">{emps.map((n) => <option key={n} value={n} />)}</datalist></div>
+                  <select value={it.recipFree ? "__free" : (it.recipient || "")} onChange={(e) => {
+                    if (e.target.value === "__free") upd(it.id, { recipFree: true, recipient: "" });
+                    else upd(it.id, { recipFree: false, recipient: e.target.value });
+                  }}>
+                    <option value="">{t("— Mitarbeiter wählen —")}</option>
+                    {emps.map((n) => <option key={n} value={n}>{n}</option>)}
+                    <option value="__free">{t("Andere (freier Text)")}</option>
+                  </select>
+                  {it.recipFree && <input value={it.recipient || ""} onChange={(e) => upd(it.id, { recipient: e.target.value })} placeholder={t("z. B. externer Dienstleister")} style={{ marginTop: 8 }} autoFocus />}
+                </div>
               )}
               <div className="field"><label>{it.source === "cash" ? t("Zweck") : t("Händler")}</label><input value={it.merchant} onChange={(e) => upd(it.id, { merchant: e.target.value })} placeholder={it.source === "cash" ? t("wofür war das Geld?") : undefined} /></div>
               <div className="field"><label>{t("Datum")}</label><input type="date" value={it.doc_date || ""} onChange={(e) => upd(it.id, { doc_date: e.target.value })} /></div>
