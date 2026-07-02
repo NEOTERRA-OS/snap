@@ -551,31 +551,19 @@ function Capture({ uid, onDone }) {
   const upRef = useRef(null);    // Datei-Upload (ohne Kamera-Zwang)
   const [activeSrc, setActiveSrc] = useState("foto");
   const [emailInfo, setEmailInfo] = useState(false);
-  // Vertretung: für wen darf ich erfassen (owners) + meine Vertretungen (delegates)
+  // Vertretung: für wen darf ich erfassen (owners) → „Für Mitarbeiter"-Auswahl.
   const [owners, setOwners] = useState([]);
   const [forUser, setForUser] = useState("");
   const [delegOpen, setDelegOpen] = useState(false);
-  const [myDeleg, setMyDeleg] = useState([]);
-  const [delegEmail, setDelegEmail] = useState("");
-  const [delegBusy, setDelegBusy] = useState(false);
-  const authHdr = async () => { const { data } = await supabase.auth.getSession(); return { Authorization: `Bearer ${data.session?.access_token}`, "Content-Type": "application/json" }; };
-  const loadDeleg = useCallback(async () => {
-    try { const h = await authHdr(); const r = await fetch("/api/delegations", { headers: h }); const j = await r.json(); setOwners(j.owners || []); setMyDeleg(j.delegates || []); } catch {}
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const r = await fetch("/api/delegations", { headers: { Authorization: `Bearer ${data.session?.access_token}` } });
+        const j = await r.json(); setOwners(j.owners || []);
+      } catch {}
+    })();
   }, []);
-  useEffect(() => { loadDeleg(); }, [loadDeleg]);
-  async function addDeleg(e) {
-    e.preventDefault(); setDelegBusy(true);
-    const h = await authHdr();
-    const r = await fetch("/api/delegations", { method: "POST", headers: h, body: JSON.stringify({ email: delegEmail }) });
-    const j = await r.json().catch(() => ({})); setDelegBusy(false);
-    if (j.error) { toast(j.error, "err"); return; }
-    setDelegEmail(""); toast(t("Vertretung hinzugefügt")); loadDeleg();
-  }
-  async function rmDeleg(id) {
-    const h = await authHdr();
-    await fetch("/api/delegations", { method: "DELETE", headers: h, body: JSON.stringify({ delegate_id: id }) });
-    loadDeleg();
-  }
 
   useEffect(() => { supabase.from("cost_centers").select("id,code,name").eq("active", true).order("code").then(({ data }) => setCcs(data || [])); }, []);
 
