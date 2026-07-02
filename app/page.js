@@ -274,6 +274,59 @@ function useServiceWorker() {
   }, []);
 }
 
+// Wiederverwendbare Vertretungs-Verwaltung (Wer darf für mich erfassen?).
+function DelegationsModal({ onClose }) {
+  const { t } = useT();
+  const [list, setList] = useState(null);
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const authHdr = async () => { const { data } = await supabase.auth.getSession(); return { Authorization: `Bearer ${data.session?.access_token}`, "Content-Type": "application/json" }; };
+  const load = useCallback(async () => {
+    try { const h = await authHdr(); const r = await fetch("/api/delegations", { headers: h }); const j = await r.json(); setList(j.delegates || []); } catch { setList([]); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  async function add(e) {
+    e.preventDefault(); setBusy(true);
+    const h = await authHdr();
+    const r = await fetch("/api/delegations", { method: "POST", headers: h, body: JSON.stringify({ email }) });
+    const j = await r.json().catch(() => ({})); setBusy(false);
+    if (j.error) { toast(j.error, "err"); return; }
+    setEmail(""); toast(t("Vertretung hinzugefügt")); load();
+  }
+  async function rm(id) {
+    const h = await authHdr();
+    await fetch("/api/delegations", { method: "DELETE", headers: h, body: JSON.stringify({ delegate_id: id }) });
+    load();
+  }
+  return (
+    <div className="modal-wrap" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 460 }}>
+        <div className="modal-ic" style={{ background: "rgba(44,60,43,.1)", color: "var(--green)" }}><Icon name="user" size={20} /></div>
+        <h3>{t("Vertretungen")}</h3>
+        <p>{t("Diese Personen dürfen Belege in deinem Namen erfassen.")}</p>
+        <form onSubmit={add} style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@neoterra.ag" required style={{ flex: 1 }} />
+          <button className="btn" disabled={busy} style={{ width: "auto", padding: "10px 14px" }}>{busy ? <span className="spin" /> : <Icon name="plus" size={14} />} {t("Hinzufügen")}</button>
+        </form>
+        {list === null ? <div className="center" style={{ minHeight: 50 }}><span className="spin" /></div>
+          : list.length === 0 ? <p className="hint">{t("Noch keine Vertretung.")}</p> : (
+            <div className="dlist">
+              {list.map((d) => (
+                <div className="drow" key={d.id}>
+                  <div style={{ minWidth: 0 }}><b>{d.name}</b><br /><span className="mut" style={{ fontSize: 12 }}>{d.email}</span></div>
+                  <button type="button" className="brem" onClick={() => rm(d.id)} title={t("Entfernen")}><Icon name="x" size={15} /></button>
+                </div>
+              ))}
+            </div>
+          )}
+        <div className="modal-actions" style={{ marginTop: 16 }}>
+          <button type="button" className="modal-btn ghost" onClick={onClose}>{t("Fertig")}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PasswordGate({ session, who, t, onDone }) {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
