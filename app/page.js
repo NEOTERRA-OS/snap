@@ -556,7 +556,7 @@ function Capture({ uid, onDone }) {
   const [emailInfo, setEmailInfo] = useState(false);
   const [emps, setEmps] = useState([]); // Mitarbeiternamen für Barauslage-Empfänger-Vorschläge
   useEffect(() => { supabase.from("profiles").select("full_name").then(({ data }) => setEmps((data || []).map((p) => p.full_name).filter(Boolean))); }, []);
-  const [warnLimit, setWarnLimit] = useState(1000); // konfigurierbare Betrags-Warnschwelle
+  const [warnLimit, setWarnLimit] = useState(5000); // konfigurierbare Betrags-Warnschwelle
   useEffect(() => { supabase.from("app_settings").select("value").eq("key", "amount_warn_limit").maybeSingle().then(({ data }) => { const n = Number(data?.value); if (n > 0) setWarnLimit(n); }); }, []);
   // Vertretung: für wen darf ich erfassen (owners) → „Für Mitarbeiter"-Auswahl.
   const [owners, setOwners] = useState([]);
