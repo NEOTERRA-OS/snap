@@ -1596,11 +1596,13 @@ function Admin({ session }) {
       <div className="card">
         <div className="pw"><Icon name="user" /> {t("Nutzer anlegen")}</div>
         <form onSubmit={createUser}>
+          <div className="field"><label>{t("E-Mail")}</label>
+            <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@neoterra.ag" /></div>
           <div className="row2">
-            <div className="field"><label>{t("E-Mail")}</label>
-              <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@neoterra.ag" /></div>
-            <div className="field"><label>{t("Name")}</label>
-              <input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} placeholder="Vor- Nachname" /></div>
+            <div className="field"><label>{t("Vorname")}</label>
+              <input value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} placeholder="Max" /></div>
+            <div className="field"><label>{t("Nachname")}</label>
+              <input value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} placeholder="Mustermann" /></div>
           </div>
           <div className="field"><label>{t("Rolle")}</label>
             <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
