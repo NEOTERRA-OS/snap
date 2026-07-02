@@ -466,7 +466,7 @@ function Shell({ session }) {
         {nav("receipts", "receipt", "Belege")}
         {["approver", "accounting", "admin"].includes(role) && nav("approvals", "checkcheck", "Freigaben")}
         <div className="sb-grp">{t("Auswerten")}</div>
-        {nav("dashboard", "dashboard", "Auswertungen")}
+        {nav("dashboard", "barchart", "Auswertungen")}
         <button className="snav" onClick={() => setDelegModal(true)}><Icon name="user" size={18} /> <span>{t("Vertretungen")}</span></button>
         {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "user", "Admin")}</>}
         <div className="sb-spacer" />
@@ -521,7 +521,7 @@ function Shell({ session }) {
         {bnav("capture", "camera", "Erfassen")}
         {bnav("receipts", "receipt", "Belege")}
         {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
-        {bnav("dashboard", "dashboard", "Analyse")}
+        {bnav("dashboard", "barchart", "Analyse")}
         {role === "admin" && bnav("admin", "user", "Admin")}
       </div>
       {detail && (
