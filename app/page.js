@@ -1482,17 +1482,44 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
 
       {drill && (() => {
         const list = f.filter(drill.predicate);
+        const allSel = list.length > 0 && list.every((r) => drillSel.has(r.id));
+        const toggleAll = () => setDrillSel(allSel ? new Set() : new Set(list.map((r) => r.id)));
+        const toggleOne = (id) => setDrillSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
         return (
           <div className="modal-wrap" onClick={() => setDrill(null)}>
-            <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560, maxHeight: "82vh", display: "flex", flexDirection: "column" }}>
+            <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 600, maxHeight: "84vh", display: "flex", flexDirection: "column" }}>
               <h3>{drill.title}</h3>
-              <p>{list.length} {t("Belege")} · {t("Zahlart hier ändern")}</p>
+              <p>{list.length} {t("Belege")} · {t("einzeln oder mehrere ändern")}</p>
+              <div className="drillbulk">
+                <label className="selall"><input type="checkbox" checked={allSel} onChange={toggleAll} />{drillSel.size ? `${drillSel.size} ${t("ausgewählt")}` : t("Alle auswählen")}</label>
+                {drillSel.size > 0 && (
+                  <div className="drillbulk-acts">
+                    <select value="" onChange={(e) => { if (e.target.value) bulkApply({ payment_method: e.target.value }); }}>
+                      <option value="">{t("Zahlart setzen …")}</option>
+                      <option value="company_card">{t("Firmenkarte")}</option>
+                      <option value="private">{t("Privat verauslagt")}</option>
+                    </select>
+                    <select value="" onChange={(e) => { if (e.target.value) bulkApply({ category: e.target.value }); }}>
+                      <option value="">{t("Kategorie setzen …")}</option>
+                      {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}
+                    </select>
+                    <select value="" onChange={(e) => { if (e.target.value) bulkApply({ cost_center_id: e.target.value === "__none" ? null : e.target.value }); }}>
+                      <option value="">{t("Kostenstelle setzen …")}</option>
+                      <option value="__none">{t("— keine —")}</option>
+                      {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
+                    </select>
+                  </div>
+                )}
+              </div>
               <div className="dlist" style={{ overflowY: "auto", flex: 1, margin: "4px 0 12px" }}>
                 {list.map((r) => (
-                  <div className="drow drow-edit" key={r.id}>
-                    <div className="drow-main" style={{ cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}>
-                      <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
-                      <span className="mut" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span>
+                  <div className={"drow drow-edit" + (drillSel.has(r.id) ? " selrow" : "")} key={r.id}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                      <input type="checkbox" checked={drillSel.has(r.id)} onChange={() => toggleOne(r.id)} style={{ marginTop: 3, flex: "0 0 auto" }} />
+                      <div className="drow-main" style={{ flex: 1, cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}>
+                        <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
+                        <span className="mut" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span>
+                      </div>
                     </div>
                     <div className="drow-edits">
                       <select value={r.payment_method} onChange={(e) => changeField(r.id, { payment_method: e.target.value })}>
