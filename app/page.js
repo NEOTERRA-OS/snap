@@ -965,7 +965,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
   return (
     <>
       <h1 className="title">{t("Meine Belege")}</h1>
-      <div className="kpis">
+      <div className="kpis" style={{ marginTop: 18 }}>
         <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n mono">{open.length}</div></div>
         <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n mono">{eur(openSum)}</div></div>
       </div>
