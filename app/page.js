@@ -1628,7 +1628,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
                       <input type="checkbox" checked={drillSel.has(r.id)} onChange={() => toggleOne(r.id)} style={{ marginTop: 3, flex: "0 0 auto" }} />
                       <div className="drow-main" style={{ flex: 1, cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}>
                         <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
-                        <span className="mut" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span>
+                        <span className="mut num" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span>
                       </div>
                     </div>
                     <div className="drow-edits">
