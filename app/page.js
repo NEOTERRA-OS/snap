@@ -486,7 +486,7 @@ function Shell({ session }) {
       </aside>
       <div className="maincol">
         <div className="topbar">
-          <button type="button" className="brand mob-only" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={22} /> <b>NEOS</b> <span className="sub">Snap</span></button>
+          <button type="button" className="brand mob-only" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={22} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
           <span className="spacer" />
           <span className="langtog">
             <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
