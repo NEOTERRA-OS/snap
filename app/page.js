@@ -467,7 +467,7 @@ function Shell({ session }) {
         {["approver", "accounting", "admin"].includes(role) && nav("approvals", "checkcheck", "Freigaben")}
         <div className="sb-grp">{t("Auswerten")}</div>
         {nav("dashboard", "dashboard", "Auswertungen")}
-        <button className="sb-sub" onClick={() => setDelegModal(true)}><Icon name="user" size={15} /> <span>{t("Vertretungen")}</span></button>
+        <button className="snav" onClick={() => setDelegModal(true)}><Icon name="user" size={18} /> <span>{t("Vertretungen")}</span></button>
         {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "user", "Admin")}</>}
         <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
