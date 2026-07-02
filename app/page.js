@@ -969,6 +969,7 @@ function Approvals({ onOpen }) {
           <div className="meta" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}>
             <div className="t">{r.merchant}</div>
             <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
+            <div className="d">{names[r.user_id] || r.creator_name || "—"}{r.created_by && r.created_by !== r.user_id ? <span className="mut"> · {t("im Auftrag von")} {names[r.created_by] || "—"}</span> : ""}</div>
             {(r.flags?.length > 0 || r.duplicate_of) && <span className="st st-app" style={{ marginTop: 6 }}><Icon name="alert" size={11} /> {r.duplicate_of ? t("mögliche Dublette") : `${r.flags.length} ${t("Hinweise")}`}</span>}
           </div>
           <div style={{ textAlign: "right" }}>
