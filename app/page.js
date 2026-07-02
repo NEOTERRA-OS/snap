@@ -1046,11 +1046,50 @@ function Detail({ id, onBack }) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
   const [preview, setPreview] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [ef, setEf] = useState(null);      // Edit-Formular-Objekt
+  const [saving, setSaving] = useState(false);
+  const [ccs, setCcs] = useState([]);
   const load = useCallback(() => {
     supabase.from("receipts").select("*").eq("id", id).single().then(({ data }) => setR(data));
     supabase.from("audit_log").select("action,detail,created_at").eq("receipt_id", id).order("created_at").then(({ data }) => setLog(data || []));
   }, [id]);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => { supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || [])); }, []);
+  // GoBD: nach Freigabe/Buchung ist der Beleg unveränderlich.
+  const editable = r && !["approved", "booked"].includes(r.status);
+  function startEdit() {
+    setEf({
+      merchant: r.merchant || "", doc_date: r.doc_date || "", gross: r.gross ?? "",
+      currency: r.currency || "EUR", vat_rate: r.vat_rate ?? "", category: r.category || "other",
+      payment_method: r.payment_method || "private", cost_center_id: r.cost_center_id || "",
+      recipient: r.recipient || "", occasion: r.occasion || "", attendees: r.attendees || "",
+    });
+    setEditing(true); setMsg("");
+  }
+  const setF = (patch) => setEf((p) => ({ ...p, ...patch }));
+  async function saveEdit() {
+    setSaving(true); setMsg("");
+    try {
+      const gross = ef.gross === "" || ef.gross == null ? null : Number(ef.gross);
+      const vr = ef.vat_rate === "" || ef.vat_rate == null ? null : Number(ef.vat_rate);
+      let net = null, vat_amount = null;
+      if (gross != null && vr != null) { net = Math.round((gross / (1 + vr / 100)) * 100) / 100; vat_amount = Math.round((gross - net) * 100) / 100; }
+      const patch = {
+        merchant: ef.merchant.trim() || null, doc_date: ef.doc_date || null,
+        gross, currency: (ef.currency || "EUR").toUpperCase(), vat_rate: vr, net, vat_amount,
+        category: ef.category, payment_method: ef.payment_method,
+        cost_center_id: ef.cost_center_id || null,
+        recipient: r.source === "cash" ? (ef.recipient.trim() || null) : r.recipient,
+        occasion: ef.category === "hospitality" ? (ef.occasion.trim() || null) : r.occasion,
+        attendees: ef.category === "hospitality" ? (ef.attendees.trim() || null) : r.attendees,
+      };
+      const { error } = await supabase.from("receipts").update(patch).eq("id", id);
+      if (error) throw error;
+      try { await supabase.from("audit_log").insert({ receipt_id: id, action: "edited", detail: t("Beleg bearbeitet") }); } catch {}
+      toast(t("Gespeichert")); setEditing(false); setEf(null); load();
+    } catch (e) { setMsg(e.message); toast(e.message, "err"); } finally { setSaving(false); }
+  }
   // Namen für „erfasst von / für" auflösen (nur wenn im Auftrag erfasst).
   const [names, setNames] = useState(null);
   useEffect(() => {
