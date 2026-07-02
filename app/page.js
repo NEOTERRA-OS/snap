@@ -428,6 +428,8 @@ function Shell({ session }) {
   const [delegModal, setDelegModal] = useState(false);
   const [theme, setTheme] = useState("light");
   const [searchQ, setSearchQ] = useState("");
+  const fabCamRef = useRef(null);          // App-Ebene: Kamera direkt aus FAB-Klick öffnen (iOS-Geste)
+  const [inbound, setInbound] = useState(null); // per FAB aufgenommene Dateien → an Capture
   const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
   // Service Worker bewusst NICHT mehr registrieren (Stale-Cache vermeiden);
   // ein bereits installierter SW wird über /sw.js automatisch abgemeldet.
@@ -522,7 +524,7 @@ function Shell({ session }) {
           {bnav("receipts", "receipt", "Belege")}
           {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
         </div>
-        <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="plus" size={26} /></button>
+        <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { fabCamRef.current?.click(); setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="plus" size={26} /></button>
         <div className="bnav-side">
           {bnav("dashboard", "barchart", "Analyse")}
           <button type="button" className="bnav" onClick={() => setDelegModal(true)}><Icon name="user" size={20} />{t("Vertretungen")}</button>
