@@ -1663,6 +1663,17 @@ function Admin({ session }) {
     if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
   }
 
+  const [warnLimit, setWarnLimit] = useState("");
+  const [warnBusy, setWarnBusy] = useState(false);
+  useEffect(() => { supabase.from("app_settings").select("value").eq("key", "amount_warn_limit").maybeSingle().then(({ data }) => setWarnLimit(data?.value || "")); }, []);
+  async function saveWarn() {
+    setWarnBusy(true);
+    const v = String(warnLimit).trim();
+    const { error } = await supabase.from("app_settings").upsert({ key: "amount_warn_limit", value: v || null, updated_at: new Date().toISOString() }, { onConflict: "key" });
+    setWarnBusy(false);
+    if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
+  }
+
   const [g, setG] = useState(null);
   useEffect(() => {
     fetch("/api/google", { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()).then(setG).catch(() => {});
