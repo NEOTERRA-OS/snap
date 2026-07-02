@@ -808,7 +808,9 @@ function Capture({ uid, onDone }) {
           {!it.loading && (
             <div className="bgrid">
               {it.source === "cash" && (
-                <div className="field"><label>{t("Empfänger")}</label><input value={it.recipient || ""} onChange={(e) => upd(it.id, { recipient: e.target.value })} placeholder={t("z. B. Bojan")} /></div>
+                <div className="field"><label>{t("Empfänger")}</label>
+                  <input list="cash-emps" value={it.recipient || ""} onChange={(e) => upd(it.id, { recipient: e.target.value })} placeholder={t("z. B. Bojan")} />
+                  <datalist id="cash-emps">{emps.map((n) => <option key={n} value={n} />)}</datalist></div>
               )}
               <div className="field"><label>{it.source === "cash" ? t("Zweck") : t("Händler")}</label><input value={it.merchant} onChange={(e) => upd(it.id, { merchant: e.target.value })} placeholder={it.source === "cash" ? t("wofür war das Geld?") : undefined} /></div>
               <div className="field"><label>{t("Datum")}</label><input type="date" value={it.doc_date || ""} onChange={(e) => upd(it.id, { doc_date: e.target.value })} /></div>
