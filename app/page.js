@@ -943,9 +943,9 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
         <div className="only-mobile">
           {sorted.map((r) => (
             <div key={r.id} className="lcard" onClick={() => onOpen(r.id)}>
-              <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
-              <div className="meta"><div className="t">{r.merchant}{flagged(r) && <Icon name="alert" size={12} className="flagdot" />}</div>
-                <div className="d">{dShort(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}</div>
+              <div className="lthumb"><Icon name={r.source === "cash" ? "banknote" : (CATS[r.category] || CATS.other).icon} size={19} /></div>
+              <div className="meta"><div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}{flagged(r) && <Icon name="alert" size={12} className="flagdot" />}</div>
+                <div className="d">{dShort(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
                 <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{t(STATUS[r.status])}</span></div>
               <div className="amt mono">{money(r.gross, r.currency)}</div>
             </div>
