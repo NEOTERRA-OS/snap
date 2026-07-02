@@ -1060,11 +1060,11 @@ function MonthlyChart({ months, data }) {
   const vals = months.map((k) => data[k] || 0);
   const max = Math.max(1, ...vals);
   const avg = vals.reduce((s, v) => s + v, 0) / (vals.length || 1);
-  const W = 620, H = 196, padL = 42, padT = 16, padB = 26;
+  const W = 880, H = 210, padL = 42, padT = 18, padB = 30;
   const plotH = H - padT - padB, plotW = W - padL - 10;
   const n = months.length;
   const step = plotW / n;
-  const bw = Math.min(46, step * 0.56);
+  const bw = Math.min(64, step * 0.58);
   const yOf = (v) => padT + plotH - (v / max) * plotH;
   const xOf = (i) => padL + step * i + step / 2;
   const ticks = [0, max / 2, max];
