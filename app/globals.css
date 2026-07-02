@@ -476,6 +476,10 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .drillbulk-acts{display:flex;gap:8px;flex-wrap:wrap}
 .drillbulk-acts select{flex:1 1 30%;min-width:130px;width:auto;padding:8px 10px;font-size:12.5px}
 .drow.selrow{outline:2px solid var(--green);outline-offset:-2px}
+.drow-read .drow-main b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drow-rgt{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.drow-clk{cursor:pointer;transition:background .12s}
+.drow-clk:hover{background:var(--line)}
 .ahead{flex-wrap:wrap;gap:10px}
 .delegcta{display:flex;align-items:center;gap:12px;width:100%;margin-top:16px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;cursor:pointer;font-family:inherit;text-align:left;transition:border-color .15s,box-shadow .15s}
 .delegcta:hover{border-color:var(--green);box-shadow:0 2px 12px rgba(44,60,43,.07)}
