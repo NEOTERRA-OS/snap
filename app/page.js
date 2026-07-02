@@ -693,7 +693,7 @@ function Capture({ uid, onDone }) {
       const rows = [];
       for (const it of ready) {
         const { eur, rate } = await fxToEur(it.gross, it.currency, it.doc_date);
-        const flags = plausFlags(it);
+        const flags = plausFlags(it, warnLimit);
         rows.push({
           user_id: forUser || uid, created_by: uid, status, source: it.source, recipient: it.recipient || null, file_path: it.filePath,
           merchant: it.merchant, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
@@ -845,7 +845,7 @@ function Capture({ uid, onDone }) {
           {!it.loading && it.duplicate_of && (
             <div className="bflag dup"><Icon name="alert" size={13} /> {t("Mögliche Dublette — dieser Beleg existiert bereits.")}</div>
           )}
-          {!it.loading && plausFlags(it).map((f) => (
+          {!it.loading && plausFlags(it, warnLimit).map((f) => (
             <div className="bflag" key={f}><Icon name="alert" size={13} /> {t(f)}</div>
           ))}
         </div>
