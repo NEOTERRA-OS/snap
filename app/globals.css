@@ -355,7 +355,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   .filterbar{gap:8px}
   .filterbar .fseg{width:100%}
   .filterbar .fseg .fs{flex:1 1 0;text-align:center;padding:8px 6px}
-  .filterbar select{flex:1 1 calc(50% - 4px);min-width:0;width:auto;padding:17px 12px;font-size:14px}
+  .filterbar select{flex:1 1 100%;min-width:0;width:100%;padding:15px 14px;font-size:15px;border-radius:12px}
   .filterbar .shown{margin-left:0;width:100%;order:9}
 }
 .fxnote{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);margin:-4px 0 14px}
