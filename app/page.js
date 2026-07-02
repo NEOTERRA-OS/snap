@@ -27,14 +27,14 @@ const money = (n, cur) => {
 const dDE = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "—");
 
 // Plausibilitäts-Flags (kanonisch deutsch; bei Anzeige via t() übersetzt).
-function plausFlags(it) {
+function plausFlags(it, limit = 1000) {
   const f = [];
   const today = new Date().toISOString().slice(0, 10);
   if (!it.merchant || !String(it.merchant).trim()) f.push(it.source === "cash" ? "Zweck fehlt" : "Händler fehlt");
   if (it.gross == null || Number(it.gross) <= 0) f.push("Betrag fehlt");
   if (it.doc_date && it.doc_date > today) f.push("Datum in der Zukunft");
   if (it.vat_rate != null && (Number(it.vat_rate) < 0 || Number(it.vat_rate) > 27)) f.push("MwSt-Satz unplausibel");
-  if (it.gross != null && Number(it.gross) > 1000) f.push("Betrag über Limit (1.000)");
+  if (it.gross != null && limit > 0 && Number(it.gross) > limit) f.push("Betrag über Warnschwelle");
   if (it.category === "hospitality" && (!it.attendees || !String(it.attendees).trim())) f.push("Bewirtung: Teilnehmer fehlen");
   return f;
 }
