@@ -921,10 +921,12 @@ function Approvals({ onOpen }) {
   const [rows, setRows] = useState(null);
   const [busy, setBusy] = useState(false);
   const [sel, setSel] = useState(() => new Set());
+  const [names, setNames] = useState({});
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
+    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of,user_id,created_by,creator_name").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
   }, []);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => { supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); }); }, []);
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const toggle = (id) => setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
