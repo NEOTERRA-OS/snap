@@ -540,6 +540,55 @@ function Shell({ session }) {
   );
 }
 
+// Kleine Anleitung „Aufs Handy laden" (PWA-Install). Blendet sich aus, wenn bereits als App geöffnet oder weggeklickt.
+function InstallGuide() {
+  const { t } = useT();
+  const [show, setShow] = useState(false);
+  const [os, setOs] = useState("other");
+  const [deferred, setDeferred] = useState(null);
+  useEffect(() => {
+    const standalone = window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    if (standalone) return;
+    try { if (localStorage.getItem("neos-install-hide") === "1") return; } catch {}
+    const ua = navigator.userAgent || "";
+    const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    setOs(ios ? "ios" : /Android/.test(ua) ? "android" : "desktop");
+    setShow(true);
+    const onBip = (e) => { e.preventDefault(); setDeferred(e); };
+    window.addEventListener("beforeinstallprompt", onBip);
+    return () => window.removeEventListener("beforeinstallprompt", onBip);
+  }, []);
+  if (!show) return null;
+  const hide = () => { try { localStorage.setItem("neos-install-hide", "1"); } catch {} setShow(false); };
+  async function install() {
+    if (!deferred) return;
+    deferred.prompt();
+    await deferred.userChoice.catch(() => {});
+    setDeferred(null); hide();
+  }
+  const steps = os === "ios"
+    ? [[<Icon key="i" name="share" size={14} />, t("Tippe unten in Safari auf das Teilen-Symbol.")], [<Icon key="i" name="plus" size={14} />, t("Wähle „Zum Home-Bildschirm“.")], [<Icon key="i" name="check" size={14} />, t("Bestätige mit „Hinzufügen“.")]]
+    : os === "android"
+      ? [[<Icon key="i" name="dots" size={14} />, t("Öffne das Browser-Menü (⋮ oben rechts).")], [<Icon key="i" name="smartphone" size={14} />, t("Tippe „App installieren“ / „Zum Startbildschirm“.")], [<Icon key="i" name="check" size={14} />, t("Bestätige — NEOS Snap erscheint als App.")]]
+      : [[<Icon key="i" name="smartphone" size={14} />, t("Klicke in der Adressleiste auf das Installieren-Symbol.")], [<Icon key="i" name="check" size={14} />, t("Bestätige die Installation.")], [<Icon key="i" name="check" size={14} />, t("NEOS Snap öffnet als eigenes Fenster.")]];
+  return (
+    <div className="installcard">
+      <button type="button" className="installcard-x" onClick={hide} aria-label={t("Schließen")}><Icon name="x" size={15} /></button>
+      <div className="installcard-hd">
+        <img className="installcard-ic" src="/icon-192.png" alt="NEOS Snap" />
+        <div className="installcard-tt">
+          <b>{t("NEOS Snap aufs Handy laden")}</b>
+          <span>{t("In Sekunden als App-Icon auf dem Startbildschirm — ohne App Store.")}</span>
+        </div>
+      </div>
+      <ol className="installcard-steps">
+        {steps.map(([ic, s], i) => <li key={i}><span className="installcard-no">{ic}</span><span>{s}</span></li>)}
+      </ol>
+      {deferred && <button type="button" className="btn" onClick={install} style={{ marginTop: 12 }}><Icon name="smartphone" size={15} /> {t("Jetzt installieren")}</button>}
+    </div>
+  );
+}
+
 let _seq = 0;
 function Capture({ uid, onDone }) {
   const { t } = useT();
@@ -724,6 +773,7 @@ function Capture({ uid, onDone }) {
     <>
       <h1 className="title">{t("Beleg erfassen")}</h1>
       <p className="lead">{t("Foto, Scan, Upload oder per E-Mail — die OCR füllt die Felder automatisch.")}</p>
+      <InstallGuide />
       <div className="capwrap">
         <div className="sources">
           <button type="button" className={"src" + (activeSrc === "foto" ? " on" : "")} onClick={() => { setActiveSrc("foto"); camRef.current?.click(); }}><Icon name="camera" size={20} /> {t("Foto")}</button>
