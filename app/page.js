@@ -714,14 +714,14 @@ function Capture({ uid, onDone }) {
                 <select value={it.currency || "EUR"} onChange={(e) => upd(it.id, { currency: e.target.value })}>
                   {Array.from(new Set([it.currency || "EUR", "EUR", "USD", "RON"])).map((c) => <option key={c} value={c}>{c === "RON" ? "RON (Lei)" : c}</option>)}
                 </select></div>
-              <div className="field"><label>{t("MwSt-Satz (%)")}</label><input type="number" step="0.1" min="0" value={it.vat_rate ?? ""} onChange={(e) => upd(it.id, { vat_rate: e.target.value === "" ? null : parseFloat(e.target.value) })} /></div>
-              <div className="field"><label>{t("Kategorie")}</label>
+              <div className="field"><label>{t("MwSt-Satz (%)")} {mb(it, "vat_rate")}</label><input type="number" step="0.1" min="0" value={it.vat_rate ?? ""} onChange={(e) => upd(it.id, { vat_rate: e.target.value === "" ? null : parseFloat(e.target.value) })} /></div>
+              <div className="field"><label>{t("Kategorie")} {mb(it, "category")}</label>
                 <select value={it.category} onChange={(e) => upd(it.id, { category: e.target.value })}>
                   {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}</select></div>
-              <div className="field"><label>{t("Kostenstelle / Projekt")}</label>
+              <div className="field"><label>{t("Kostenstelle / Projekt")} {mb(it, "cost_center_id")}</label>
                 <select value={it.cost_center_id} onChange={(e) => upd(it.id, { cost_center_id: e.target.value })}>
                   <option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select></div>
-              <div className="field"><label>{t("Zahlart")}</label>
+              <div className="field"><label>{t("Zahlart")} {mb(it, "payment_method")}</label>
                 <select value={it.payment_method} onChange={(e) => upd(it.id, { payment_method: e.target.value })}>
                   <option value="company_card">{t("Firmenkarte")}</option><option value="private">{t("Privat verauslagt")}</option></select></div>
               {it.category === "hospitality" && (
@@ -732,7 +732,7 @@ function Capture({ uid, onDone }) {
               )}
             </div>
           )}
-          {!it.loading && it.memoryHit && (
+          {!it.loading && it.mem && Object.keys(it.mem).length > 0 && (
             <div className="bflag mem"><Icon name="sparkles" size={13} /> {t("Vorbelegt aus Lieferanten-Gedächtnis — bitte prüfen.")}</div>
           )}
           {!it.loading && it.duplicate_of && (
