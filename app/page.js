@@ -1478,12 +1478,24 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
               <p>{list.length} {t("Belege")} · {t("Zahlart hier ändern")}</p>
               <div className="dlist" style={{ overflowY: "auto", flex: 1, margin: "4px 0 12px" }}>
                 {list.map((r) => (
-                  <div className="drow" key={r.id}>
-                    <div style={{ minWidth: 0, flex: 1, cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}><b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b><br /><span className="mut" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span></div>
-                    <select value={r.payment_method} onChange={(e) => changePay(r.id, e.target.value)} style={{ width: "auto", minWidth: 150 }}>
-                      <option value="company_card">{t("Firmenkarte")}</option>
-                      <option value="private">{t("Privat verauslagt")}</option>
-                    </select>
+                  <div className="drow drow-edit" key={r.id}>
+                    <div className="drow-main" style={{ cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}>
+                      <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
+                      <span className="mut" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span>
+                    </div>
+                    <div className="drow-edits">
+                      <select value={r.payment_method} onChange={(e) => changeField(r.id, { payment_method: e.target.value })}>
+                        <option value="company_card">{t("Firmenkarte")}</option>
+                        <option value="private">{t("Privat verauslagt")}</option>
+                      </select>
+                      <select value={r.category} onChange={(e) => changeField(r.id, { category: e.target.value })}>
+                        {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}
+                      </select>
+                      <select value={r.cost_center_id || ""} onChange={(e) => changeField(r.id, { cost_center_id: e.target.value || null })}>
+                        <option value="">{t("— Kostenstelle —")}</option>
+                        {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
+                      </select>
+                    </div>
                   </div>
                 ))}
                 {list.length === 0 && <p className="hint">{t("Keine Belege.")}</p>}
