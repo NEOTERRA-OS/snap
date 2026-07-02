@@ -1502,6 +1502,10 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
           <option value="">{t("Alle Kategorien")}</option>
           {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}
         </select>
+        <select value={emp} onChange={(e) => setEmp(e.target.value)}>
+          <option value="">{t("Alle Mitarbeiter")}</option>
+          {empList.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
+        </select>
         <span className="shown">{f.length} {t("Belege")}</span>
       </div>
 
