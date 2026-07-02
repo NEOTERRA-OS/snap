@@ -361,6 +361,14 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 @media(min-width:1040px){.kpis.kx{grid-template-columns:repeat(4,1fr)}}
 .agrid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:14px}
 @media(min-width:820px){.agrid{grid-template-columns:1fr 1fr}}
+
+/* ===== Auswertungen: einheitliche Sektions-Karten ===== */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.panel .pw{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line2)}
+.agrid > .panel{margin-bottom:0;height:100%}
+.panel .rrow:last-child{margin-bottom:-2px}
+.panel .bar:first-of-type{margin-top:0}
+@media(max-width:520px){.panel{padding:14px 14px}}
 /* vertical month bars */
 .vbars{display:flex;align-items:flex-end;gap:8px;height:190px;padding-top:18px;overflow-x:auto}
 .vbar{flex:1;min-width:34px;display:flex;flex-direction:column;align-items:center;height:100%}

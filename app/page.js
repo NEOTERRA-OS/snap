@@ -1175,7 +1175,7 @@ function Dashboard() {
             <div className="rlab" title={k}>{t(k)}</div>
             <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
           </div>
-          <div className="rrgt"><span className="rv mono">{eur(v)}</span><span className="rpct mono">{Math.round(v / tot * 100)}%</span></div>
+          <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / tot * 100)}%</span></div>
         </div>))}
     </div>);
   };
