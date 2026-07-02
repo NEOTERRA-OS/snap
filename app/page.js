@@ -513,7 +513,7 @@ function Shell({ session }) {
               : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "admin" ? <Admin session={session} />
-              : <Dashboard />}
+              : <Dashboard onOpen={setDetail} />}
           </div>
         </div>
       </div>
