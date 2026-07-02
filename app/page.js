@@ -693,6 +693,7 @@ function Capture({ uid, onDone }) {
             <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} /></label>
         </div>
         <div className="tip"><Icon name="filetext" size={14} /> {t("Import-Spalten: Datum, Händler, Brutto, Währung, MwSt, Kategorie, Kostenstelle, Zahlart, Anlass, Teilnehmer.")}</div>
+        <button type="button" className="linkbtn" onClick={() => setDelegOpen(true)} style={{ marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, color: "var(--muted)" }}><Icon name="user" size={14} /> {t("Vertretungen verwalten")}</button>
         {err && <div className="err">{err}</div>}
       </div>
       {emailInfo && (
