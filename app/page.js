@@ -554,6 +554,8 @@ function Capture({ uid, onDone }) {
   const upRef = useRef(null);    // Datei-Upload (ohne Kamera-Zwang)
   const [activeSrc, setActiveSrc] = useState("foto");
   const [emailInfo, setEmailInfo] = useState(false);
+  const [emps, setEmps] = useState([]); // Mitarbeiternamen für Barauslage-Empfänger-Vorschläge
+  useEffect(() => { supabase.from("profiles").select("full_name").then(({ data }) => setEmps((data || []).map((p) => p.full_name).filter(Boolean))); }, []);
   // Vertretung: für wen darf ich erfassen (owners) → „Für Mitarbeiter"-Auswahl.
   const [owners, setOwners] = useState([]);
   const [forUser, setForUser] = useState("");
