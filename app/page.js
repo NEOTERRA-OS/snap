@@ -27,7 +27,7 @@ const money = (n, cur) => {
 const dDE = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "—");
 
 // Plausibilitäts-Flags (kanonisch deutsch; bei Anzeige via t() übersetzt).
-function plausFlags(it, limit = 1000) {
+function plausFlags(it, limit = 5000) {
   const f = [];
   const today = new Date().toISOString().slice(0, 10);
   if (!it.merchant || !String(it.merchant).trim()) f.push(it.source === "cash" ? "Zweck fehlt" : "Händler fehlt");
@@ -1737,6 +1737,14 @@ function Admin({ session }) {
           <input value={drive} onChange={(e) => setDrive(e.target.value)} placeholder="z. B. 1Sx7gRp7-…" className="mono" /></div>
         <p className="hint" style={{ margin: "2px 0 12px" }}>{t("ID aus der Drive-URL …/folders/<ID>. Pro Mitarbeiter wird darunter automatisch ein Unterordner angelegt. Das verbundene Google-Konto muss Zugriff auf den Ordner haben.")}</p>
         <button type="button" className="btn" disabled={driveBusy} onClick={saveDrive} style={{ width: "auto", padding: "11px 18px" }}>{driveBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
+      </div>
+
+      <div className="card">
+        <div className="pw"><Icon name="alert" /> {t("Betrags-Warnschwelle")}</div>
+        <div className="field"><label>{t("Warnschwelle (EUR)")}</label>
+          <input type="number" min="0" value={warnLimit} onChange={(e) => setWarnLimit(e.target.value)} placeholder="5000" /></div>
+        <p className="hint" style={{ margin: "2px 0 12px" }}>{t("Belege über diesem Betrag werden zur Prüfung markiert (nur Hinweis, kein Block). Standard 5000, leer = kein Limit.")}</p>
+        <button type="button" className="btn" disabled={warnBusy} onClick={saveWarn} style={{ width: "auto", padding: "11px 18px" }}>{warnBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
       </div>
 
       <div className="card">
