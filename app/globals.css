@@ -457,6 +457,15 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .memb{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--emerald);background:var(--emerald-bg);border:1px solid var(--emerald-bd);border-radius:999px;padding:1px 6px 1px 5px;vertical-align:middle;letter-spacing:0}
 .memb .i{color:var(--emerald)}
 
+/* ===== Vertretung: „Für Mitarbeiter" + Verwaltung ===== */
+.forsel{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.forsel label{font-size:12px;color:var(--muted);font-weight:600}
+.forsel select{width:auto;min-width:160px;padding:9px 12px;font-size:13px}
+.dlist{display:flex;flex-direction:column;gap:8px}
+.drow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--line2);border-radius:10px}
+.drow b{font-size:13.5px;color:var(--ink)}
+.ahead{flex-wrap:wrap;gap:10px}
+
 /* ===== Passwort-Gate (Vollbild) ===== */
 .gate-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
 
