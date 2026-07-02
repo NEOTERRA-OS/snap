@@ -501,7 +501,18 @@ function Capture({ uid, onDone }) {
 
   useEffect(() => { supabase.from("cost_centers").select("id,code,name").eq("active", true).order("code").then(({ data }) => setCcs(data || [])); }, []);
 
-  const upd = (id, patch) => setItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
+  const upd = (id, patch) => setItems((prev) => prev.map((it) => {
+    if (it.id !== id) return it;
+    const next = { ...it, ...patch };
+    // Ändert der Nutzer ein gemerktes Feld selbst, verschwindet dessen „gemerkt"-Badge.
+    if (it.mem && !patch.mem) {
+      const m = { ...it.mem };
+      let changed = false;
+      for (const k of Object.keys(patch)) { if (m[k]) { delete m[k]; changed = true; } }
+      if (changed) next.mem = m;
+    }
+    return next;
+  }));
 
   function onPick(e) { addFiles(Array.from(e.target.files || [])); e.target.value = ""; }
   function onDrop(e) { e.preventDefault(); setDrag(false); addFiles(Array.from(e.dataTransfer?.files || [])); }
