@@ -756,32 +756,7 @@ function Capture({ uid, onDone }) {
           </div>
         </div>
       )}
-      {delegOpen && (
-        <div className="modal-wrap" onClick={() => setDelegOpen(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 460 }}>
-            <div className="modal-ic" style={{ background: "rgba(44,60,43,.1)", color: "var(--green)" }}><Icon name="user" size={20} /></div>
-            <h3>{t("Vertretungen")}</h3>
-            <p>{t("Diese Personen dürfen Belege in deinem Namen erfassen.")}</p>
-            <form onSubmit={addDeleg} style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-              <input type="email" value={delegEmail} onChange={(e) => setDelegEmail(e.target.value)} placeholder="name@neoterra.ag" required style={{ flex: 1 }} />
-              <button className="btn" disabled={delegBusy} style={{ width: "auto", padding: "10px 14px" }}>{delegBusy ? <span className="spin" /> : <Icon name="plus" size={14} />} {t("Hinzufügen")}</button>
-            </form>
-            {myDeleg.length === 0 ? <p className="hint">{t("Noch keine Vertretung.")}</p> : (
-              <div className="dlist">
-                {myDeleg.map((d) => (
-                  <div className="drow" key={d.id}>
-                    <div style={{ minWidth: 0 }}><b>{d.name}</b><br /><span className="mut" style={{ fontSize: 12 }}>{d.email}</span></div>
-                    <button type="button" className="brem" onClick={() => rmDeleg(d.id)} title={t("Entfernen")}><Icon name="x" size={15} /></button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="modal-actions" style={{ marginTop: 16 }}>
-              <button type="button" className="modal-btn ghost" onClick={() => setDelegOpen(false)}>{t("Fertig")}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {delegOpen && <DelegationsModal onClose={() => setDelegOpen(false)} />}
     </>
   );
 
