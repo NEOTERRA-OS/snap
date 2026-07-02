@@ -369,6 +369,21 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .panel .rrow:last-child{margin-bottom:-2px}
 .panel .bar:first-of-type{margin-top:0}
 @media(max-width:520px){.panel{padding:14px 14px}}
+
+/* ===== Monatschart (dynamische HTML-Balken, unverzerrt) ===== */
+.mc2{position:relative;padding-top:4px}
+.mc2-bars{position:relative;display:flex;align-items:flex-end;gap:12px;height:210px;margin-top:6px}
+.mc2-col{flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.mc2-bar{position:relative;width:min(58px,72%);background:var(--r2);border-radius:9px 9px 0 0;min-height:3px;transition:height .35s cubic-bezier(.2,.7,.2,1)}
+.mc2-bar.cur{background:var(--r1)}
+.mc2-val{position:absolute;left:50%;top:-20px;transform:translateX(-50%);font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.mc2-bar.cur .mc2-val{color:var(--ink)}
+.mc2-avg{position:absolute;left:0;right:0;border-top:1.5px dashed var(--muted2);z-index:1;pointer-events:none}
+.mc2-avg span{position:absolute;right:0;top:-9px;font-size:11px;font-weight:600;color:var(--muted);background:var(--surface);padding:0 3px 0 7px;font-variant-numeric:tabular-nums}
+.mc2-labs{display:flex;gap:12px;margin-top:10px}
+.mc2-lab{flex:1;text-align:center;font-size:12px;color:var(--muted2)}
+.mc2-lab.cur{color:var(--ink);font-weight:600}
+@media(max-width:520px){.mc2-bars{height:170px;gap:7px}.mc2-val,.mc2-lab{font-size:10.5px}}
 /* vertical month bars */
 .vbars{display:flex;align-items:flex-end;gap:8px;height:190px;padding-top:18px;overflow-x:auto}
 .vbar{flex:1;min-width:34px;display:flex;flex-direction:column;align-items:center;height:100%}
