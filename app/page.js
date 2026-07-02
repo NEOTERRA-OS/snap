@@ -1060,38 +1060,28 @@ function MonthlyChart({ months, data }) {
   const vals = months.map((k) => data[k] || 0);
   const max = Math.max(1, ...vals);
   const avg = vals.reduce((s, v) => s + v, 0) / (vals.length || 1);
-  const W = 880, H = 210, padL = 42, padT = 18, padB = 30;
-  const plotH = H - padT - padB, plotW = W - padL - 10;
   const n = months.length;
-  const step = plotW / n;
-  const bw = Math.min(64, step * 0.58);
-  const yOf = (v) => padT + plotH - (v / max) * plotH;
-  const xOf = (i) => padL + step * i + step / 2;
-  const ticks = [0, max / 2, max];
+  const SCALE = 0.86; // Kopf-Freiraum über dem höchsten Balken für die Wert-Labels
   return (
-    <svg className="mchart" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label="Ausgaben pro Monat">
-      {ticks.map((tk, i) => (
-        <g key={i}>
-          <line className="mc-grid" x1={padL} y1={yOf(tk)} x2={W} y2={yOf(tk)} />
-          <text className="mc-axt" x={padL - 6} y={yOf(tk) + 3} textAnchor="end">{shortEur(tk)}</text>
-        </g>
-      ))}
-      <line className="mc-avg" x1={padL} y1={yOf(avg)} x2={W} y2={yOf(avg)} strokeDasharray="5 4" />
-      <text className="mc-avgt mono" x={W - 2} y={yOf(avg) - 4} textAnchor="end">Ø {shortEur(avg)}</text>
-      {months.map((k, i) => {
-        const v = data[k] || 0;
-        const cur = i === n - 1;
-        const h = Math.max(2, (v / max) * plotH);
-        const x = xOf(i) - bw / 2;
-        return (
-          <g key={k}>
-            <rect className={"mc-bar" + (cur ? " cur" : "")} x={x} y={padT + plotH - h} width={bw} height={h} rx="5" />
-            <text className="mc-val mono" x={xOf(i)} y={padT + plotH - h - 6} textAnchor="middle">{shortEur(v)}</text>
-            <text className={"mc-lab" + (cur ? " cur" : "")} x={xOf(i)} y={H - 8} textAnchor="middle">{monthLabel(k)}</text>
-          </g>
-        );
-      })}
-    </svg>
+    <div className="mc2">
+      <div className="mc2-bars">
+        <div className="mc2-avg" style={{ bottom: (avg / max) * 100 * SCALE + "%" }}><span>Ø {shortEur(avg)}</span></div>
+        {months.map((k, i) => {
+          const v = data[k] || 0;
+          const cur = i === n - 1;
+          return (
+            <div className="mc2-col" key={k}>
+              <div className={"mc2-bar" + (cur ? " cur" : "")} style={{ height: Math.max(1.5, (v / max) * 100 * SCALE) + "%" }}>
+                <span className="mc2-val">{shortEur(v)}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mc2-labs">
+        {months.map((k, i) => <div className={"mc2-lab" + (i === n - 1 ? " cur" : "")} key={k}>{monthLabel(k)}</div>)}
+      </div>
+    </div>
   );
 }
 
