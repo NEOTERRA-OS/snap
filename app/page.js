@@ -773,8 +773,8 @@ function Capture({ uid, onDone }) {
     <>
       <h1 className="title">{t("Beleg erfassen")}</h1>
       <p className="lead">{t("Foto, Scan, Upload oder per E-Mail — die OCR füllt die Felder automatisch.")}</p>
-      <InstallGuide />
       <div className="capwrap">
+        <InstallGuide />
         <div className="sources">
           <button type="button" className={"src" + (activeSrc === "foto" ? " on" : "")} onClick={() => { setActiveSrc("foto"); camRef.current?.click(); }}><Icon name="camera" size={20} /> {t("Foto")}</button>
           <button type="button" className={"src" + (activeSrc === "scan" ? " on" : "")} onClick={() => { setActiveSrc("scan"); camRef.current?.click(); }}><Icon name="scan" size={20} /> {t("Scan")}</button>
