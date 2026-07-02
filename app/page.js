@@ -994,6 +994,14 @@ function Detail({ id, onBack }) {
     supabase.from("audit_log").select("action,detail,created_at").eq("receipt_id", id).order("created_at").then(({ data }) => setLog(data || []));
   }, [id]);
   useEffect(() => { load(); }, [load]);
+  // Namen für „erfasst von / für" auflösen (nur wenn im Auftrag erfasst).
+  const [names, setNames] = useState(null);
+  useEffect(() => {
+    if (r?.created_by && r.created_by !== r.user_id) {
+      supabase.from("profiles").select("id,full_name").in("id", [r.user_id, r.created_by].filter(Boolean))
+        .then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); });
+    } else setNames(null);
+  }, [r?.created_by, r?.user_id]);
   // Inline-Vorschau (signierter Link) für Bild-Belege.
   useEffect(() => {
     if (!r?.file_path) return;
