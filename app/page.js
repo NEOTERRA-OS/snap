@@ -1303,11 +1303,15 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
 
       {curs.length > 1 && (
         <div className="panel">
-          <div className="pw"><Icon name="wallet" /> {t("Nach Währung")}</div>
-          {curs.map(([c, v]) => (
-            <div className="bar" key={c}><div className="lab">{c === "RON" ? "RON (Lei)" : c}</div>
-              <div className="track"><div className="fill" style={{ width: (v.eur / (total || 1)) * 100 + "%" }} /></div>
-              <div className="v" style={{ width: "auto", whiteSpace: "nowrap" }}>{money(v.orig, c)} · {eur(v.eur)}</div></div>))}
+          <div className="pw"><Icon name="wallet" /> {t("Nach Währung")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
+          {curs.map(([c, v], i) => (
+            <div className="rrow" key={c}>
+              <div className="rmain">
+                <div className="rlab">{c === "RON" ? "RON (Lei)" : c}</div>
+                <div className="rtrack"><i className={rampClass(i)} style={{ width: (v.eur / (total || 1)) * 100 + "%" }} /></div>
+              </div>
+              <div className="rrgt"><span className="rv">{eur(v.eur)}</span><span className="rpct">{money(v.orig, c)}</span></div>
+            </div>))}
         </div>
       )}
 
