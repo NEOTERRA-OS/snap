@@ -511,7 +511,7 @@ function Shell({ session }) {
         </div>
         <div className="content">
           <div className="container">
-            {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} />
+            {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} inbound={inbound} onInboundHandled={() => setInbound(null)} />
               : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "admin" ? <Admin session={session} />
@@ -530,6 +530,8 @@ function Shell({ session }) {
           <button type="button" className="bnav" onClick={() => setDelegModal(true)}><Icon name="user" size={20} />{t("Vertretungen")}</button>
         </div>
       </div>
+      <input ref={fabCamRef} type="file" accept="image/*,application/pdf" capture="environment" multiple hidden
+        onChange={(e) => { const fs = Array.from(e.target.files || []); e.target.value = ""; if (fs.length) { setInbound(fs); setDetail(null); setView("capture"); } }} />
       {detail && (
         <div className="sheet-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
           <div className="sheet">
@@ -596,7 +598,7 @@ function InstallGuide() {
 }
 
 let _seq = 0;
-function Capture({ uid, onDone }) {
+function Capture({ uid, onDone, inbound, onInboundHandled }) {
   const { t } = useT();
   const [stage, setStage] = useState("pick"); // pick | review
   const [items, setItems] = useState([]);
