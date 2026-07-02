@@ -1122,6 +1122,9 @@ function Detail({ id, onBack }) {
         <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
         <div className="kv"><span className="k">{t("MwSt")}</span><span className="v">{r.vat_rate}% · {money(r.vat_amount, r.currency)}</span></div>
         <div className="kv"><span className="k">{t("Status")}</span><span className="v">{t(STATUS[r.status])}</span></div>
+        {r.source === "cash" && (
+          <div className="kv"><span className="k">{t("Barauslage")}</span><span className="v">{t("Empfänger")}: {r.recipient || "—"}</span></div>
+        )}
         {r.created_by && r.created_by !== r.user_id && (
           <div className="kv"><span className="k">{t("Erfasst von")}</span>
             <span className="v">{names?.[r.created_by] || "—"} <span className="mut">· {t("für")} {names?.[r.user_id] || r.creator_name || "—"}</span></span></div>
