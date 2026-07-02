@@ -45,6 +45,9 @@ const P = {
   search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
   arrowup: '<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>',
   arrowdown: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
+  share: '<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/>',
+  smartphone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+  dots: '<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',
 };
 export default function Icon({ name, size = 16, color, style, className }) {
   return (
