@@ -505,8 +505,21 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .modal-btn.danger:hover:not(:disabled){background:#b91c1c}
 
 /* ===== Inline-Beleg-Vorschau ===== */
-.rcpt-prev{display:block;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;background:var(--surface)}
-.rcpt-prev img{display:block;width:100%;max-height:360px;object-fit:contain;background:#0000000a}
+.rcpt-box{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;background:var(--surface)}
+.rcpt-cap{display:flex;align-items:center;gap:6px;padding:9px 12px;font-size:11px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--line2)}
+.rcpt-cap .rcpt-open{margin-left:auto;color:var(--green);font-size:11px}
+.rcpt-prev{display:block;overflow:hidden;background:var(--surface)}
+.rcpt-prev img{display:block;width:100%;max-height:420px;object-fit:contain;background:#0000000a}
+.rcpt-pdf{display:block;width:100%;height:480px;border:0;background:#0000000a}
+.rcpt-fallback{display:block;padding:22px;text-align:center;color:var(--green);font-weight:600}
+
+/* ===== Beleg bearbeiten ===== */
+.detail-editrow{display:flex;justify-content:flex-end;margin-bottom:2px}
+.edit-cta{color:var(--green);font-weight:600;font-size:12px}
+.editform{padding-top:2px}
+.editform .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.editform-acts{display:flex;gap:10px;margin-top:14px}
+.editform-acts .btn{flex:1}
 
 /* ===== Dark Mode (neutral surfaces + Emerald-Akzent, NEOS-Guideline) ===== */
 [data-theme="dark"]{
