@@ -552,8 +552,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   --pos:#34d399;--neg:#f87171;--warn:#fbbf24;
 }
 /* CTAs behalten dunkles Bottle-Green auf Gelb (Kontrast) */
-[data-theme="dark"] .btn,[data-theme="dark"] .sb-cta,[data-theme="dark"] .dz-btn{color:#2C3C2B}
-[data-theme="dark"] .btn .i,[data-theme="dark"] .dz-btn .i{color:#2C3C2B}
+[data-theme="dark"] .btn:not(.ghost),[data-theme="dark"] .sb-cta,[data-theme="dark"] .dz-btn{color:#2C3C2B}
+[data-theme="dark"] .btn:not(.ghost) .i,[data-theme="dark"] .dz-btn .i{color:#2C3C2B}
 /* Auswahl-Elemente (Nav/Chips/Tabs) = Bottle-Green-Fläche + Weiß, Tab-Unterstrich Gelb */
 [data-theme="dark"] .snav.on,[data-theme="dark"] .chip.on,[data-theme="dark"] .fseg .fs.on,[data-theme="dark"] .langtog button.on{background:#2C3C2B;color:#fff}
 [data-theme="dark"] .snav.on .i{color:var(--yellow)}
