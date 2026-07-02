@@ -30,12 +30,21 @@ export async function POST(req) {
   const g = await requireAdmin(req);
   if (!g.ok) return NextResponse.json({ error: g.error }, { status: g.status });
   const body = await req.json().catch(() => ({}));
-  const code = (body.code || "").trim();
+  let code = (body.code || "").trim();
   const name = (body.name || "").trim();
-  if (!code || !name) return NextResponse.json({ error: "Code und Bezeichnung erforderlich." }, { status: 400 });
+  if (!name) return NextResponse.json({ error: "Bezeichnung erforderlich." }, { status: 400 });
   const s = svc();
-  const { data: dupe } = await s.from("cost_centers").select("id").ilike("code", code).maybeSingle();
-  if (dupe) return NextResponse.json({ error: "Code existiert bereits." }, { status: 409 });
+  const { data: existing } = await s.from("cost_centers").select("code");
+  const used = new Set((existing || []).map((c) => (c.code || "").toLowerCase()));
+  if (!code) {
+    // Automatisch generieren (KST-001, KST-002 …), Buchhaltung ist hier zweitrangig.
+    let n = (existing?.length || 0) + 1;
+    let cand;
+    do { cand = "KST-" + String(n).padStart(3, "0"); n++; } while (used.has(cand.toLowerCase()));
+    code = cand;
+  } else if (used.has(code.toLowerCase())) {
+    return NextResponse.json({ error: "Code existiert bereits." }, { status: 409 });
+  }
   const { data, error } = await s.from("cost_centers").insert({ code, name, active: true }).select("id,code,name,active").single();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true, item: data });
