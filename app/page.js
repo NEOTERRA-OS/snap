@@ -1079,6 +1079,10 @@ function Detail({ id, onBack }) {
         <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
         <div className="kv"><span className="k">{t("MwSt")}</span><span className="v">{r.vat_rate}% · {money(r.vat_amount, r.currency)}</span></div>
         <div className="kv"><span className="k">{t("Status")}</span><span className="v">{t(STATUS[r.status])}</span></div>
+        {r.created_by && r.created_by !== r.user_id && (
+          <div className="kv"><span className="k">{t("Erfasst von")}</span>
+            <span className="v">{names?.[r.created_by] || "—"} <span className="mut">· {t("für")} {names?.[r.user_id] || r.creator_name || "—"}</span></span></div>
+        )}
         {r.erp_docname && <div className="kv"><span className="k">ERPNext</span><span className="v">{r.erp_doctype} · {r.erp_docname}</span></div>}
         <div className="kv"><span className="k">{t("Originalbeleg")}</span>
           <span className="v">{r.file_path ? <button className="linkbtn" style={{ color: "var(--green)" }} onClick={openOriginal}><Icon name="filetext" size={13} /> {t("Öffnen")}</button> : "—"}</span></div>
