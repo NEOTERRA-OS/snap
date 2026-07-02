@@ -499,7 +499,7 @@ function Capture({ uid, onDone }) {
   const [activeSrc, setActiveSrc] = useState("foto");
   const [emailInfo, setEmailInfo] = useState(false);
 
-  useEffect(() => { supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || [])); }, []);
+  useEffect(() => { supabase.from("cost_centers").select("id,code,name").eq("active", true).order("code").then(({ data }) => setCcs(data || [])); }, []);
 
   const upd = (id, patch) => setItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
 
