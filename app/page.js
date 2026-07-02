@@ -1511,11 +1511,11 @@ function Admin({ session }) {
   async function createUser(e) {
     e.preventDefault(); setBusy(true); setErr(""); setCreated(null);
     try {
-      const res = await fetch("/api/admin/users", { method: "POST", headers: auth, body: JSON.stringify(form) });
+      const res = await fetch("/api/admin/users", { method: "POST", headers: auth, body: JSON.stringify({ email: form.email, full_name: `${form.first_name} ${form.last_name}`.trim(), role: form.role }) });
       const j = await res.json();
       if (j.error) throw new Error(j.error);
       setCreated({ email: j.user.email, password: j.password });
-      setForm({ email: "", full_name: "", role: "employee" });
+      setForm({ email: "", first_name: "", last_name: "", role: "employee" });
       load();
     } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
   }
