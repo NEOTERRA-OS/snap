@@ -1170,11 +1170,57 @@ function Detail({ id, onBack }) {
         <div className="amt">{money(r.gross, r.currency)}</div>
       </div>
       {preview && (
-        <a className="rcpt-prev" href={preview} target="_blank" rel="noreferrer" title={t("Öffnen")}>
-          <img src={preview} alt={t("Originalbeleg")} />
-        </a>
+        <div className="rcpt-box">
+          <div className="rcpt-cap"><Icon name="filetext" size={13} /> {t("Belegvorschau")}
+            <button className="linkbtn rcpt-open" onClick={openOriginal}><Icon name="upload" size={12} /> {t("Öffnen")}</button></div>
+          {previewKind === "pdf"
+            ? <object className="rcpt-pdf" data={preview + "#view=FitH"} type="application/pdf"><a className="rcpt-fallback" href={preview} target="_blank" rel="noreferrer">{t("PDF öffnen")}</a></object>
+            : <a className="rcpt-prev" href={preview} target="_blank" rel="noreferrer" title={t("Öffnen")}><img src={preview} alt={t("Originalbeleg")} /></a>}
+        </div>
       )}
       <div className="card">
+        {editable && !editing && (
+          <div className="detail-editrow"><button className="linkbtn edit-cta" onClick={startEdit}><Icon name="pencil" size={13} /> {t("Bearbeiten")}</button></div>
+        )}
+        {editing ? (
+          <div className="editform">
+            <div className="field"><label>{r.source === "cash" ? t("Zweck") : t("Händler")}</label>
+              <input value={ef.merchant} onChange={(e) => setF({ merchant: e.target.value })} /></div>
+            <div className="frow">
+              <div className="field"><label>{t("Datum")}</label><input type="date" value={ef.doc_date || ""} onChange={(e) => setF({ doc_date: e.target.value })} /></div>
+              <div className="field"><label>{t("Währung")}</label><input value={ef.currency} onChange={(e) => setF({ currency: e.target.value })} style={{ textTransform: "uppercase" }} /></div>
+            </div>
+            <div className="frow">
+              <div className="field"><label>{t("Betrag (brutto)")}</label><input type="number" step="0.01" min="0" value={ef.gross} onChange={(e) => setF({ gross: e.target.value })} /></div>
+              <div className="field"><label>{t("MwSt-Satz (%)")}</label><input type="number" step="0.1" min="0" value={ef.vat_rate} onChange={(e) => setF({ vat_rate: e.target.value })} /></div>
+            </div>
+            <div className="field"><label>{t("Kategorie")}</label>
+              <select value={ef.category} onChange={(e) => setF({ category: e.target.value })}>
+                {Object.entries(CATS).map(([k, c]) => <option key={k} value={k}>{t(c.label)}</option>)}
+              </select></div>
+            <div className="field"><label>{t("Zahlart")}</label>
+              <select value={ef.payment_method} onChange={(e) => setF({ payment_method: e.target.value })}>
+                <option value="private">{t("Privat verauslagt")}</option>
+                <option value="company">{t("Firmenkarte")}</option>
+              </select></div>
+            <div className="field"><label>{t("Kostenstelle")}</label>
+              <select value={ef.cost_center_id} onChange={(e) => setF({ cost_center_id: e.target.value })}>
+                <option value="">{t("— keine —")}</option>
+                {ccs.map((c) => <option key={c.id} value={c.id}>{c.code ? c.code + " · " : ""}{c.name}</option>)}
+              </select></div>
+            {r.source === "cash" && (
+              <div className="field"><label>{t("Empfänger")}</label><input value={ef.recipient} onChange={(e) => setF({ recipient: e.target.value })} /></div>
+            )}
+            {ef.category === "hospitality" && <>
+              <div className="field"><label>{t("Anlass der Bewirtung")}</label><input value={ef.occasion} onChange={(e) => setF({ occasion: e.target.value })} /></div>
+              <div className="field"><label>{t("Teilnehmer")}</label><input value={ef.attendees} onChange={(e) => setF({ attendees: e.target.value })} /></div>
+            </>}
+            <div className="editform-acts">
+              <button className="btn ghost" disabled={saving} onClick={() => { setEditing(false); setEf(null); }}>{t("Abbrechen")}</button>
+              <button className="btn" disabled={saving} onClick={saveEdit}>{saving ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
+            </div>
+          </div>
+        ) : (<></>)}
         <div className="kv"><span className="k">{t("Datum")}</span><span className="v">{dDE(r.doc_date)}</span></div>
         <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
         <div className="kv"><span className="k">{t("MwSt")}</span><span className="v">{r.vat_rate}% · {money(r.vat_amount, r.currency)}</span></div>
