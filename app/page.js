@@ -1212,12 +1212,21 @@ function Dashboard() {
   const [period, setPeriod] = useState("12m");
   const [cc, setCc] = useState("");
   const [cat, setCat] = useState("");
+  const [drill, setDrill] = useState(null); // { title, predicate }
 
+  const loadRows = useCallback(() => {
+    supabase.from("receipts").select("id,merchant,doc_date,gross,net,vat_amount,category,status,payment_method,cost_center_id,user_id,creator_name,currency,gross_eur,fx_rate,source,recipient").then(({ data }) => setRows(data || []));
+  }, []);
   useEffect(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,net,vat_amount,category,status,payment_method,cost_center_id,user_id,creator_name,currency,gross_eur,fx_rate").then(({ data }) => setRows(data || []));
+    loadRows();
     supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || []));
     supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setProfiles(m); });
-  }, []);
+  }, [loadRows]);
+  async function changePay(rid, pm) {
+    const { error } = await supabase.from("receipts").update({ payment_method: pm }).eq("id", rid);
+    if (error) { toast(error.message, "err"); return; }
+    setRows((prev) => (prev || []).map((r) => (r.id === rid ? { ...r, payment_method: pm } : r)));
+  }
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const ccMap = {}; ccs.forEach((c) => (ccMap[c.id] = c));
