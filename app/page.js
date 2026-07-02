@@ -1450,14 +1450,39 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
       <div className="panel">
         <div className="pw"><Icon name="wallet" /> {t("Zahlart")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
         {sorted(byPay).map(([k, v], i) => { const mx = total || 1; return (
-          <div className="rrow" key={k}>
+          <div className="rrow rrow-clk" key={k} onClick={() => setDrill({ title: t(k), predicate: (r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte") === k })} title={t("Belege anzeigen & Zahlart ändern")}>
             <div className="rmain">
               <div className="rlab">{t(k)}</div>
               <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
             </div>
-            <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / mx * 100)}%</span></div>
+            <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / mx * 100)}%</span><Icon name="chevronleft" size={14} style={{ transform: "rotate(180deg)", color: "var(--muted2)" }} /></div>
           </div>); })}
       </div>
+
+      {drill && (() => {
+        const list = f.filter(drill.predicate);
+        return (
+          <div className="modal-wrap" onClick={() => setDrill(null)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560, maxHeight: "82vh", display: "flex", flexDirection: "column" }}>
+              <h3>{drill.title}</h3>
+              <p>{list.length} {t("Belege")} · {t("Zahlart hier ändern")}</p>
+              <div className="dlist" style={{ overflowY: "auto", flex: 1, margin: "4px 0 12px" }}>
+                {list.map((r) => (
+                  <div className="drow" key={r.id}>
+                    <div style={{ minWidth: 0, flex: 1 }}><b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b><br /><span className="mut" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span></div>
+                    <select value={r.payment_method} onChange={(e) => changePay(r.id, e.target.value)} style={{ width: "auto", minWidth: 150 }}>
+                      <option value="company_card">{t("Firmenkarte")}</option>
+                      <option value="private">{t("Privat verauslagt")}</option>
+                    </select>
+                  </div>
+                ))}
+                {list.length === 0 && <p className="hint">{t("Keine Belege.")}</p>}
+              </div>
+              <div className="modal-actions"><button type="button" className="modal-btn ghost" onClick={() => setDrill(null)}>{t("Fertig")}</button></div>
+            </div>
+          </div>
+        );
+      })()}
     </>
   );
 }
