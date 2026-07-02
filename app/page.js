@@ -527,7 +527,7 @@ function Capture({ uid, onDone }) {
   }
   async function enrichImported(it) {
     try { const dup = await findDuplicate(null, it.merchant, it.doc_date, it.gross); if (dup) upd(it.id, { duplicate_of: dup }); } catch {}
-    try { const mem = await loadVendorMemory(it.merchant); if (mem) { const p = { memoryHit: true }; if (!it.cost_center_id && mem.cost_center_id) p.cost_center_id = mem.cost_center_id; if (mem.payment_method && it.payment_method === "company_card") p.payment_method = mem.payment_method; upd(it.id, p); } } catch {}
+    try { const mem = await loadVendorMemory(it.merchant); if (mem) { const p = {}; const m = {}; if (!it.cost_center_id && mem.cost_center_id) { p.cost_center_id = mem.cost_center_id; m.cost_center_id = true; } if (mem.payment_method && it.payment_method === "company_card") { p.payment_method = mem.payment_method; m.payment_method = true; } if (Object.keys(m).length) { p.mem = m; upd(it.id, p); } } } catch {}
   }
   async function onImport(e) {
     const file = e.target.files?.[0]; e.target.value = "";
@@ -591,12 +591,12 @@ function Capture({ uid, onDone }) {
       try {
         const mem = await loadVendorMemory(ocr.merchant);
         if (mem) {
-          const patch = { memoryHit: true };
-          if (mem.cost_center_id) patch.cost_center_id = mem.cost_center_id;
-          if (mem.payment_method) patch.payment_method = mem.payment_method;
-          if (mem.category) patch.category = mem.category;
-          if (mem.vat_rate != null) patch.vat_rate = mem.vat_rate;
-          upd(id, patch);
+          const patch = {}; const m = {};
+          if (mem.cost_center_id) { patch.cost_center_id = mem.cost_center_id; m.cost_center_id = true; }
+          if (mem.payment_method) { patch.payment_method = mem.payment_method; m.payment_method = true; }
+          if (mem.category) { patch.category = mem.category; m.category = true; }
+          if (mem.vat_rate != null) { patch.vat_rate = mem.vat_rate; m.vat_rate = true; }
+          if (Object.keys(m).length) { patch.mem = m; upd(id, patch); }
         }
       } catch {}
     } catch (e) { upd(id, { loading: false, error: e.message }); }
