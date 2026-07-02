@@ -1491,6 +1491,38 @@ function Admin({ session }) {
       </div>
 
       <div className="card">
+        <div className="pw"><Icon name="layers" /> {t("Kostenstellen")}</div>
+        <form onSubmit={addCc}>
+          <div className="row2">
+            <div className="field"><label>{t("Code")}</label>
+              <input value={ccForm.code} onChange={(e) => setCcForm({ ...ccForm, code: e.target.value })} placeholder="z. B. 1000" className="mono" required /></div>
+            <div className="field"><label>{t("Bezeichnung")}</label>
+              <input value={ccForm.name} onChange={(e) => setCcForm({ ...ccForm, name: e.target.value })} placeholder={t("z. B. Vertrieb")} required /></div>
+          </div>
+          <button className="btn" disabled={ccBusy} style={{ width: "auto", padding: "11px 18px" }}>{ccBusy ? <span className="spin" /> : <Icon name="plus" size={15} />} {t("Anlegen")}</button>
+        </form>
+        {ccList === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div> : ccList.length === 0 ? (
+          <p className="hint" style={{ marginTop: 12 }}>{t("Noch keine Kostenstellen — lege oben die erste an.")}</p>
+        ) : (
+          <table className="utable" style={{ marginTop: 14 }}>
+            <thead><tr><th>{t("Code")}</th><th>{t("Bezeichnung")}</th><th>{t("Status")}</th><th aria-label={t("Aktionen")} /></tr></thead>
+            <tbody>
+              {ccList.map((cc) => (
+                <tr key={cc.id} style={cc.active ? undefined : { opacity: 0.5 }}>
+                  <td className="mono">{cc.code}</td>
+                  <td>{cc.name}</td>
+                  <td><button type="button" className="fchip" onClick={() => toggleCc(cc)} title={t("Status umschalten")}>{cc.active ? t("Aktiv") : t("Inaktiv")}</button></td>
+                  <td style={{ textAlign: "right", width: 44 }}>
+                    <button type="button" className="brem" onClick={() => delCc(cc)} title={t("Löschen")}><Icon name="trash" size={15} /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="card">
         <div className="pw"><Icon name="user" /> {t("Nutzer")} {users ? `(${users.length})` : ""}</div>
         {!users ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div> : (
           <table className="utable">
