@@ -1674,9 +1674,9 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
               <div className="dlist" style={{ overflowY: "auto", flex: 1, margin: "4px 0 12px" }}>
                 {list.map((r) => (
                   <div className={"drow drow-edit" + (drillSel.has(r.id) ? " selrow" : "")} key={r.id}>
-                    <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                      <input type="checkbox" checked={drillSel.has(r.id)} onChange={() => toggleOne(r.id)} style={{ marginTop: 3, flex: "0 0 auto" }} />
-                      <div className="drow-main" style={{ flex: 1, cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}>
+                    <div className="drow-head">
+                      <input type="checkbox" checked={drillSel.has(r.id)} onChange={() => toggleOne(r.id)} />
+                      <div className="drow-main" style={{ cursor: onOpen ? "pointer" : "default" }} onClick={onOpen ? () => { setDrill(null); onOpen(r.id); } : undefined} title={onOpen ? t("Beleg öffnen") : undefined}>
                         <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
                         <span className="mut num" style={{ fontSize: 12 }}>{r.doc_date} · {money(r.gross, r.currency)}</span>
                       </div>
