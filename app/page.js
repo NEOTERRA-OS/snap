@@ -986,11 +986,27 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
   const [statusF, setStatusF] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [dir, setDir] = useState("desc");
+  const [ccs, setCcs] = useState([]);
+  const [sel, setSel] = useState(() => new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency,flags,duplicate_of,source,recipient").order("doc_date", { ascending: false })
+    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method").order("doc_date", { ascending: false })
       .then(({ data }) => setRows(data || []));
   }, []);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => { supabase.from("cost_centers").select("id,code,name").eq("active", true).order("code").then(({ data }) => setCcs(data || [])); }, []);
+  const toggleSel = (id, e) => { e?.stopPropagation(); setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; }); };
+  async function bulkApply(patch) {
+    const ids = [...sel];
+    if (!ids.length) return;
+    setBulkBusy(true);
+    const { error } = await supabase.from("receipts").update(patch).in("id", ids);
+    setBulkBusy(false);
+    if (error) { toast(error.message, "err"); return; }
+    setRows((prev) => (prev || []).map((r) => (ids.includes(r.id) ? { ...r, ...patch } : r)));
+    setSel(new Set());
+    toast(`${ids.length} ${t("Belege geändert")}`);
+  }
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const statusMatch = (r) => statusF === "all" ? true
@@ -1008,6 +1024,8 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
   const openSum = open.reduce((s, r) => s + Number(r.gross || 0), 0);
   const chips = [["all", "Alle"], ["draft", "Entwurf"], ["review", "In Prüfung"], ["approved", "Genehmigt"], ["booked", "Gebucht"], ["rejected", "Abgelehnt"]];
   const flagged = (r) => (r.flags?.length > 0 || r.duplicate_of);
+  const allSel = sorted.length > 0 && sorted.every((r) => sel.has(r.id));
+  const toggleAll = () => setSel(allSel ? new Set() : new Set(sorted.map((r) => r.id)));
 
   return (
     <>
