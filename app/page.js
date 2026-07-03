@@ -795,9 +795,10 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
         const flags = plausFlags(it, warnLimit);
         rows.push({
           user_id: forUser || uid, created_by: uid, status, source: it.source, recipient: it.recipient || null, file_path: it.filePath,
-          merchant: it.merchant, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
+          merchant: it.merchant, merchant_cui: (it.merchant_cui || "").trim() || null, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
           currency: it.currency || "EUR", gross_eur: eur, fx_rate: rate,
           file_hash: it.file_hash, file_size: it.file_size,
+          net: netFrom(it.gross, it.vat_rate),
           vat_amount: it.gross && it.vat_rate ? +(it.gross - it.gross / (1 + it.vat_rate / 100)).toFixed(2) : null,
           category: it.category, payment_method: it.payment_method,
           reimbursable: it.payment_method === "private", confidence: it.confidence,
