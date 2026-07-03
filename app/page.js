@@ -2167,6 +2167,24 @@ function Admin({ session }) {
       </div>
 
       <div className="card">
+        <div className="pw"><Icon name="wallet" /> {t("Währungskurse (EUR) nachtragen")}</div>
+        <p className="hint" style={{ margin: "0 0 12px" }}>{t("Ergänzt fehlende EUR-Werte bei Altbelegen in Fremdwährung (RON/USD) über den EZB-Kurs zum Belegdatum, damit Summen und Auswertungen stimmen.")}</p>
+        <button type="button" className="btn ghost" disabled={fxBusy} onClick={backfillFx} style={{ width: "auto", padding: "11px 18px" }}>{fxBusy ? <span className="spin" /> : <Icon name="refresh" size={15} />} {t("EUR-Kurse nachtragen")}</button>
+        {fxStatus && (
+          <div className={"reorg-status " + fxStatus.kind} style={{ marginTop: 12 }}>
+            <div className="reorg-head"><Icon name={fxStatus.kind === "ok" ? "checkcheck" : fxStatus.kind === "err" ? "alert" : "refresh"} size={15} /><span>{fxStatus.msg}</span></div>
+            {fxStatus.stats && (
+              <div className="reorg-stats">
+                <span><b className="num">{fxStatus.stats.updated}</b> {t("umgerechnet")}</span>
+                {fxStatus.stats.failed > 0 && <span className="reorg-err"><b className="num">{fxStatus.stats.failed}</b> {t("Fehler")}</span>}
+                {fxStatus.stats.remaining > 0 && <span><b className="num">{fxStatus.stats.remaining}</b> {t("offen")}</span>}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="card">
         <div className="pw"><Icon name="alert" /> {t("Betrags-Warnschwelle")}</div>
         <div className="field"><label>{t("Warnschwelle (EUR)")}</label>
           <input type="number" min="0" value={warnLimit} onChange={(e) => setWarnLimit(e.target.value)} placeholder="5000" /></div>
