@@ -2080,6 +2080,7 @@ function Admin({ session }) {
                   <span><b className="num">{reorgStatus.stats.moved}</b> {t("verschoben")}</span>
                   <span><b className="num">{reorgStatus.stats.renamed}</b> {t("umbenannt")}</span>
                   <span><b className="num">{reorgStatus.stats.trashed}</b> {t("Ordner in Papierkorb")}</span>
+                  {reorgStatus.stats.skippedNonEmpty > 0 && <span><b className="num">{reorgStatus.stats.skippedNonEmpty}</b> {t("noch nicht leer")}</span>}
                   {reorgStatus.stats.errors > 0 && <span className="reorg-err"><b className="num">{reorgStatus.stats.errors}</b> {t("Fehler")}</span>}
                   <span className="mut">· {reorgStatus.stats.secs}s</span>
                 </div>
