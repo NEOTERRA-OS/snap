@@ -15,7 +15,7 @@ const CATS = {
 };
 
 // Auswählbare Icons für Kategorien (müssen in components/Icon.js existieren).
-const CAT_ICONS = ["receipt", "fuel", "car", "train", "utensils", "cart", "laptop", "phone", "bed", "filetext", "package", "cog", "tool", "ticket", "banknote", "wallet", "building", "parking", "megaphone", "graduation", "sprout", "shield", "heart", "layers", "mail", "key", "camera"];
+const CAT_ICONS = ["receipt", "fuel", "car", "droplet", "train", "utensils", "cart", "laptop", "phone", "bed", "filetext", "package", "cog", "tool", "ticket", "banknote", "wallet", "building", "parking", "megaphone", "graduation", "sprout", "shield", "heart", "layers", "mail", "key", "camera"];
 
 // Dynamischer Kategorien-Store: Built-ins als Fallback, echte Werte aus DB (Tabelle categories).
 let _catsArr = Object.entries(CATS).map(([key, v], i) => ({ key, label: v.label, icon: v.icon, active: true, sort: i + 1 }));
