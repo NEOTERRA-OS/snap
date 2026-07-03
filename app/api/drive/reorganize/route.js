@@ -26,7 +26,8 @@ const isoDate = (s) => (s && /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : new
 function seedName(r, ext) {
   const typ = INVOICE_CATS.includes(r.category) ? "Invoice" : "Receipt";
   const vendor = indexVendor(r.source === "cash" ? "Barauslage" : (r.merchant || ""));
-  const parts = [isoDate(r.doc_date), typ]; if (vendor) parts.push(vendor);
+  const ref = indexVendor(r.invoice_no || "");
+  const parts = [isoDate(r.doc_date), typ]; if (vendor) parts.push(vendor); if (ref) parts.push(ref);
   return parts.join("_") + (ext || "").toLowerCase();
 }
 function userFolderName(fullName, email, uid) {
@@ -97,7 +98,7 @@ export async function POST(req) {
   // Profile & Belege laden.
   const { data: profs } = await s.from("profiles").select("id,full_name,drive_folder_id");
   const profById = {}; (profs || []).forEach((p) => (profById[p.id] = p));
-  const { data: receipts } = await s.from("receipts").select("id,user_id,merchant,doc_date,category,source,file_path,drive_file_id").not("drive_file_id", "is", null);
+  const { data: receipts } = await s.from("receipts").select("id,user_id,merchant,doc_date,category,source,file_path,drive_file_id,invoice_no").not("drive_file_id", "is", null);
 
   let moved = 0, renamed = 0, errors = 0;
   for (const r of receipts || []) {
