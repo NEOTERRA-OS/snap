@@ -1105,7 +1105,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
         <table className="jtable only-desktop">
           <thead><tr>
             <th className="thc thc-chk"><input type="checkbox" checked={allSel} onChange={toggleAll} aria-label={t("Alle auswählen")} /></th>
-            <th className="thc">{t("Datum")}</th><th className="thc">{t("Händler")}</th><th className="thc">{t("Kategorie")}</th>
+            <th className="thc">{t("Datum")}</th><th className="thc">{t("Händler")}</th>{allScope && <th className="thc">{t("Mitarbeiter")}</th>}<th className="thc">{t("Kategorie")}</th>
             <th className="thc">{t("Status")}</th><th className="thc r">{t("Betrag")}</th>
           </tr></thead>
           <tbody>
@@ -1114,6 +1114,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
                 <td className="td-chk" onClick={(e) => toggleSel(r.id, e)}><input type="checkbox" checked={sel.has(r.id)} onChange={(e) => toggleSel(r.id, e)} onClick={(e) => e.stopPropagation()} aria-label={t("Auswählen")} /></td>
                 <td className="mono">{dShort(r.doc_date)}</td>
                 <td className="tdmerch">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || "—"}</td>
+                {allScope && <td className="mut">{names[r.user_id] || "—"}</td>}
                 <td><span className="catcell"><Icon name={catInfo(r.category).icon} size={14} /> {t(catInfo(r.category).label)}</span></td>
                 <td><span className={"badge b-" + r.status}><span className="dot" />{t(STATUS[r.status])}</span></td>
                 <td className="r mono amt">{money(r.gross, r.currency)}</td>
