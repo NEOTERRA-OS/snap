@@ -1146,7 +1146,8 @@ function Approvals({ onOpen }) {
     setBusy(false);
     if (error) { toast(error.message, "err"); return; }
     toast(`${ids.length} ${decision === "approved" ? t("freigegeben") : t("abgelehnt")}`);
-    if (decision === "approved") Promise.all(ids.map((id) => syncToDrive(id))).catch(() => {});
+    // Sequenziell ablegen: sonst legen parallele Requests mehrfach denselben Nutzerordner an.
+    if (decision === "approved") (async () => { for (const id of ids) { try { await syncToDrive(id); } catch {} } })();
     load();
   }
   const decide = (id, decision, reason) => decideMany([id], decision, reason);
