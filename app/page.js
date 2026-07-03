@@ -1971,6 +1971,22 @@ function Admin({ session }) {
     setDriveBusy(false);
     if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
   }
+  const [fxBusy, setFxBusy] = useState(false);
+  const [fxStatus, setFxStatus] = useState(null);
+  async function backfillFx() {
+    if (!window.confirm(t("Fehlende EUR-Kurse für Altbelege per EZB-Kurs (zum Belegdatum) nachtragen?"))) return;
+    setFxBusy(true); setFxStatus({ kind: "run", msg: t("Läuft … Kurse werden ermittelt und Beträge umgerechnet.") });
+    try {
+      const res = await fetch("/api/fx/backfill", { method: "POST", headers: auth });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || j.error) { setFxStatus({ kind: "err", msg: j.error || `HTTP ${res.status}` }); toast(j.error || t("Fehler"), "err"); return; }
+      const kind = j.remaining > 0 || j.failed > 0 ? "warn" : "ok";
+      const msg = j.total === 0 ? t("Alle Belege haben bereits EUR-Werte.") : t("Nachtrag abgeschlossen.");
+      setFxStatus({ kind, msg, stats: { updated: j.updated ?? 0, failed: j.failed ?? 0, remaining: j.remaining ?? 0 } });
+      toast(t("EUR-Kurse nachgetragen"));
+    } catch (e) { setFxStatus({ kind: "err", msg: String(e?.message || e) }); toast(t("Fehler"), "err"); }
+    finally { setFxBusy(false); }
+  }
   const [bfBusy, setBfBusy] = useState(false);
   const [bfStatus, setBfStatus] = useState(null);
   async function backfillOcr() {
