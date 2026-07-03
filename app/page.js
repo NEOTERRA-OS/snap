@@ -513,7 +513,7 @@ function Shell({ session }) {
         <div className="sb-grp">{t("Auswerten")}</div>
         {nav("dashboard", "barchart", "Auswertungen")}
         <button className="snav" onClick={() => setDelegModal(true)}><Icon name="user" size={18} /> <span>{t("Vertretungen")}</span></button>
-        {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("allreceipts", "layers", "Alle Belege")}{nav("admin", "user", "Admin")}</>}
+        {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("allreceipts", "layers", "Alle Belege")}{nav("activity", "clock", "Aktivität")}{nav("admin", "user", "Admin")}</>}
         <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
         <div className="sb-user">
@@ -558,6 +558,7 @@ function Shell({ session }) {
               : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} />
               : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
+              : view === "activity" ? <ActivityLog />
               : view === "admin" ? <Admin session={session} />
               : <Dashboard onOpen={setDetail} />}
           </div>
