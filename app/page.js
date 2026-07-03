@@ -891,10 +891,6 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
             </select>
           </div>
         )}
-        <label className="btn ghost csv" style={{ cursor: "pointer" }}>
-          <Icon name="plus" size={15} /> {t("Mehr hinzufügen")}
-          <input type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
-        </label>
       </div>
       {items.map((it) => (
         <div className="card bcard" key={it.id}>
@@ -969,6 +965,10 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
         </div>
       ))}
       {err && <div className="err">{err}</div>}
+      <label className="btn ghost" style={{ cursor: "pointer", marginBottom: 10 }}>
+        <Icon name="plus" size={15} /> {t("Weiteren Beleg hinzufügen")}
+        <input type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
+      </label>
       <div className="submitrow">
         {draftFirst ? (<>
           <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("draft")}>
