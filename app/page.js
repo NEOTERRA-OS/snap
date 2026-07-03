@@ -35,7 +35,13 @@ async function loadCats(force) {
   if (data && data.length) _rebuild(data);
 }
 function catInfo(key) { return _catsMap[key] || _catsMap.other || { label: "Sonstiges", icon: "receipt" }; }
-function catOpts() { return _catsArr.filter((c) => c.active); }
+function catOpts() {
+  return _catsArr.filter((c) => c.active).slice().sort((a, b) => {
+    if (a.key === "other") return 1;            // Sammelkategorie „Sonstiges" ans Ende
+    if (b.key === "other") return -1;
+    return (a.label || "").localeCompare(b.label || "", "de", { sensitivity: "base" });
+  });
+}
 function useCats() {
   const [, force] = useState(0);
   useEffect(() => {
