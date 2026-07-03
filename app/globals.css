@@ -553,6 +553,9 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .installcard-no{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 auto;border-radius:8px;background:rgba(44,60,43,.08);color:var(--green)}
 [data-theme="dark"] .installcard-no{background:#ffffff12}
 
+.nethint{display:block;margin-top:6px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.nethint b{color:var(--ink);font-weight:700}
+
 /* ===== Icon-Auswahl (Kategorien) ===== */
 .iconpick{display:flex;flex-wrap:wrap;gap:7px}
 .iconpick-b{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--muted);cursor:pointer}
