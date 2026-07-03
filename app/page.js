@@ -1815,6 +1815,53 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
 
 const ROLE_LABELS = { employee: "Mitarbeiter", approver: "Genehmiger", accounting: "Buchhaltung", admin: "Administrator" };
 
+const ACT_LABEL = {
+  "receipt.created": "Beleg erfasst", "receipt.submitted": "Beleg eingereicht", "receipt.approved": "Beleg freigegeben",
+  "receipt.rejected": "Beleg abgelehnt", "receipt.booked": "Beleg gebucht", "receipt.withdrawn": "Einreichung zurückgezogen",
+  "receipt.edited": "Beleg bearbeitet", "receipt.deleted": "Beleg gelöscht", "receipt.status": "Status geändert",
+};
+const ACT_ICON = { "receipt.created": "plus", "receipt.submitted": "arrowright", "receipt.approved": "check", "receipt.rejected": "x", "receipt.booked": "link", "receipt.edited": "pencil", "receipt.deleted": "trash", "receipt.withdrawn": "chevronleft" };
+const dtLong = (s) => (s ? new Date(s).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—");
+
+// Aktivitätsprotokoll — eigene Seite, nur für Admins (RLS auf activity_log).
+function ActivityLog() {
+  const { t } = useT();
+  const [activity, setActivity] = useState(null);
+  const [actNames, setActNames] = useState({});
+  const [actLimit, setActLimit] = useState(100);
+  const loadActivity = useCallback(() => {
+    supabase.from("activity_log").select("id,created_at,actor_id,action,entity_id,summary").order("created_at", { ascending: false }).limit(actLimit)
+      .then(({ data }) => setActivity(data || []));
+    supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setActNames(m); });
+  }, [actLimit]);
+  useEffect(() => { loadActivity(); }, [loadActivity]);
+  return (
+    <>
+      <h1 className="title">{t("Aktivitätsprotokoll")}</h1>
+      <p className="lead">{t("Wer hat wann was gemacht — nur für Administratoren sichtbar.")}</p>
+      <div className="card">
+        {activity === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div>
+          : activity.length === 0 ? <p className="hint">{t("Noch keine Aktivität aufgezeichnet.")}</p> : (
+          <div className="actfeed">
+            {activity.map((a) => (
+              <div className="actrow" key={a.id}>
+                <span className={"actic a-" + (a.action || "").replace(/\./g, "-")}><Icon name={ACT_ICON[a.action] || "receipt"} size={13} /></span>
+                <div className="actmain">
+                  <div className="actline"><b>{actNames[a.actor_id] || t("System")}</b> · {t(ACT_LABEL[a.action] || a.action)}{a.summary ? <span className="mut"> · {a.summary}</span> : ""}</div>
+                  <div className="acttime num">{dtLong(a.created_at)}</div>
+                </div>
+              </div>
+            ))}
+            {activity.length >= actLimit && (
+              <button type="button" className="linkbtn" style={{ marginTop: 8 }} onClick={() => setActLimit((l) => l + 100)}><Icon name="arrowdown" size={13} /> {t("Mehr laden")}</button>
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 function Admin({ session }) {
   const { t } = useT();
   const [users, setUsers] = useState(null);
