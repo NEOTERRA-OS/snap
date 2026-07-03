@@ -745,7 +745,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
       preview: file.type.startsWith("image/") ? URL.createObjectURL(file) : null,
       filePath: null, file_hash: null, file_size: null, merchant: "", doc_date: new Date().toISOString().slice(0, 10),
       gross: null, currency: "EUR", vat_rate: null, category: "other",
-      payment_method: "company_card", cost_center_id: "", confidence: null,
+      payment_method: "private", cost_center_id: "", confidence: null,
       occasion: "", attendees: "", duplicate_of: null,
       source: file.type.includes("pdf") ? "upload" : "photo",
     }));
