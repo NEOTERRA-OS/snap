@@ -929,7 +929,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
               <div className="field"><label>{t("MwSt-Satz (%)")} {mb(it, "vat_rate")}</label><input type="number" step="0.1" min="0" value={it.vat_rate ?? ""} onChange={(e) => upd(it.id, { vat_rate: e.target.value === "" ? null : parseFloat(e.target.value) })} /></div>
               <div className="field"><label>{t("Kategorie")} {mb(it, "category")}</label>
                 <select value={it.category} onChange={(e) => upd(it.id, { category: e.target.value })}>
-                  {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}</select></div>
+                  {catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}</select></div>
               <div className="field"><label>{t("Kostenstelle / Projekt")} {mb(it, "cost_center_id")}</label>
                 <select value={it.cost_center_id} onChange={(e) => upd(it.id, { cost_center_id: e.target.value })}>
                   <option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select></div>
@@ -1293,7 +1293,7 @@ function Detail({ id, onBack }) {
             </div>
             <div className="field"><label>{t("Kategorie")}</label>
               <select value={ef.category} onChange={(e) => setF({ category: e.target.value })}>
-                {Object.entries(CATS).map(([k, c]) => <option key={k} value={k}>{t(c.label)}</option>)}
+                {catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}
               </select></div>
             <div className="field"><label>{t("Zahlart")}</label>
               <select value={ef.payment_method} onChange={(e) => setF({ payment_method: e.target.value })}>
@@ -1597,7 +1597,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
         </select>
         <select value={cat} onChange={(e) => setCat(e.target.value)}>
           <option value="">{t("Alle Kategorien")}</option>
-          {Object.entries(CATS).map(([k, v]) => <option key={k} value={k}>{t(v.label)}</option>)}
+          {catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}
         </select>
         <select value={emp} onChange={(e) => setEmp(e.target.value)}>
           <option value="">{t("Alle Mitarbeiter")}</option>
