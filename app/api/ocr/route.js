@@ -85,7 +85,8 @@ export async function POST(req) {
       vat_rate: num(parsed.vat_rate) ?? 19,
       vat_amount: num(parsed.vat_amount),
       currency: normCur(parsed.currency),
-      invoice_no: parsed.invoice_no || null,
+      invoice_no: (parsed.invoice_no || "").toString().trim() || null,
+      cui: (parsed.cui || "").toString().trim() || null,
       category: CATS.includes(parsed.category) ? parsed.category : "other",
       confidence: num(parsed.confidence) ?? 80,
     };
