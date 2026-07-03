@@ -1966,22 +1966,25 @@ function Admin({ session }) {
   async function backfillOcr() {
     if (!window.confirm(t("Fehlende Rechnungsnummern & CUI per OCR aus den bereits abgelegten Belegen nachtragen? (Läuft in mehreren Durchgängen.)"))) return;
     setBfBusy(true);
-    let updated = 0, cui = 0, errs = 0, remaining = null, rounds = 0;
+    let grand = null, updated = 0, cui = 0, errs = 0, remaining = null, rounds = 0;
     try {
       // In Runden aufrufen, bis nichts mehr offen ist (Timeout-sicher).
       // eslint-disable-next-line no-constant-condition
       while (true) {
         rounds++;
-        setBfStatus({ kind: "run", msg: `${t("Läuft … OCR-Nachtrag")}${remaining != null ? ` · ${remaining} ${t("offen")}` : ""}`, stats: { updated, cui, errs } });
         const res = await fetch("/api/drive/backfill", { method: "POST", headers: { ...auth, "content-type": "application/json" }, body: JSON.stringify({ limit: 6 }) });
         const j = await res.json().catch(() => ({}));
-        if (!res.ok || j.error) { setBfStatus({ kind: "err", msg: j.error || `HTTP ${res.status}`, stats: { updated, cui, errs } }); toast(j.error || t("Fehler"), "err"); return; }
+        if (!res.ok || j.error) { setBfStatus({ kind: "err", msg: j.error || `HTTP ${res.status}`, total: grand || 0, done: grand ? grand - (remaining ?? 0) : 0, pct: 0, stats: { updated, cui, errs } }); toast(j.error || t("Fehler"), "err"); return; }
+        if (grand == null) grand = j.total || 0;
         updated += j.updated || 0; cui += j.cuiAdded || 0; errs += j.errors || 0; remaining = j.remaining ?? 0;
-        if (!j.processed || remaining <= 0 || rounds > 30) break;
+        const done = Math.max(0, grand - remaining);
+        const pct = grand > 0 ? Math.min(100, Math.round((done / grand) * 100)) : 100;
+        setBfStatus({ kind: "run", msg: grand === 0 ? t("Keine offenen Belege — nichts nachzutragen.") : `${t("Lese Belege per OCR …")} ${done}/${grand}`, total: grand, done, pct, stats: { updated, cui, errs } });
+        if (!j.processed || remaining <= 0 || rounds > 60) break;
       }
-      setBfStatus({ kind: errs > 0 ? "warn" : "ok", msg: t("Nachtrag abgeschlossen."), stats: { updated, cui, errs, remaining } });
-      toast(t("Rechnungsnummern nachgetragen"));
-    } catch (e) { setBfStatus({ kind: "err", msg: String(e?.message || e), stats: { updated, cui, errs } }); toast(t("Fehler"), "err"); }
+      setBfStatus({ kind: errs > 0 ? "warn" : "ok", msg: grand === 0 ? t("Keine offenen Belege — nichts nachzutragen.") : t("Nachtrag abgeschlossen."), total: grand || 0, done: grand || 0, pct: 100, stats: { updated, cui, errs, remaining } });
+      if (grand > 0) toast(t("Rechnungsnummern nachgetragen"));
+    } catch (e) { setBfStatus({ kind: "err", msg: String(e?.message || e), pct: 0, stats: { updated, cui, errs } }); toast(t("Fehler"), "err"); }
     finally { setBfBusy(false); }
   }
   const [reorgBusy, setReorgBusy] = useState(false);
