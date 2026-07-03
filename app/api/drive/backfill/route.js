@@ -40,9 +40,12 @@ export async function POST(req) {
   const body = await req.json().catch(() => ({}));
   const limit = Math.min(Math.max(Number(body.limit) || 6, 1), 10);
 
-  const { data: rows } = await s.from("receipts")
-    .select("id,file_path,merchant_cui,invoice_no,source")
-    .is("invoice_no", null).not("file_path", "is", null).neq("source", "cash")
+  const pending = (qb) => qb.eq("ocr_backfilled", false).not("file_path", "is", null).neq("source", "cash");
+
+  // Gesamtzahl offener Belege (für Fortschrittsanzeige).
+  const { count: totalOpen } = await pending(s.from("receipts").select("id", { count: "exact", head: true }));
+
+  const { data: rows } = await pending(s.from("receipts").select("id,file_path,merchant_cui,invoice_no,source"))
     .order("created_at", { ascending: true }).limit(limit);
 
   let processed = 0, updated = 0, cuiAdded = 0, errors = 0;
@@ -50,29 +53,28 @@ export async function POST(req) {
     processed++;
     try {
       const dl = await s.storage.from("receipts").download(r.file_path);
-      if (dl.error) { errors++; continue; }
-      const buf = Buffer.from(await dl.data.arrayBuffer());
-      const b64 = buf.toString("base64");
-      const ocrRes = await fetch(new URL("/api/ocr", req.url), {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ data: b64, mediaType: mimeFromPath(r.file_path), filename: r.file_path.split("/").pop() }),
-      });
-      const oj = await ocrRes.json().catch(() => ({}));
-      const f = oj.fields || {};
-      const patch = {};
-      if (f.invoice_no && String(f.invoice_no).trim()) patch.invoice_no = String(f.invoice_no).trim();
-      if (!r.merchant_cui && f.cui && String(f.cui).trim()) patch.merchant_cui = String(f.cui).trim();
-      if (Object.keys(patch).length) {
-        const { error } = await s.from("receipts").update(patch).eq("id", r.id);
-        if (error) { errors++; continue; }
-        if (patch.invoice_no) updated++;
-        if (patch.merchant_cui) cuiAdded++;
-      }
+      // Immer als „versucht" markieren, damit derselbe Beleg nicht endlos neu geprüft wird.
+      const patch = { ocr_backfilled: true };
+      if (!dl.error) {
+        const buf = Buffer.from(await dl.data.arrayBuffer());
+        const b64 = buf.toString("base64");
+        const ocrRes = await fetch(new URL("/api/ocr", req.url), {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ data: b64, mediaType: mimeFromPath(r.file_path), filename: r.file_path.split("/").pop() }),
+        });
+        const oj = await ocrRes.json().catch(() => ({}));
+        const f = oj.fields || {};
+        if (f.invoice_no && String(f.invoice_no).trim()) patch.invoice_no = String(f.invoice_no).trim();
+        if (!r.merchant_cui && f.cui && String(f.cui).trim()) patch.merchant_cui = String(f.cui).trim();
+      } else { errors++; }
+      const { error } = await s.from("receipts").update(patch).eq("id", r.id);
+      if (error) { errors++; continue; }
+      if (patch.invoice_no) updated++;
+      if (patch.merchant_cui) cuiAdded++;
     } catch { errors++; }
   }
 
-  const { count: remaining } = await s.from("receipts").select("id", { count: "exact", head: true })
-    .is("invoice_no", null).not("file_path", "is", null).neq("source", "cash");
+  const { count: remaining } = await pending(s.from("receipts").select("id", { count: "exact", head: true }));
 
-  return NextResponse.json({ ok: true, processed, updated, cuiAdded, errors, remaining: remaining ?? 0 });
+  return NextResponse.json({ ok: true, processed, updated, cuiAdded, errors, remaining: remaining ?? 0, total: totalOpen ?? 0 });
 }
