@@ -1128,7 +1128,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
               <input type="checkbox" className="lcard-chk" checked={sel.has(r.id)} onChange={(e) => toggleSel(r.id, e)} onClick={(e) => e.stopPropagation()} aria-label={t("Auswählen")} />
               <div className="lthumb"><Icon name={r.source === "cash" ? "banknote" : catInfo(r.category).icon} size={19} /></div>
               <div className="meta"><div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}{flagged(r) && <Icon name="alert" size={12} className="flagdot" />}</div>
-                <div className="d">{dShort(r.doc_date)} · {t(catInfo(r.category).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
+                <div className="d">{dShort(r.doc_date)} · {t(catInfo(r.category).label)}{allScope && <span className="mut"> · {names[r.user_id] || "—"}</span>}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
                 <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{t(STATUS[r.status])}</span></div>
               <div className="amt mono">{money(r.gross, r.currency)}</div>
             </div>
