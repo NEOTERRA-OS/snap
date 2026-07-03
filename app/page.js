@@ -2041,6 +2041,11 @@ function Admin({ session }) {
           </div>
         )}
         <button type="button" className="btn" disabled={driveBusy} onClick={saveDrive} style={{ width: "auto", padding: "11px 18px" }}>{driveBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
+        <div style={{ borderTop: "1px solid var(--line2)", margin: "16px 0 12px", paddingTop: 14 }}>
+          <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{t("Ablage aufräumen")}</label>
+          <p className="hint" style={{ margin: "0 0 10px" }}>{t("Sortiert alle abgelegten Belege in Nachname_Vorname/JJJJ-MM, benennt sie im NEOS-Index-Schema um und verschiebt fälschlich angelegte, leere Ordner in den Papierkorb (wiederherstellbar).")}</p>
+          <button type="button" className="btn ghost" disabled={reorgBusy} onClick={reorganizeDrive} style={{ width: "auto", padding: "11px 18px" }}>{reorgBusy ? <span className="spin" /> : <Icon name="refresh" size={15} />} {t("Jetzt aufräumen & umbenennen")}</button>
+        </div>
       </div>
 
       <div className="card">
