@@ -147,20 +147,22 @@ export async function POST(req) {
 
   // Leere Fehlordner direkt unter der Inbox in den Papierkorb (reversibel).
   let trashed = 0;
+  let foldersSeen = 0, skippedNonEmpty = 0, trashErrors = 0, sampleTrashError = null;
   try {
     const canonSet = new Set(canonical.values());
     const q = encodeURIComponent(`'${inbox}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
     const list = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=1000&${DRIVE_Q}`, { headers: { authorization: `Bearer ${token}` } })).json();
     for (const f of list.files || []) {
       if (canonSet.has(f.id)) continue;
+      foldersSeen++;
       const cq = encodeURIComponent(`'${f.id}' in parents and trashed=false`);
       const kids = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${cq}&fields=files(id)&pageSize=1&${DRIVE_Q}`, { headers: { authorization: `Bearer ${token}` } })).json();
       if ((kids.files || []).length === 0) {
         const tr = await (await fetch(`https://www.googleapis.com/drive/v3/files/${f.id}?supportsAllDrives=true`, { method: "PATCH", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ trashed: true }) })).json();
-        if (!tr.error) trashed++;
-      }
+        if (!tr.error) { trashed++; } else { trashErrors++; if (!sampleTrashError) sampleTrashError = tr.error.message || String(tr.error); }
+      } else { skippedNonEmpty++; }
     }
-  } catch {}
+  } catch (e) { if (!sampleTrashError) sampleTrashError = String(e?.message || e); }
 
-  return NextResponse.json({ ok: true, moved, renamed, trashed, errors, total: (receipts || []).length });
+  return NextResponse.json({ ok: true, moved, renamed, trashed, errors, total: (receipts || []).length, foldersSeen, skippedNonEmpty, trashErrors, sampleTrashError });
 }
