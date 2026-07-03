@@ -105,9 +105,16 @@ export async function POST(req) {
     const { data: prof } = await s.from("profiles").select("full_name,drive_folder_id").eq("id", r.user_id).single();
     let email = "";
     try { const { data: gu } = await s.auth.admin.getUserById(r.user_id); email = gu?.user?.email || ""; } catch {}
-    const folderName = (prof?.full_name || email || r.user_id).toString();
-    const folderId = await ensureUserFolder(token, folderName, prof?.drive_folder_id, s, r.user_id, inbox);
-    if (!folderId) throw new Error("Inbox-Ordner konnte nicht angelegt werden");
+    // 1) Hauptordner je Mitarbeiter (aus Cache oder per Suche/Anlage), ID am Profil merken.
+    let userFolderId = prof?.drive_folder_id;
+    if (!userFolderId) {
+      userFolderId = await ensureFolder(token, userFolderName(prof?.full_name, email, r.user_id), inbox);
+      if (userFolderId) await s.from("profiles").update({ drive_folder_id: userFolderId }).eq("id", r.user_id);
+    }
+    if (!userFolderId) throw new Error("Nutzerordner konnte nicht angelegt werden");
+    // 2) Monats-Unterordner nach Belegdatum.
+    const folderId = await ensureFolder(token, monthFolderName(r.doc_date), userFolderId);
+    if (!folderId) throw new Error("Monatsordner konnte nicht angelegt werden");
 
     const dl = await s.storage.from("receipts").download(r.file_path);
     if (dl.error) throw new Error("Download: " + dl.error.message);
