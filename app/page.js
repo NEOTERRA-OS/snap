@@ -1826,6 +1826,17 @@ function Admin({ session }) {
   }, [token]);
   useEffect(() => { load(); }, [load]);
 
+  // ---- Aktivitätsprotokoll (nur Admin via RLS) ----
+  const [activity, setActivity] = useState(null);
+  const [actNames, setActNames] = useState({});
+  const [actLimit, setActLimit] = useState(50);
+  const loadActivity = useCallback(() => {
+    supabase.from("activity_log").select("id,created_at,actor_id,action,entity_id,summary").order("created_at", { ascending: false }).limit(actLimit)
+      .then(({ data }) => setActivity(data || []));
+    supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setActNames(m); });
+  }, [actLimit]);
+  useEffect(() => { loadActivity(); }, [loadActivity]);
+
   // ---- Kostenstellen ----
   const [ccList, setCcList] = useState(null);
   const [ccForm, setCcForm] = useState({ code: "", name: "" });
