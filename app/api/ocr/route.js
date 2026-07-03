@@ -26,7 +26,8 @@ const PROMPT = `Du bist ein Beleg-/Rechnungs-Extraktor. Lies den beigefügten Be
  "vat_rate": number,            // MwSt-Satz in Prozent (z. B. 19, 7, 0)
  "vat_amount": number|null,     // MwSt-Betrag falls erkennbar
  "currency": string,            // ISO-Code: meist "EUR", "USD" oder "RON" (rumänische Lei = RON)
- "invoice_no": string|null,     // Beleg-/Rechnungsnummer
+ "invoice_no": string|null,     // Beleg-/Rechnungsnummer (z. B. "FACT 2026-00123", "Nr. 4210")
+ "cui": string|null,            // rumänischer Cod Fiscal / CUI des Händlers (z. B. "RO12345678"); nur die Kennung, ohne Label
  "category": "fuel|travel|hospitality|it|lodging|office|other",
  "confidence": number           // 0-100, deine Gesamtsicherheit
 }
