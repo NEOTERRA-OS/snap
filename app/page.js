@@ -2023,6 +2023,12 @@ function Admin({ session }) {
         <div className="field"><label>{t("Inbox-Ordner-ID (Shared Drive)")}</label>
           <input value={drive} onChange={(e) => setDrive(e.target.value)} placeholder="z. B. 1Sx7gRp7-…" className="mono" /></div>
         <p className="hint" style={{ margin: "2px 0 12px" }}>{t("ID aus der Drive-URL …/folders/<ID>. Pro Mitarbeiter wird darunter automatisch ein Unterordner angelegt. Das verbundene Google-Konto muss Zugriff auf den Ordner haben.")}</p>
+        {drive.trim() && (
+          <div className="kv" style={{ marginBottom: 12 }}>
+            <span className="k">{t("Belegordner")}</span>
+            <span className="v"><a className="linkbtn" style={{ color: "var(--green)" }} href={`https://drive.google.com/drive/folders/${drive.trim()}`} target="_blank" rel="noreferrer"><Icon name="link" size={13} /> {t("In Google Drive öffnen")}</a></span>
+          </div>
+        )}
         <button type="button" className="btn" disabled={driveBusy} onClick={saveDrive} style={{ width: "auto", padding: "11px 18px" }}>{driveBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
       </div>
 
