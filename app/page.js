@@ -1836,6 +1836,13 @@ function Admin({ session }) {
     supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setActNames(m); });
   }, [actLimit]);
   useEffect(() => { loadActivity(); }, [loadActivity]);
+  const ACT_LABEL = {
+    "receipt.created": "Beleg erfasst", "receipt.submitted": "Beleg eingereicht", "receipt.approved": "Beleg freigegeben",
+    "receipt.rejected": "Beleg abgelehnt", "receipt.booked": "Beleg gebucht", "receipt.withdrawn": "Einreichung zurückgezogen",
+    "receipt.edited": "Beleg bearbeitet", "receipt.deleted": "Beleg gelöscht", "receipt.status": "Status geändert",
+  };
+  const ACT_ICON = { "receipt.created": "plus", "receipt.submitted": "arrowright", "receipt.approved": "check", "receipt.rejected": "x", "receipt.booked": "link", "receipt.edited": "pencil", "receipt.deleted": "trash", "receipt.withdrawn": "chevronleft" };
+  const dtLong = (s) => (s ? new Date(s).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—");
 
   // ---- Kostenstellen ----
   const [ccList, setCcList] = useState(null);
