@@ -1054,7 +1054,8 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
       <h1 className="title">{t("Meine Belege")}</h1>
       <div className="kpis" style={{ marginTop: 18 }}>
         <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n mono">{open.length}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n mono">{eur(openSum)}</div></div>
+        <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n mono">{eur(openSum)}</div>
+          <div className="ksub">{openUnconverted > 0 ? `${t("in EUR umgerechnet")} · ${openUnconverted} ${t("ohne Kurs")}` : t("in EUR umgerechnet")}</div></div>
       </div>
 
       <div className="filterbox">
