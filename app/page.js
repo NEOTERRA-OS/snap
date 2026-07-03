@@ -715,7 +715,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
   }
   async function enrichImported(it) {
     try { const dup = await findDuplicate(null, it.merchant, it.doc_date, it.gross); if (dup) upd(it.id, { duplicate_of: dup }); } catch {}
-    try { const mem = await loadVendorMemory(it.merchant); if (mem) { const p = {}; const m = {}; if (!it.cost_center_id && mem.cost_center_id) { p.cost_center_id = mem.cost_center_id; m.cost_center_id = true; } if (mem.payment_method && it.payment_method === "company_card") { p.payment_method = mem.payment_method; m.payment_method = true; } if (!it.merchant_cui && mem.merchant_cui) { p.merchant_cui = mem.merchant_cui; m.merchant_cui = true; } if (Object.keys(m).length) { p.mem = m; upd(it.id, p); } } } catch {}
+    try { const mem = await loadVendorMemory(it.merchant); if (mem) { const p = {}; const m = {}; if (!it.cost_center_id && mem.cost_center_id) { p.cost_center_id = mem.cost_center_id; m.cost_center_id = true; } if (mem.payment_method && mem.payment_method !== it.payment_method) { p.payment_method = mem.payment_method; m.payment_method = true; } if (!it.merchant_cui && mem.merchant_cui) { p.merchant_cui = mem.merchant_cui; m.merchant_cui = true; } if (Object.keys(m).length) { p.mem = m; upd(it.id, p); } } } catch {}
   }
   async function onImport(e) {
     const file = e.target.files?.[0]; e.target.value = "";
