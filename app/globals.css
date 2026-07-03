@@ -540,6 +540,13 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .installcard-no{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 auto;border-radius:8px;background:rgba(44,60,43,.08);color:var(--green)}
 [data-theme="dark"] .installcard-no{background:#ffffff12}
 
+/* ===== Icon-Auswahl (Kategorien) ===== */
+.iconpick{display:flex;flex-wrap:wrap;gap:7px}
+.iconpick-b{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--muted);cursor:pointer}
+.iconpick-b:hover{color:var(--ink);border-color:var(--muted2)}
+.iconpick-b.on{border-color:var(--green);color:var(--green);background:rgba(44,60,43,.06)}
+[data-theme="dark"] .iconpick-b.on{border-color:var(--emerald);color:var(--emerald);background:#ffffff10}
+
 /* ===== Beleg bearbeiten ===== */
 .detail-editrow{display:flex;justify-content:flex-end;margin-bottom:2px}
 .edit-cta{color:var(--green);font-weight:600;font-size:12px}

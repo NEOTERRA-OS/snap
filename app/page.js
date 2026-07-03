@@ -2008,6 +2008,62 @@ function Admin({ session }) {
       </div>
 
       <div className="card">
+        <div className="pw"><Icon name="layers" /> {t("Kategorien")}</div>
+        <form onSubmit={addCat}>
+          <div className="field"><label>{t("Bezeichnung")}</label>
+            <input value={catForm.label} onChange={(e) => setCatForm({ ...catForm, label: e.target.value })} placeholder={t("z. B. Marketing")} required /></div>
+          <div className="field"><label>{t("Icon")}</label>
+            <div className="iconpick">
+              {CAT_ICONS.map((ic) => (
+                <button type="button" key={ic} className={"iconpick-b" + (catForm.icon === ic ? " on" : "")} onClick={() => setCatForm({ ...catForm, icon: ic })} title={ic} aria-label={ic}><Icon name={ic} size={18} /></button>
+              ))}
+            </div>
+          </div>
+          <button className="btn" disabled={catBusy} style={{ width: "auto", padding: "11px 18px" }}>{catBusy ? <span className="spin" /> : <Icon name="plus" size={15} />} {t("Anlegen")}</button>
+        </form>
+        {catAdmin === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div> : (
+          <table className="utable" style={{ marginTop: 14 }}>
+            <thead><tr><th style={{ width: 44 }} aria-label={t("Icon")} /><th>{t("Bezeichnung")}</th><th>{t("Status")}</th><th aria-label={t("Aktionen")} /></tr></thead>
+            <tbody>
+              {catAdmin.map((c) => {
+                const editing = catEdit?.id === c.id;
+                return (
+                <tr key={c.id} style={c.active ? undefined : { opacity: 0.5 }}>
+                  {editing ? (
+                    <>
+                      <td><Icon name={catEdit.icon} size={18} /></td>
+                      <td><input value={catEdit.label} onChange={(e) => setCatEdit({ ...catEdit, label: e.target.value })} style={{ padding: "7px 9px" }} />
+                        <div className="iconpick" style={{ marginTop: 8 }}>
+                          {CAT_ICONS.map((ic) => (
+                            <button type="button" key={ic} className={"iconpick-b" + (catEdit.icon === ic ? " on" : "")} onClick={() => setCatEdit({ ...catEdit, icon: ic })} title={ic}><Icon name={ic} size={16} /></button>
+                          ))}
+                        </div>
+                      </td>
+                      <td><button type="button" className="fchip" onClick={() => toggleCat(c)}>{c.active ? t("Aktiv") : t("Inaktiv")}</button></td>
+                      <td style={{ textAlign: "right", whiteSpace: "nowrap", width: 80 }}>
+                        <button type="button" className="brem" onClick={saveCatEdit} title={t("Speichern")} style={{ marginRight: 6, color: "var(--green)" }}><Icon name="check" size={15} /></button>
+                        <button type="button" className="brem" onClick={() => setCatEdit(null)} title={t("Abbrechen")}><Icon name="x" size={15} /></button>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td><Icon name={c.icon || "receipt"} size={18} /></td>
+                      <td>{t(c.label)}</td>
+                      <td><button type="button" className="fchip" onClick={() => toggleCat(c)} title={t("Status umschalten")}>{c.active ? t("Aktiv") : t("Inaktiv")}</button></td>
+                      <td style={{ textAlign: "right", whiteSpace: "nowrap", width: 80 }}>
+                        <button type="button" className="brem" onClick={() => setCatEdit({ id: c.id, label: c.label || "", icon: c.icon || "receipt" })} title={t("Bearbeiten")} style={{ marginRight: 6 }}><Icon name="pencil" size={15} /></button>
+                        {c.key !== "other" && <button type="button" className="brem" onClick={() => delCat(c)} title={t("Löschen")}><Icon name="trash" size={15} /></button>}
+                      </td>
+                    </>
+                  )}
+                </tr>
+              );})}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="card">
         <div className="pw"><Icon name="user" /> {t("Nutzer")} {users ? `(${users.length})` : ""}</div>
         {!users ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div> : (
           <table className="utable">
