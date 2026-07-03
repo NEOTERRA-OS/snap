@@ -553,6 +553,20 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .installcard-no{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 auto;border-radius:8px;background:rgba(44,60,43,.08);color:var(--green)}
 [data-theme="dark"] .installcard-no{background:#ffffff12}
 
+/* Aktivitätsprotokoll */
+.actfeed{display:flex;flex-direction:column}
+.actrow{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--line2)}
+.actrow:first-child{border-top:0}
+.actic{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--line2);color:var(--muted)}
+.actic.a-receipt-created{background:rgba(44,60,43,.09);color:var(--green)}
+.actic.a-receipt-approved,.actic.a-receipt-booked{background:var(--emerald-bg,#eefaf3);color:#1f9d57}
+.actic.a-receipt-rejected,.actic.a-receipt-deleted{background:#fdecec;color:#c0392b}
+.actic.a-receipt-submitted{background:#eef3fb;color:#2f6fb0}
+[data-theme="dark"] .actic{background:#ffffff10}
+.actmain{min-width:0;flex:1}
+.actline{font-size:13px;color:var(--ink);line-height:1.35}
+.acttime{font-size:11px;color:var(--muted2);margin-top:1px}
+
 /* Aufräum-Status */
 .reorg-status{border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;background:var(--surface)}
 .reorg-status.ok{border-color:var(--emerald-bd,#bfe6d4);background:var(--emerald-bg,#f0faf4)}
