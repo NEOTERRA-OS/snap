@@ -2089,7 +2089,7 @@ function Admin({ session }) {
         <button type="button" className="btn" disabled={driveBusy} onClick={saveDrive} style={{ width: "auto", padding: "11px 18px" }}>{driveBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
         <div style={{ borderTop: "1px solid var(--line2)", margin: "16px 0 12px", paddingTop: 14 }}>
           <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{t("Rechnungsnummern nachtragen (OCR)")}</label>
-          <p className="hint" style={{ margin: "0 0 10px" }}>{t("Liest Rechnungsnummer & CUI per OCR aus bereits abgelegten Belegen aus und speichert sie. Danach „Aufräumen & umbenennen" ausführen, damit die Nummer in den Dateinamen kommt.")}</p>
+          <p className="hint" style={{ margin: "0 0 10px" }}>{t("Liest Rechnungsnummer & CUI per OCR aus bereits abgelegten Belegen aus und speichert sie. Danach „Aufräumen & umbenennen“ ausführen, damit die Nummer in den Dateinamen kommt.")}</p>
           <button type="button" className="btn ghost" disabled={bfBusy} onClick={backfillOcr} style={{ width: "auto", padding: "11px 18px" }}>{bfBusy ? <span className="spin" /> : <Icon name="sparkles" size={15} />} {t("Jetzt nachtragen")}</button>
           {bfStatus && (
             <div className={"reorg-status " + bfStatus.kind} style={{ marginTop: 12 }}>
