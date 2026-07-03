@@ -1973,7 +1973,10 @@ function Admin({ session }) {
       const j = await res.json().catch(() => ({}));
       if (!res.ok || j.error) { setReorgStatus({ kind: "err", msg: j.error || `HTTP ${res.status}` }); toast(j.error || t("Fehler"), "err"); return; }
       const secs = Math.round((Date.now() - started) / 1000);
-      setReorgStatus({ kind: "ok", msg: t("Erfolgreich abgeschlossen."), stats: { total: j.total ?? 0, moved: j.moved ?? 0, renamed: j.renamed ?? 0, trashed: j.trashed ?? 0, errors: j.errors ?? 0, secs } });
+      const note = j.trashErrors > 0 ? `${t("Papierkorb-Fehler")}: ${j.sampleTrashError || ""}`
+        : j.skippedNonEmpty > 0 ? t("Einige Ordner sind noch nicht leer — bitte erneut ausführen.")
+        : null;
+      setReorgStatus({ kind: note ? "warn" : "ok", msg: note || t("Erfolgreich abgeschlossen."), stats: { total: j.total ?? 0, moved: j.moved ?? 0, renamed: j.renamed ?? 0, trashed: j.trashed ?? 0, skippedNonEmpty: j.skippedNonEmpty ?? 0, errors: j.errors ?? 0, secs } });
       toast(t("Ablage aufgeräumt"));
     } catch (e) {
       setReorgStatus({ kind: "err", msg: String(e?.message || e) });
