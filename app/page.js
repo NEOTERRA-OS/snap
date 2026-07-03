@@ -1962,14 +1962,23 @@ function Admin({ session }) {
     if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
   }
   const [reorgBusy, setReorgBusy] = useState(false);
+  const [reorgStatus, setReorgStatus] = useState(null); // { kind: "run"|"ok"|"err", msg, stats }
   async function reorganizeDrive() {
     if (!window.confirm(t("Alle abgelegten Belege in Nachname_Vorname/JJJJ-MM einsortieren, im Index-Schema umbenennen und leere Fehlordner in den Papierkorb verschieben?"))) return;
     setReorgBusy(true);
-    const res = await fetch("/api/drive/reorganize", { method: "POST", headers: auth });
-    const j = await res.json().catch(() => ({}));
-    setReorgBusy(false);
-    if (j.error) { toast(j.error, "err"); return; }
-    toast(`${t("Fertig")}: ${j.moved} ${t("verschoben")} · ${j.renamed} ${t("umbenannt")} · ${j.trashed} ${t("Ordner in Papierkorb")}${j.errors ? ` · ${j.errors} ${t("Fehler")}` : ""}`);
+    setReorgStatus({ kind: "run", msg: t("Läuft … Belege werden einsortiert, umbenannt und Fehlordner aufgeräumt.") });
+    const started = Date.now();
+    try {
+      const res = await fetch("/api/drive/reorganize", { method: "POST", headers: auth });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || j.error) { setReorgStatus({ kind: "err", msg: j.error || `HTTP ${res.status}` }); toast(j.error || t("Fehler"), "err"); return; }
+      const secs = Math.round((Date.now() - started) / 1000);
+      setReorgStatus({ kind: "ok", msg: t("Erfolgreich abgeschlossen."), stats: { total: j.total ?? 0, moved: j.moved ?? 0, renamed: j.renamed ?? 0, trashed: j.trashed ?? 0, errors: j.errors ?? 0, secs } });
+      toast(t("Ablage aufgeräumt"));
+    } catch (e) {
+      setReorgStatus({ kind: "err", msg: String(e?.message || e) });
+      toast(t("Fehler"), "err");
+    } finally { setReorgBusy(false); }
   }
 
   const [warnLimit, setWarnLimit] = useState("");
