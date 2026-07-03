@@ -2065,6 +2065,24 @@ function Admin({ session }) {
           <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{t("Ablage aufräumen")}</label>
           <p className="hint" style={{ margin: "0 0 10px" }}>{t("Sortiert alle abgelegten Belege in Nachname_Vorname/JJJJ-MM, benennt sie im NEOS-Index-Schema um und verschiebt fälschlich angelegte, leere Ordner in den Papierkorb (wiederherstellbar).")}</p>
           <button type="button" className="btn ghost" disabled={reorgBusy} onClick={reorganizeDrive} style={{ width: "auto", padding: "11px 18px" }}>{reorgBusy ? <span className="spin" /> : <Icon name="refresh" size={15} />} {t("Jetzt aufräumen & umbenennen")}</button>
+          {reorgStatus && (
+            <div className={"reorg-status " + reorgStatus.kind} style={{ marginTop: 12 }}>
+              <div className="reorg-head">
+                <Icon name={reorgStatus.kind === "ok" ? "checkcheck" : reorgStatus.kind === "err" ? "alert" : "refresh"} size={15} />
+                <span>{reorgStatus.msg}</span>
+              </div>
+              {reorgStatus.stats && (
+                <div className="reorg-stats">
+                  <span><b className="num">{reorgStatus.stats.total}</b> {t("Belege geprüft")}</span>
+                  <span><b className="num">{reorgStatus.stats.moved}</b> {t("verschoben")}</span>
+                  <span><b className="num">{reorgStatus.stats.renamed}</b> {t("umbenannt")}</span>
+                  <span><b className="num">{reorgStatus.stats.trashed}</b> {t("Ordner in Papierkorb")}</span>
+                  {reorgStatus.stats.errors > 0 && <span className="reorg-err"><b className="num">{reorgStatus.stats.errors}</b> {t("Fehler")}</span>}
+                  <span className="mut">· {reorgStatus.stats.secs}s</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

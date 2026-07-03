@@ -553,6 +553,18 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .installcard-no{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 auto;border-radius:8px;background:rgba(44,60,43,.08);color:var(--green)}
 [data-theme="dark"] .installcard-no{background:#ffffff12}
 
+/* Aufräum-Status */
+.reorg-status{border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;background:var(--surface)}
+.reorg-status.ok{border-color:var(--emerald-bd,#bfe6d4);background:var(--emerald-bg,#f0faf4)}
+.reorg-status.err{border-color:#f0c2c2;background:#fdf2f2}
+.reorg-status.run{border-color:var(--line);background:var(--line2)}
+.reorg-head{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ink)}
+.reorg-status.ok .reorg-head{color:#1f7a4d}
+.reorg-status.err .reorg-head{color:#b91c1c}
+.reorg-stats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;color:var(--muted);font-weight:600}
+.reorg-stats .num{color:var(--ink)}
+.reorg-stats .reorg-err .num,.reorg-stats .reorg-err{color:#b91c1c}
+
 .nethint{display:block;margin-top:6px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .nethint b{color:var(--ink);font-weight:700}
 
