@@ -2088,6 +2088,24 @@ function Admin({ session }) {
         )}
         <button type="button" className="btn" disabled={driveBusy} onClick={saveDrive} style={{ width: "auto", padding: "11px 18px" }}>{driveBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
         <div style={{ borderTop: "1px solid var(--line2)", margin: "16px 0 12px", paddingTop: 14 }}>
+          <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{t("Rechnungsnummern nachtragen (OCR)")}</label>
+          <p className="hint" style={{ margin: "0 0 10px" }}>{t("Liest Rechnungsnummer & CUI per OCR aus bereits abgelegten Belegen aus und speichert sie. Danach „Aufräumen & umbenennen" ausführen, damit die Nummer in den Dateinamen kommt.")}</p>
+          <button type="button" className="btn ghost" disabled={bfBusy} onClick={backfillOcr} style={{ width: "auto", padding: "11px 18px" }}>{bfBusy ? <span className="spin" /> : <Icon name="sparkles" size={15} />} {t("Jetzt nachtragen")}</button>
+          {bfStatus && (
+            <div className={"reorg-status " + bfStatus.kind} style={{ marginTop: 12 }}>
+              <div className="reorg-head"><Icon name={bfStatus.kind === "ok" ? "checkcheck" : bfStatus.kind === "err" ? "alert" : "sparkles"} size={15} /><span>{bfStatus.msg}</span></div>
+              {bfStatus.stats && (
+                <div className="reorg-stats">
+                  <span><b className="num">{bfStatus.stats.updated}</b> {t("Rechnungsnummern")}</span>
+                  <span><b className="num">{bfStatus.stats.cui}</b> CUI</span>
+                  {bfStatus.stats.errs > 0 && <span className="reorg-err"><b className="num">{bfStatus.stats.errs}</b> {t("Fehler")}</span>}
+                  {bfStatus.stats.remaining != null && bfStatus.stats.remaining > 0 && <span><b className="num">{bfStatus.stats.remaining}</b> {t("offen")}</span>}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div style={{ borderTop: "1px solid var(--line2)", margin: "16px 0 12px", paddingTop: 14 }}>
           <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "var(--ink)", marginBottom: 4 }}>{t("Ablage aufräumen")}</label>
           <p className="hint" style={{ margin: "0 0 10px" }}>{t("Sortiert alle abgelegten Belege in Nachname_Vorname/JJJJ-MM, benennt sie im NEOS-Index-Schema um und verschiebt fälschlich angelegte, leere Ordner in den Papierkorb (wiederherstellbar).")}</p>
           <button type="button" className="btn ghost" disabled={reorgBusy} onClick={reorganizeDrive} style={{ width: "auto", padding: "11px 18px" }}>{reorgBusy ? <span className="spin" /> : <Icon name="refresh" size={15} />} {t("Jetzt aufräumen & umbenennen")}</button>
