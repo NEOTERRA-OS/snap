@@ -65,7 +65,10 @@ export async function PATCH(req) {
   return NextResponse.json({ ok: true });
 }
 
-// Löschen, wenn ungenutzt; sonst deaktivieren (Belege behalten ihre Zuordnung).
+// Löschen. Wird die Kostenstelle noch von Belegen genutzt, fragt die App zunächst nach:
+//  - decision "reassign" + reassignTo: betroffene Belege auf andere Kostenstelle umbuchen, dann löschen
+//  - decision "clear": Kostenstellen-Zuordnung der Belege entfernen (Kategorie bleibt erhalten!), dann löschen
+// Ohne Entscheidung → { needsDecision, used } zurück, damit die App den Dialog zeigen kann.
 export async function DELETE(req) {
   const g = await requireAdmin(req);
   if (!g.ok) return NextResponse.json({ error: g.error }, { status: g.status });
@@ -73,11 +76,23 @@ export async function DELETE(req) {
   if (!body.id) return NextResponse.json({ error: "id fehlt" }, { status: 400 });
   const s = svc();
   const { count } = await s.from("receipts").select("id", { count: "exact", head: true }).eq("cost_center_id", body.id);
-  if ((count ?? 0) > 0) {
-    await s.from("cost_centers").update({ active: false }).eq("id", body.id);
-    return NextResponse.json({ ok: true, deactivated: true, used: count });
+  const used = count ?? 0;
+  const decision = body.decision; // "reassign" | "clear" | undefined
+  if (used > 0 && decision !== "reassign" && decision !== "clear") {
+    return NextResponse.json({ needsDecision: true, used });
+  }
+  if (used > 0) {
+    if (decision === "reassign") {
+      if (!body.reassignTo || body.reassignTo === body.id) return NextResponse.json({ error: "Ziel-Kostenstelle fehlt." }, { status: 400 });
+      // Nur die Kostenstelle wird umgebucht — Kategorie/Betrag/alles andere bleibt unberührt.
+      const { error: uerr } = await s.from("receipts").update({ cost_center_id: body.reassignTo }).eq("cost_center_id", body.id);
+      if (uerr) return NextResponse.json({ error: uerr.message }, { status: 400 });
+    } else {
+      const { error: uerr } = await s.from("receipts").update({ cost_center_id: null }).eq("cost_center_id", body.id);
+      if (uerr) return NextResponse.json({ error: uerr.message }, { status: 400 });
+    }
   }
   const { error } = await s.from("cost_centers").delete().eq("id", body.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ ok: true, deleted: true });
+  return NextResponse.json({ ok: true, deleted: true, reassigned: decision === "reassign" ? used : 0, cleared: decision === "clear" ? used : 0 });
 }
