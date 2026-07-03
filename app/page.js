@@ -13,6 +13,39 @@ const CATS = {
   office: { label: "Büromaterial", icon: "filetext" },
   other: { label: "Sonstiges", icon: "receipt" },
 };
+
+// Auswählbare Icons für Kategorien (müssen in components/Icon.js existieren).
+const CAT_ICONS = ["receipt", "fuel", "train", "utensils", "laptop", "bed", "filetext", "banknote", "wallet", "building", "parking", "layers", "mail", "key", "shield", "camera"];
+
+// Dynamischer Kategorien-Store: Built-ins als Fallback, echte Werte aus DB (Tabelle categories).
+let _catsArr = Object.entries(CATS).map(([key, v], i) => ({ key, label: v.label, icon: v.icon, active: true, sort: i + 1 }));
+let _catsMap = { ...CATS };
+let _catsLoaded = false;
+const _catSubs = new Set();
+function _rebuild(rows) {
+  _catsArr = rows;
+  _catsMap = {};
+  rows.forEach((c) => { _catsMap[c.key] = { label: c.label, icon: c.icon || "receipt", active: c.active }; });
+  _catSubs.forEach((fn) => fn());
+}
+async function loadCats(force) {
+  if (_catsLoaded && !force) return;
+  _catsLoaded = true;
+  const { data } = await supabase.from("categories").select("key,label,icon,sort,active").order("sort");
+  if (data && data.length) _rebuild(data);
+}
+function catInfo(key) { return _catsMap[key] || _catsMap.other || { label: "Sonstiges", icon: "receipt" }; }
+function catOpts() { return _catsArr.filter((c) => c.active); }
+function useCats() {
+  const [, force] = useState(0);
+  useEffect(() => {
+    const fn = () => force((x) => x + 1);
+    _catSubs.add(fn);
+    loadCats();
+    return () => { _catSubs.delete(fn); };
+  }, []);
+  return { info: catInfo, opts: catOpts };
+}
 const STATUS = {
   draft: "Entwurf", review: "In Prüfung", submitted: "Freigabe",
   approved: "Genehmigt", booked: "Gebucht", rejected: "Abgelehnt",
