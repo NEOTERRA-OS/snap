@@ -1040,7 +1040,10 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
     return dir === "asc" ? c : -c;
   });
   const open = rows.filter((r) => ["review", "submitted", "approved"].includes(r.status));
-  const openSum = open.reduce((s, r) => s + Number(r.gross || 0), 0);
+  // EUR-Wert je Beleg (Fremdwährung via gespeichertem gross_eur; EUR unverändert).
+  const eurOf = (r) => (r.gross_eur != null ? Number(r.gross_eur) : ((!r.currency || r.currency === "EUR") ? Number(r.gross || 0) : null));
+  const openSum = open.reduce((s, r) => s + (eurOf(r) ?? 0), 0);
+  const openUnconverted = open.filter((r) => eurOf(r) == null).length;
   const chips = [["all", "Alle"], ["draft", "Entwurf"], ["review", "In Prüfung"], ["approved", "Genehmigt"], ["booked", "Gebucht"], ["rejected", "Abgelehnt"]];
   const flagged = (r) => (r.flags?.length > 0 || r.duplicate_of);
   const allSel = sorted.length > 0 && sorted.every((r) => sel.has(r.id));
