@@ -1227,7 +1227,7 @@ function Detail({ id, onBack }) {
       let net = null, vat_amount = null;
       if (gross != null && vr != null) { net = Math.round((gross / (1 + vr / 100)) * 100) / 100; vat_amount = Math.round((gross - net) * 100) / 100; }
       const patch = {
-        merchant: ef.merchant.trim() || null, doc_date: ef.doc_date || null,
+        merchant: ef.merchant.trim() || null, merchant_cui: (ef.merchant_cui || "").trim() || null, doc_date: ef.doc_date || null,
         gross, currency: (ef.currency || "EUR").toUpperCase(), vat_rate: vr, net, vat_amount,
         category: ef.category, payment_method: ef.payment_method,
         cost_center_id: ef.cost_center_id || null,
@@ -1337,6 +1337,10 @@ function Detail({ id, onBack }) {
           <div className="editform">
             <div className="field"><label>{r.source === "cash" ? t("Zweck") : t("Händler")}</label>
               <input value={ef.merchant} onChange={(e) => setF({ merchant: e.target.value })} /></div>
+            {r.source !== "cash" && (
+              <div className="field"><label>{t("CUI / Cod Fiscal")}</label>
+                <input value={ef.merchant_cui} onChange={(e) => setF({ merchant_cui: e.target.value })} placeholder="RO12345678" className="mono" /></div>
+            )}
             <div className="frow">
               <div className="field"><label>{t("Datum")}</label><input type="date" value={ef.doc_date || ""} onChange={(e) => setF({ doc_date: e.target.value })} /></div>
               <div className="field"><label>{t("Währung")}</label><input value={ef.currency} onChange={(e) => setF({ currency: e.target.value })} style={{ textTransform: "uppercase" }} /></div>
