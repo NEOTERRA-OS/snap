@@ -1778,6 +1778,43 @@ function Admin({ session }) {
     setCcEdit(null); toast(t("Gespeichert")); loadCc();
   }
 
+  // ---- Kategorien ----
+  const [catAdmin, setCatAdmin] = useState(null);
+  const [catForm, setCatForm] = useState({ label: "", icon: "receipt" });
+  const [catBusy, setCatBusy] = useState(false);
+  const [catEdit, setCatEdit] = useState(null); // { id, label, icon }
+  const loadCatAdmin = useCallback(() => {
+    supabase.from("categories").select("id,key,label,icon,sort,active").order("sort").then(({ data }) => setCatAdmin(data || []));
+  }, []);
+  useEffect(() => { loadCatAdmin(); }, [loadCatAdmin]);
+  async function addCat(e) {
+    e.preventDefault(); setCatBusy(true);
+    const res = await fetch("/api/admin/categories", { method: "POST", headers: auth, body: JSON.stringify(catForm) });
+    const j = await res.json().catch(() => ({}));
+    setCatBusy(false);
+    if (j.error) { toast(j.error, "err"); return; }
+    setCatForm({ label: "", icon: "receipt" }); toast(t("Kategorie angelegt")); loadCatAdmin(); loadCats(true);
+  }
+  async function toggleCat(c) {
+    await fetch("/api/admin/categories", { method: "PATCH", headers: auth, body: JSON.stringify({ id: c.id, active: !c.active }) });
+    loadCatAdmin(); loadCats(true);
+  }
+  async function delCat(c) {
+    const res = await fetch("/api/admin/categories", { method: "DELETE", headers: auth, body: JSON.stringify({ id: c.id }) });
+    const j = await res.json().catch(() => ({}));
+    if (j.error) { toast(j.error, "err"); return; }
+    toast(j.deactivated ? t("Kategorie deaktiviert (in Belegen verwendet)") : t("Kategorie gelöscht"));
+    loadCatAdmin(); loadCats(true);
+  }
+  async function saveCatEdit() {
+    if (!catEdit) return;
+    if (!catEdit.label.trim()) { toast(t("Bezeichnung erforderlich."), "err"); return; }
+    const res = await fetch("/api/admin/categories", { method: "PATCH", headers: auth, body: JSON.stringify({ id: catEdit.id, label: catEdit.label, icon: catEdit.icon }) });
+    const j = await res.json().catch(() => ({}));
+    if (j.error) { toast(j.error, "err"); return; }
+    setCatEdit(null); toast(t("Gespeichert")); loadCatAdmin(); loadCats(true);
+  }
+
   async function createUser(e) {
     e.preventDefault(); setBusy(true); setErr(""); setCreated(null);
     try {
