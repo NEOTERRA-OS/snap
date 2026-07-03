@@ -1211,7 +1211,7 @@ function Detail({ id, onBack }) {
   const editable = r && !["approved", "booked"].includes(r.status);
   function startEdit() {
     setEf({
-      merchant: r.merchant || "", doc_date: r.doc_date || "", gross: r.gross ?? "",
+      merchant: r.merchant || "", merchant_cui: r.merchant_cui || "", doc_date: r.doc_date || "", gross: r.gross ?? "",
       currency: r.currency || "EUR", vat_rate: r.vat_rate ?? "", category: r.category || "other",
       payment_method: r.payment_method || "private", cost_center_id: r.cost_center_id || "",
       recipient: r.recipient || "", occasion: r.occasion || "", attendees: r.attendees || "",
