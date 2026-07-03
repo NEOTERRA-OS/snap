@@ -2151,6 +2151,29 @@ function Admin({ session }) {
           </div>
         </div>
       )}
+
+      {ccDel && (
+        <div className="modal-wrap" onClick={() => { if (!ccDel.busy) setCcDel(null); }}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 460 }}>
+            <div className="modal-ic"><Icon name="trash" size={20} /></div>
+            <h3>{t("Kostenstelle löschen")}</h3>
+            <p>{t("«{name}» wird von {n} Beleg(en) verwendet. Die Kategorien der Belege bleiben in jedem Fall erhalten — nur die Kostenstelle ist betroffen. Was soll damit passieren?").replace("{name}", (ccDel.cc.code ? ccDel.cc.code + " · " : "") + (ccDel.cc.name || "")).replace("{n}", ccDel.used)}</p>
+            <div className="field"><label>{t("Belege einer anderen Kostenstelle zuordnen")}</label>
+              <select value={ccDel.target} onChange={(e) => setCcDel((p) => ({ ...p, target: e.target.value }))} disabled={ccDel.busy}>
+                <option value="">{t("— Kostenstelle wählen —")}</option>
+                {(ccList || []).filter((c) => c.id !== ccDel.cc.id && c.active).map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
+              </select>
+            </div>
+            <div className="modal-actions" style={{ flexWrap: "wrap", justifyContent: "space-between" }}>
+              <button type="button" className="modal-btn ghost" disabled={ccDel.busy} onClick={() => setCcDel(null)}>{t("Abbrechen")}</button>
+              <span style={{ display: "flex", gap: 10 }}>
+                <button type="button" className="modal-btn ghost" disabled={ccDel.busy} onClick={() => confirmDelCc("clear")} title={t("Belege behalten Kategorie, aber keine Kostenstelle")}>{t("Ohne Zuordnung löschen")}</button>
+                <button type="button" className="modal-btn" style={{ background: "var(--green)", color: "#fff" }} disabled={ccDel.busy || !ccDel.target} onClick={() => confirmDelCc("reassign")}>{ccDel.busy ? <span className="spin" /> : <Icon name="check" size={14} />} {t("Umbuchen & löschen")}</button>
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
