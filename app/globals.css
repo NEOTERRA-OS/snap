@@ -558,6 +558,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .reorg-status.ok{border-color:var(--emerald-bd,#bfe6d4);background:var(--emerald-bg,#f0faf4)}
 .reorg-status.err{border-color:#f0c2c2;background:#fdf2f2}
 .reorg-status.run{border-color:var(--line);background:var(--line2)}
+.reorg-status.warn{border-color:#f0d9a8;background:#fdf8ec}
+.reorg-status.warn .reorg-head{color:#a86b12}
 .reorg-head{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ink)}
 .reorg-status.ok .reorg-head{color:#1f7a4d}
 .reorg-status.err .reorg-head{color:#b91c1c}
