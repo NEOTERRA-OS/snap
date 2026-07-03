@@ -795,7 +795,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
         const flags = plausFlags(it, warnLimit);
         rows.push({
           user_id: forUser || uid, created_by: uid, status, source: it.source, recipient: it.recipient || null, file_path: it.filePath,
-          merchant: it.merchant, merchant_cui: (it.merchant_cui || "").trim() || null, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
+          merchant: it.merchant, merchant_cui: (it.merchant_cui || "").trim() || null, invoice_no: (it.invoice_no || "").trim() || null, doc_date: it.doc_date, gross: it.gross, vat_rate: it.vat_rate,
           currency: it.currency || "EUR", gross_eur: eur, fx_rate: rate,
           file_hash: it.file_hash, file_size: it.file_size,
           net: netFrom(it.gross, it.vat_rate),
@@ -927,6 +927,10 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
               {it.source !== "cash" && (
                 <div className="field"><label>{t("CUI / Cod Fiscal")} {mb(it, "merchant_cui")}</label>
                   <input value={it.merchant_cui || ""} onChange={(e) => upd(it.id, { merchant_cui: e.target.value })} placeholder="RO12345678" className="mono" /></div>
+              )}
+              {it.source !== "cash" && (
+                <div className="field"><label>{t("Rechnungsnummer")}</label>
+                  <input value={it.invoice_no || ""} onChange={(e) => upd(it.id, { invoice_no: e.target.value })} placeholder={t("z. B. FACT 2026-00123")} className="mono" /></div>
               )}
               <div className="field"><label>{t("Datum")}</label><input type="date" value={it.doc_date || ""} onChange={(e) => upd(it.id, { doc_date: e.target.value })} /></div>
               <div className="field"><label>{t("Betrag brutto")}</label><input type="number" step="0.01" value={it.gross ?? ""} onChange={(e) => upd(it.id, { gross: parseFloat(e.target.value) })} />
