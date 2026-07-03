@@ -1044,7 +1044,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
               <tr key={r.id} onClick={() => onOpen(r.id)}>
                 <td className="mono">{dShort(r.doc_date)}</td>
                 <td className="tdmerch">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || "—"}</td>
-                <td><span className="catcell"><Icon name={(CATS[r.category] || CATS.other).icon} size={14} /> {t((CATS[r.category] || CATS.other).label)}</span></td>
+                <td><span className="catcell"><Icon name={catInfo(r.category).icon} size={14} /> {t(catInfo(r.category).label)}</span></td>
                 <td><span className={"badge b-" + r.status}><span className="dot" />{t(STATUS[r.status])}</span></td>
                 <td className="r mono amt">{money(r.gross, r.currency)}</td>
               </tr>
@@ -1054,9 +1054,9 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
         <div className="only-mobile">
           {sorted.map((r) => (
             <div key={r.id} className="lcard" onClick={() => onOpen(r.id)}>
-              <div className="lthumb"><Icon name={r.source === "cash" ? "banknote" : (CATS[r.category] || CATS.other).icon} size={19} /></div>
+              <div className="lthumb"><Icon name={r.source === "cash" ? "banknote" : catInfo(r.category).icon} size={19} /></div>
               <div className="meta"><div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}{flagged(r) && <Icon name="alert" size={12} className="flagdot" />}</div>
-                <div className="d">{dShort(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
+                <div className="d">{dShort(r.doc_date)} · {t(catInfo(r.category).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
                 <span className={"badge b-" + r.status} style={{ marginTop: 6 }}><span className="dot" />{t(STATUS[r.status])}</span></div>
               <div className="amt mono">{money(r.gross, r.currency)}</div>
             </div>
@@ -1116,10 +1116,10 @@ function Approvals({ onOpen }) {
       {rows.map((r) => (
         <div className={"lcard" + (sel.has(r.id) ? " selrow" : "")} key={r.id} style={{ cursor: "default" }}>
           <label className="selbox" onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={sel.has(r.id)} onChange={() => toggle(r.id)} /></label>
-          <div className="lthumb" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
+          <div className="lthumb" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}><Icon name={catInfo(r.category).icon} size={19} /></div>
           <div className="meta" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}>
             <div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "")}</div>
-            <div className="d">{dDE(r.doc_date)} · {t((CATS[r.category] || CATS.other).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
+            <div className="d">{dDE(r.doc_date)} · {t(catInfo(r.category).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
             <div className="d">{names[r.user_id] || r.creator_name || "—"}{r.created_by && r.created_by !== r.user_id ? <span className="mut"> · {t("im Auftrag von")} {names[r.created_by] || "—"}</span> : ""}</div>
             {(r.flags?.length > 0 || r.duplicate_of) && <span className="st st-app" style={{ marginTop: 6 }}><Icon name="alert" size={11} /> {r.duplicate_of ? t("mögliche Dublette") : `${r.flags.length} ${t("Hinweise")}`}</span>}
           </div>
@@ -1262,8 +1262,8 @@ function Detail({ id, onBack }) {
     <>
       <button className="linkbtn" onClick={onBack} style={{ marginBottom: 10 }}><Icon name="chevronleft" size={16} /> {t("Zurück")}</button>
       <div className="lcard" style={{ cursor: "default" }}>
-        <div className="lthumb"><Icon name={(CATS[r.category] || CATS.other).icon} size={19} /></div>
-        <div className="meta"><div className="t">{r.merchant}</div><div className="d">{t((CATS[r.category] || CATS.other).label)} · {r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte")}</div></div>
+        <div className="lthumb"><Icon name={catInfo(r.category).icon} size={19} /></div>
+        <div className="meta"><div className="t">{r.merchant}</div><div className="d">{t(catInfo(r.category).label)} · {r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte")}</div></div>
         <div className="amt">{money(r.gross, r.currency)}</div>
       </div>
       {preview && (
@@ -1489,7 +1489,7 @@ function Dashboard({ onOpen }) {
   const curs = Object.entries(byCur).sort((a, b) => b[1].eur - a[1].eur);
 
   const agg = (keyFn) => { const m = {}; f.forEach((r) => { const k = keyFn(r); if (k == null) return; m[k] = (m[k] || 0) + (eurOf(r) ?? 0); }); return m; };
-  const keyCat = (r) => (CATS[r.category] || CATS.other).label;
+  const keyCat = (r) => catInfo(r.category).label;
   const keyCc = (r) => (r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "—") : "—");
   const keyMerch = (r) => r.merchant || "—";
   const keyEmp = (r) => profiles[r.user_id] || r.creator_name || "—";
@@ -1524,7 +1524,7 @@ function Dashboard({ onOpen }) {
 
   function exportCsv() {
     const head = ["Datum", "Händler", "Kategorie", "Kostenstelle", "Mitarbeiter", "Status", "Währung", "Brutto", "Brutto_EUR", "MwSt"];
-    const lines = f.map((r) => [r.doc_date || "", (r.merchant || "").replace(/;/g, ","), (CATS[r.category] || CATS.other).label,
+    const lines = f.map((r) => [r.doc_date || "", (r.merchant || "").replace(/;/g, ","), catInfo(r.category).label,
       r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "") : "", profiles[r.user_id] || r.creator_name || "", STATUS[r.status] || r.status,
       r.currency || "EUR", Number(r.gross || 0).toFixed(2), (eurOf(r) != null ? eurOf(r).toFixed(2) : ""), Number(r.vat_amount || 0).toFixed(2)].join(";"));
     const blob = new Blob(["﻿" + [head.join(";"), ...lines].join("\n")], { type: "text/csv;charset=utf-8" });
@@ -1541,7 +1541,7 @@ function Dashboard({ onOpen }) {
     const barTable = (title, entries, fmt) => `<h2>${esc(title)}</h2><table class="dist">${entries.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="r">${fmt(v)}</td></tr>`).join("") || `<tr><td>${t("Keine Daten.")}</td><td></td></tr>`}</table>`;
     const sortedE = (m) => Object.entries(m).sort((a, b) => b[1] - a[1]);
     const rowsHtml = f.slice().sort((a, b) => (b.doc_date || "").localeCompare(a.doc_date || "")).map((r) => `<tr>
-      <td>${esc(r.doc_date || "")}</td><td>${esc(r.merchant || "")}</td><td>${esc(t((CATS[r.category] || CATS.other).label))}</td>
+      <td>${esc(r.doc_date || "")}</td><td>${esc(r.merchant || "")}</td><td>${esc(t(catInfo(r.category).label))}</td>
       <td>${esc(r.cost_center_id ? (ccMap[r.cost_center_id]?.code || "") : "")}</td><td>${esc(t(STATUS[r.status] || r.status))}</td>
       <td class="r">${esc(money(r.gross, r.currency))}</td><td class="r">${eurOf(r) != null ? eur(eurOf(r)) : "—"}</td></tr>`).join("");
     const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>NEOS Snap — ${t("Auswertungen")}</title>
@@ -1704,7 +1704,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
                     title={onOpen ? t("Beleg öffnen") : undefined}>
                     <div className="drow-main">
                       <b>{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</b>
-                      <span className="mut num" style={{ fontSize: 12 }}>{r.doc_date} · {t((CATS[r.category] || CATS.other).label)}</span>
+                      <span className="mut num" style={{ fontSize: 12 }}>{r.doc_date} · {t(catInfo(r.category).label)}</span>
                     </div>
                     <div className="drow-rgt">
                       <span className="amt">{money(r.gross, r.currency)}</span>
