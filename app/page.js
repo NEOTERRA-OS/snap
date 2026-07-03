@@ -58,6 +58,9 @@ const money = (n, cur) => {
   catch { return `${Number(n).toLocaleString("de-DE", { minimumFractionDigits: 2 })} ${cur || ""}`.trim(); }
 };
 const dDE = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "—");
+// Netto aus Brutto & MwSt-Satz (falls kein gespeicherter Netto-Wert vorliegt).
+const netFrom = (g, r) => (g == null || r == null ? null : Math.round((Number(g) / (1 + Number(r) / 100)) * 100) / 100);
+const netOf = (r) => (r?.net != null ? Number(r.net) : netFrom(r?.gross, r?.vat_rate));
 
 // Plausibilitäts-Flags (kanonisch deutsch; bei Anzeige via t() übersetzt).
 function plausFlags(it, limit = 5000) {
