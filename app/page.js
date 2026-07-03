@@ -1714,7 +1714,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
       <div className="kpis kx" style={{ marginTop: 14 }}>
         <div className="kpi">
           <div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div><div className="n mono">{eur(sum(openReimb))}</div>
-          <div className={"ksub " + (openReimb.length ? "warn" : "neu")}>{openReimb.length} {t("Belege offen")}</div>
+          <div className={"ksub " + (openReimb.length ? "warn" : "neu")}>{openReimb.length} {t("privat · erstattungsfähig")}</div>
         </div>
         <div className="kpi">
           <div className="kt"><Icon name="layers" />{t("Vorsteuer")}</div><div className="n mono">{eur(vat)}</div>
