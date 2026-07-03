@@ -1388,6 +1388,9 @@ function Detail({ id, onBack }) {
         {r.source !== "cash" && r.merchant_cui && (
           <div className="kv"><span className="k">{t("CUI / Cod Fiscal")}</span><span className="v mono">{r.merchant_cui}</span></div>
         )}
+        {r.source !== "cash" && r.invoice_no && (
+          <div className="kv"><span className="k">{t("Rechnungsnummer")}</span><span className="v mono">{r.invoice_no}</span></div>
+        )}
         <div className="kv"><span className="k">{t("Datum")}</span><span className="v">{dDE(r.doc_date)}</span></div>
         <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
         <div className="kv"><span className="k">{t("Netto")}</span><span className="v"><span className="num">{money(netOf(r), r.currency)}</span></span></div>
