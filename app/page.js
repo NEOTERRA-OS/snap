@@ -761,7 +761,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
         ocr = (await res.json()).fields || mockOcr(file.name);
       } catch { ocr = mockOcr(file.name); }
       upd(id, { loading: false, filePath: up.error ? null : path, file_hash: hash, file_size: file.size, error: up.error ? up.error.message : null,
-        merchant: ocr.merchant || "", doc_date: ocr.doc_date, gross: ocr.gross, currency: ocr.currency || "EUR",
+        merchant: ocr.merchant || "", merchant_cui: ocr.cui || "", invoice_no: ocr.invoice_no || "", doc_date: ocr.doc_date, gross: ocr.gross, currency: ocr.currency || "EUR",
         vat_rate: ocr.vat_rate, category: ocr.category || "other", confidence: ocr.confidence });
       // Dublettenprüfung: gleicher Datei-Hash ODER gleicher Händler+Datum+Betrag.
       try {
