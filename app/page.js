@@ -1761,12 +1761,25 @@ function Admin({ session }) {
     await fetch("/api/admin/cost-centers", { method: "PATCH", headers: auth, body: JSON.stringify({ id: cc.id, active: !cc.active }) });
     loadCc();
   }
+  const [ccDel, setCcDel] = useState(null); // { cc, used, target, busy } — Lösch-Dialog bei genutzter Kostenstelle
   async function delCc(cc) {
     const res = await fetch("/api/admin/cost-centers", { method: "DELETE", headers: auth, body: JSON.stringify({ id: cc.id }) });
     const j = await res.json().catch(() => ({}));
     if (j.error) { toast(j.error, "err"); return; }
-    toast(j.deactivated ? t("Kostenstelle deaktiviert (in Belegen verwendet)") : t("Kostenstelle gelöscht"));
+    if (j.needsDecision) { setCcDel({ cc, used: j.used, target: "", busy: false }); return; }
+    toast(t("Kostenstelle gelöscht"));
     loadCc();
+  }
+  async function confirmDelCc(decision) { // "reassign" | "clear"
+    if (!ccDel) return;
+    if (decision === "reassign" && !ccDel.target) { toast(t("Bitte Ziel-Kostenstelle wählen."), "err"); return; }
+    setCcDel((p) => ({ ...p, busy: true }));
+    const payload = { id: ccDel.cc.id, decision, ...(decision === "reassign" ? { reassignTo: ccDel.target } : {}) };
+    const res = await fetch("/api/admin/cost-centers", { method: "DELETE", headers: auth, body: JSON.stringify(payload) });
+    const j = await res.json().catch(() => ({}));
+    if (j.error) { toast(j.error, "err"); setCcDel((p) => ({ ...p, busy: false })); return; }
+    toast(decision === "reassign" ? `${j.reassigned} ${t("Belege umgebucht, Kostenstelle gelöscht")}` : t("Kostenstelle gelöscht, Zuordnung entfernt"));
+    setCcDel(null); loadCc();
   }
   const [ccEdit, setCcEdit] = useState(null); // { id, code, name }
   async function saveCcEdit() {
