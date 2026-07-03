@@ -1376,9 +1376,14 @@ function Detail({ id, onBack }) {
             </div>
           </div>
         ) : (<>
+        {r.source !== "cash" && r.merchant_cui && (
+          <div className="kv"><span className="k">{t("CUI / Cod Fiscal")}</span><span className="v mono">{r.merchant_cui}</span></div>
+        )}
         <div className="kv"><span className="k">{t("Datum")}</span><span className="v">{dDE(r.doc_date)}</span></div>
         <div className="kv"><span className="k">{t("Währung")}</span><span className="v">{r.currency || "EUR"}</span></div>
-        <div className="kv"><span className="k">{t("MwSt")}</span><span className="v"><span className="num">{r.vat_rate}% · {money(r.vat_amount, r.currency)}</span></span></div>
+        <div className="kv"><span className="k">{t("Netto")}</span><span className="v"><span className="num">{money(netOf(r), r.currency)}</span></span></div>
+        <div className="kv"><span className="k">{t("MwSt")}</span><span className="v"><span className="num">{r.vat_rate}% · {money(r.vat_amount ?? (netOf(r) != null && r.gross != null ? r.gross - netOf(r) : null), r.currency)}</span></span></div>
+        <div className="kv"><span className="k">{t("Brutto")}</span><span className="v"><span className="num">{money(r.gross, r.currency)}</span></span></div>
         <div className="kv"><span className="k">{t("Status")}</span><span className="v">{t(STATUS[r.status])}</span></div>
         {r.source === "cash" && (
           <div className="kv"><span className="k">{t("Barauslage")}</span><span className="v">{t("Empfänger")}: {r.recipient || "—"}</span></div>
