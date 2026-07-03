@@ -1078,12 +1078,14 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
       ) : (<>
         <table className="jtable only-desktop">
           <thead><tr>
+            <th className="thc thc-chk"><input type="checkbox" checked={allSel} onChange={toggleAll} aria-label={t("Alle auswählen")} /></th>
             <th className="thc">{t("Datum")}</th><th className="thc">{t("Händler")}</th><th className="thc">{t("Kategorie")}</th>
             <th className="thc">{t("Status")}</th><th className="thc r">{t("Betrag")}</th>
           </tr></thead>
           <tbody>
             {sorted.map((r) => (
-              <tr key={r.id} onClick={() => onOpen(r.id)}>
+              <tr key={r.id} onClick={() => onOpen(r.id)} className={sel.has(r.id) ? "selrow" : undefined}>
+                <td className="td-chk" onClick={(e) => toggleSel(r.id, e)}><input type="checkbox" checked={sel.has(r.id)} onChange={(e) => toggleSel(r.id, e)} onClick={(e) => e.stopPropagation()} aria-label={t("Auswählen")} /></td>
                 <td className="mono">{dShort(r.doc_date)}</td>
                 <td className="tdmerch">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || "—"}</td>
                 <td><span className="catcell"><Icon name={catInfo(r.category).icon} size={14} /> {t(catInfo(r.category).label)}</span></td>
@@ -1095,7 +1097,8 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
         </table>
         <div className="only-mobile">
           {sorted.map((r) => (
-            <div key={r.id} className="lcard" onClick={() => onOpen(r.id)}>
+            <div key={r.id} className={"lcard" + (sel.has(r.id) ? " selrow" : "")} onClick={() => onOpen(r.id)}>
+              <input type="checkbox" className="lcard-chk" checked={sel.has(r.id)} onChange={(e) => toggleSel(r.id, e)} onClick={(e) => e.stopPropagation()} aria-label={t("Auswählen")} />
               <div className="lthumb"><Icon name={r.source === "cash" ? "banknote" : catInfo(r.category).icon} size={19} /></div>
               <div className="meta"><div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}{flagged(r) && <Icon name="alert" size={12} className="flagdot" />}</div>
                 <div className="d">{dShort(r.doc_date)} · {t(catInfo(r.category).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
