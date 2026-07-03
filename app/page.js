@@ -513,7 +513,7 @@ function Shell({ session }) {
         <div className="sb-grp">{t("Auswerten")}</div>
         {nav("dashboard", "barchart", "Auswertungen")}
         <button className="snav" onClick={() => setDelegModal(true)}><Icon name="user" size={18} /> <span>{t("Vertretungen")}</span></button>
-        {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "user", "Admin")}</>}
+        {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("allreceipts", "layers", "Alle Belege")}{nav("admin", "user", "Admin")}</>}
         <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
         <div className="sb-user">
