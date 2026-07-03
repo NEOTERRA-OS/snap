@@ -31,7 +31,8 @@ function isoDate(s) { return s && /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) 
 function seedName(r, ext) {
   const typ = INVOICE_CATS.includes(r.category) ? "Invoice" : "Receipt";
   const vendor = indexVendor(r.source === "cash" ? "Barauslage" : (r.merchant || ""));
-  const parts = [isoDate(r.doc_date), typ]; if (vendor) parts.push(vendor);
+  const ref = indexVendor(r.invoice_no || "");
+  const parts = [isoDate(r.doc_date), typ]; if (vendor) parts.push(vendor); if (ref) parts.push(ref);
   return parts.join("_") + (ext || "").toLowerCase();
 }
 
