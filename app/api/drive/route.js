@@ -38,20 +38,29 @@ async function getToken(refreshToken) {
 
 const DRIVE_Q = "supportsAllDrives=true&includeItemsFromAllDrives=true&corpora=allDrives";
 
-async function ensureUserFolder(token, name, cached, s, userId, root) {
-  if (cached) return cached;
-  const q = encodeURIComponent(`name='${name.replace(/'/g, "\\'")}' and '${root}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
-  const found = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)&${DRIVE_Q}`, { headers: { authorization: `Bearer ${token}` } })).json();
-  let id = found.files?.[0]?.id;
-  if (!id) {
-    const created = await (await fetch(`https://www.googleapis.com/drive/v3/files?fields=id&supportsAllDrives=true`, {
-      method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
-      body: JSON.stringify({ name, mimeType: "application/vnd.google-apps.folder", parents: [root] }),
-    })).json();
-    id = created.id;
-  }
-  if (id) await s.from("profiles").update({ drive_folder_id: id }).eq("id", userId);
-  return id;
+// Hauptordner-Name je Mitarbeiter: „Nachname_Vorname" (z. B. Förtig_Benedikt).
+function userFolderName(fullName, email, uid) {
+  const n = (fullName || "").trim();
+  if (n) { const parts = n.split(/\s+/); if (parts.length >= 2) return `${parts[parts.length - 1]}_${parts.slice(0, -1).join(" ")}`; return n; }
+  return (email || uid || "Unbekannt").toString();
+}
+// Monats-Unterordner nach Belegdatum: „JJJJ-MM" (sortierbar).
+function monthFolderName(docDate) {
+  const d = docDate ? new Date(docDate) : new Date();
+  if (isNaN(d.getTime())) return "ohne-datum";
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+// Ordner suchen (ältesten zuerst → selbstheilend bei Alt-Duplikaten) oder anlegen.
+async function ensureFolder(token, name, parentId) {
+  const q = encodeURIComponent(`name='${name.replace(/'/g, "\\'")}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const found = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)&orderBy=createdTime&${DRIVE_Q}`, { headers: { authorization: `Bearer ${token}` } })).json();
+  const existing = found.files?.[0]?.id;
+  if (existing) return existing;
+  const created = await (await fetch(`https://www.googleapis.com/drive/v3/files?fields=id&supportsAllDrives=true`, {
+    method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+    body: JSON.stringify({ name, mimeType: "application/vnd.google-apps.folder", parents: [parentId] }),
+  })).json();
+  return created.id;
 }
 
 // Inbox-Ordner: App-Einstellung (admin-setzbar) vor Env-Variable.
