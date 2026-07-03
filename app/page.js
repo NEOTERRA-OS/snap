@@ -1950,6 +1950,16 @@ function Admin({ session }) {
     setDriveBusy(false);
     if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
   }
+  const [reorgBusy, setReorgBusy] = useState(false);
+  async function reorganizeDrive() {
+    if (!window.confirm(t("Alle abgelegten Belege in Nachname_Vorname/JJJJ-MM einsortieren, im Index-Schema umbenennen und leere Fehlordner in den Papierkorb verschieben?"))) return;
+    setReorgBusy(true);
+    const res = await fetch("/api/drive/reorganize", { method: "POST", headers: auth });
+    const j = await res.json().catch(() => ({}));
+    setReorgBusy(false);
+    if (j.error) { toast(j.error, "err"); return; }
+    toast(`${t("Fertig")}: ${j.moved} ${t("verschoben")} · ${j.renamed} ${t("umbenannt")} · ${j.trashed} ${t("Ordner in Papierkorb")}${j.errors ? ` · ${j.errors} ${t("Fehler")}` : ""}`);
+  }
 
   const [warnLimit, setWarnLimit] = useState("");
   const [warnBusy, setWarnBusy] = useState(false);
