@@ -1961,6 +1961,29 @@ function Admin({ session }) {
     setDriveBusy(false);
     if (error) toast(error.message, "err"); else toast(t("Gespeichert"));
   }
+  const [bfBusy, setBfBusy] = useState(false);
+  const [bfStatus, setBfStatus] = useState(null);
+  async function backfillOcr() {
+    if (!window.confirm(t("Fehlende Rechnungsnummern & CUI per OCR aus den bereits abgelegten Belegen nachtragen? (Läuft in mehreren Durchgängen.)"))) return;
+    setBfBusy(true);
+    let updated = 0, cui = 0, errs = 0, remaining = null, rounds = 0;
+    try {
+      // In Runden aufrufen, bis nichts mehr offen ist (Timeout-sicher).
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        rounds++;
+        setBfStatus({ kind: "run", msg: `${t("Läuft … OCR-Nachtrag")}${remaining != null ? ` · ${remaining} ${t("offen")}` : ""}`, stats: { updated, cui, errs } });
+        const res = await fetch("/api/drive/backfill", { method: "POST", headers: { ...auth, "content-type": "application/json" }, body: JSON.stringify({ limit: 6 }) });
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || j.error) { setBfStatus({ kind: "err", msg: j.error || `HTTP ${res.status}`, stats: { updated, cui, errs } }); toast(j.error || t("Fehler"), "err"); return; }
+        updated += j.updated || 0; cui += j.cuiAdded || 0; errs += j.errors || 0; remaining = j.remaining ?? 0;
+        if (!j.processed || remaining <= 0 || rounds > 30) break;
+      }
+      setBfStatus({ kind: errs > 0 ? "warn" : "ok", msg: t("Nachtrag abgeschlossen."), stats: { updated, cui, errs, remaining } });
+      toast(t("Rechnungsnummern nachgetragen"));
+    } catch (e) { setBfStatus({ kind: "err", msg: String(e?.message || e), stats: { updated, cui, errs } }); toast(t("Fehler"), "err"); }
+    finally { setBfBusy(false); }
+  }
   const [reorgBusy, setReorgBusy] = useState(false);
   const [reorgStatus, setReorgStatus] = useState(null); // { kind: "run"|"ok"|"err", msg, stats }
   async function reorganizeDrive() {
