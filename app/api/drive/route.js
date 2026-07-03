@@ -13,16 +13,26 @@ const INBOX = process.env.GDRIVE_INBOX_FOLDER_ID; // Ordner im Shared Drive (Fal
 
 const svc = () => createClient(SUPA_URL, SERVICE, { auth: { persistSession: false } });
 
-// Belege bleiben unbenannt-roh; der NT Google Drive Scanner indexiert sie
-// anschließend nach NEOS-Index-Schema. Wir geben nur einen lesbaren Seed-Namen
-// (mit Typ-Hinweis Invoice/Receipt nach Kategorie) — bewusst KEIN _-Schema,
-// damit der Scanner die Datei verarbeitet (statt als „bereits benannt" zu überspringen).
-const INVOICE_CATS = ["it", "lodging", "office"];
+// Dateiname exakt im NEOS-Index-Schema: JJJJ-MM-TT_Typ[_Vendor].ext
+// (siehe schema-detect.ts / RENAMED_PATTERN). Passt der Name, überspringt der
+// Scanner die Datei als „bereits benannt" → spart Verarbeitungszeit.
+const INVOICE_CATS = ["it", "lodging", "office", "telecom", "insurance", "rent", "maintenance", "material", "marketing", "training"];
+const DIA = { "ä": "ae", "ö": "oe", "ü": "ue", "Ä": "Ae", "Ö": "Oe", "Ü": "Ue", "ß": "ss", "ă": "a", "â": "a", "î": "i", "ș": "s", "ț": "t", "Ș": "S", "Ț": "T", "Â": "A", "Î": "I", "Ă": "A" };
+// Vendor-Token → nur [A-Za-z0-9_-], Segmente in Title-Case (Index-konform).
+function indexVendor(s) {
+  let v = String(s || "").trim();
+  if (!v) return "";
+  v = v.split("").map((c) => DIA[c] ?? c).join("");
+  v = v.replace(/[^A-Za-z0-9]+/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "");
+  v = v.split("_").map((seg) => (!seg ? "" : seg === seg.toUpperCase() ? seg.charAt(0) + seg.slice(1).toLowerCase() : seg.charAt(0).toUpperCase() + seg.slice(1))).filter(Boolean).join("_");
+  return v.slice(0, 50);
+}
+function isoDate(s) { return s && /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : new Date().toISOString().slice(0, 10); }
 function seedName(r, ext) {
   const typ = INVOICE_CATS.includes(r.category) ? "Invoice" : "Receipt";
-  const amount = r.gross != null ? `${Number(r.gross).toFixed(2).replace(".", ",")} ${r.currency || "EUR"}` : "";
-  const parts = ["Snap", r.doc_date || "", typ, (r.merchant || "Beleg").replace(/[\\/:*?"<>|]+/g, " ").trim(), amount].filter(Boolean);
-  return parts.join(" ") + ext;
+  const vendor = indexVendor(r.source === "cash" ? "Barauslage" : (r.merchant || ""));
+  const parts = [isoDate(r.doc_date), typ]; if (vendor) parts.push(vendor);
+  return parts.join("_") + (ext || "").toLowerCase();
 }
 
 // Access-Token aus dem gespeicherten Refresh-Token des verbundenen Google-Kontos (Weg 2, schlüsselfrei).
