@@ -1216,7 +1216,7 @@ function Detail({ id, onBack }) {
   const editable = r && !["approved", "booked"].includes(r.status);
   function startEdit() {
     setEf({
-      merchant: r.merchant || "", merchant_cui: r.merchant_cui || "", doc_date: r.doc_date || "", gross: r.gross ?? "",
+      merchant: r.merchant || "", merchant_cui: r.merchant_cui || "", invoice_no: r.invoice_no || "", doc_date: r.doc_date || "", gross: r.gross ?? "",
       currency: r.currency || "EUR", vat_rate: r.vat_rate ?? "", category: r.category || "other",
       payment_method: r.payment_method || "private", cost_center_id: r.cost_center_id || "",
       recipient: r.recipient || "", occasion: r.occasion || "", attendees: r.attendees || "",
@@ -1232,7 +1232,7 @@ function Detail({ id, onBack }) {
       let net = null, vat_amount = null;
       if (gross != null && vr != null) { net = Math.round((gross / (1 + vr / 100)) * 100) / 100; vat_amount = Math.round((gross - net) * 100) / 100; }
       const patch = {
-        merchant: ef.merchant.trim() || null, merchant_cui: (ef.merchant_cui || "").trim() || null, doc_date: ef.doc_date || null,
+        merchant: ef.merchant.trim() || null, merchant_cui: (ef.merchant_cui || "").trim() || null, invoice_no: (ef.invoice_no || "").trim() || null, doc_date: ef.doc_date || null,
         gross, currency: (ef.currency || "EUR").toUpperCase(), vat_rate: vr, net, vat_amount,
         category: ef.category, payment_method: ef.payment_method,
         cost_center_id: ef.cost_center_id || null,
