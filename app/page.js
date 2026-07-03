@@ -1535,7 +1535,7 @@ function Dashboard({ onOpen }) {
     const esc = (s) => String(s ?? "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
     const periodLabel = { "1m": t("Monat"), "3m": t("3 Monate"), "12m": t("12 Monate"), all: t("Alle") }[period];
     const ccLabel = cc ? (ccMap[cc]?.code + " · " + ccMap[cc]?.name) : t("Alle Kostenstellen");
-    const catLabel = cat ? t((CATS[cat] || CATS.other).label) : t("Alle Kategorien");
+    const catLabel = cat ? t(catInfo(cat).label) : t("Alle Kategorien");
     const kpiHtml = [[t("Volumen"), eur(total)], [t("Belege"), String(f.length)], [t("Ø Betrag"), eur(avg)], [t("Vorsteuer"), eur(vat)], [t("Offene Erstattung"), eur(sum(openReimb))], [t("Gebucht"), eur(sum(booked))]]
       .map(([l, v]) => `<div class="k"><div class="kl">${esc(l)}</div><div class="kv">${esc(v)}</div></div>`).join("");
     const barTable = (title, entries, fmt) => `<h2>${esc(title)}</h2><table class="dist">${entries.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="r">${fmt(v)}</td></tr>`).join("") || `<tr><td>${t("Keine Daten.")}</td><td></td></tr>`}</table>`;
