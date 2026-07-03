@@ -999,7 +999,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
 
 const dShort = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—");
 
-function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
+function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [statusF, setStatusF] = useState("all");
@@ -1008,12 +1008,15 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
   const [ccs, setCcs] = useState([]);
   const [sel, setSel] = useState(() => new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [names, setNames] = useState({});
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,gross_eur,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method").order("doc_date", { ascending: false })
-      .then(({ data }) => setRows(data || []));
-  }, []);
+    let qb = supabase.from("receipts").select("id,merchant,doc_date,gross,gross_eur,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method,user_id").order("doc_date", { ascending: false });
+    if (!allScope) qb = qb.eq("user_id", uid);   // „Meine Belege": nur eigene; Admin-Blick „Alle Belege": ungefiltert
+    qb.then(({ data }) => setRows(data || []));
+  }, [allScope, uid]);
   useEffect(() => { load(); }, [load]);
   useEffect(() => { supabase.from("cost_centers").select("id,code,name").eq("active", true).order("code").then(({ data }) => setCcs(data || [])); }, []);
+  useEffect(() => { if (allScope) supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); }); }, [allScope]);
   const toggleSel = (id, e) => { e?.stopPropagation(); setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; }); };
   async function bulkApply(patch) {
     const ids = [...sel];
@@ -1051,7 +1054,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
 
   return (
     <>
-      <h1 className="title">{t("Meine Belege")}</h1>
+      <h1 className="title">{allScope ? t("Alle Belege") : t("Meine Belege")}</h1>
       <div className="kpis" style={{ marginTop: 18 }}>
         <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n mono">{open.length}</div></div>
         <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n mono">{eur(openSum)}</div>
