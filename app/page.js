@@ -1009,7 +1009,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
   const [sel, setSel] = useState(() => new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method").order("doc_date", { ascending: false })
+    supabase.from("receipts").select("id,merchant,doc_date,gross,gross_eur,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method").order("doc_date", { ascending: false })
       .then(({ data }) => setRows(data || []));
   }, []);
   useEffect(() => { load(); }, [load]);
