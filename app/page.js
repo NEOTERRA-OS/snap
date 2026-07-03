@@ -2092,6 +2092,28 @@ function Admin({ session }) {
       {err && <div className="err" style={{ marginBottom: 12 }}>{err}</div>}
 
       <div className="card">
+        <div className="pw"><Icon name="clock" /> {t("Aktivitätsprotokoll")}</div>
+        <p className="hint" style={{ margin: "-2px 0 12px" }}>{t("Wer hat wann was gemacht — nur für Administratoren sichtbar.")}</p>
+        {activity === null ? <div className="center" style={{ minHeight: 50 }}><span className="spin" /></div>
+          : activity.length === 0 ? <p className="hint">{t("Noch keine Aktivität aufgezeichnet.")}</p> : (
+          <div className="actfeed">
+            {activity.map((a) => (
+              <div className="actrow" key={a.id}>
+                <span className={"actic a-" + (a.action || "").replace(/\./g, "-")}><Icon name={ACT_ICON[a.action] || "receipt"} size={13} /></span>
+                <div className="actmain">
+                  <div className="actline"><b>{actNames[a.actor_id] || t("System")}</b> · {t(ACT_LABEL[a.action] || a.action)}{a.summary ? <span className="mut"> · {a.summary}</span> : ""}</div>
+                  <div className="acttime num">{dtLong(a.created_at)}</div>
+                </div>
+              </div>
+            ))}
+            {activity.length >= actLimit && (
+              <button type="button" className="linkbtn" style={{ marginTop: 8 }} onClick={() => setActLimit((l) => l + 50)}><Icon name="arrowdown" size={13} /> {t("Mehr laden")}</button>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="card">
         <div className="pw"><Icon name="user" /> {t("Nutzer anlegen")}</div>
         <form onSubmit={createUser}>
           <div className="field"><label>{t("E-Mail")}</label>
