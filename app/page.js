@@ -701,7 +701,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
     setItems((p) => [...p, {
       id: ++_seq, name: t("Manueller Beleg"), loading: false, preview: null, filePath: null, file_hash: null, file_size: null,
       merchant: "", doc_date: new Date().toISOString().slice(0, 10), gross: null, currency: "EUR", vat_rate: null, category: "other",
-      payment_method: "company_card", cost_center_id: "", confidence: null, occasion: "", attendees: "", duplicate_of: null, source: "manual",
+      payment_method: "private", cost_center_id: "", confidence: null, occasion: "", attendees: "", duplicate_of: null, source: "manual",
     }]);
   }
   // Barauslage / Sonderfall: Bargeld ausgelegt (kein Foto). Auslegender bekommt erstattet (privat).
