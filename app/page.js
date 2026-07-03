@@ -1346,6 +1346,10 @@ function Detail({ id, onBack }) {
               <div className="field"><label>{t("CUI / Cod Fiscal")}</label>
                 <input value={ef.merchant_cui} onChange={(e) => setF({ merchant_cui: e.target.value })} placeholder="RO12345678" className="mono" /></div>
             )}
+            {r.source !== "cash" && (
+              <div className="field"><label>{t("Rechnungsnummer")}</label>
+                <input value={ef.invoice_no} onChange={(e) => setF({ invoice_no: e.target.value })} placeholder={t("z. B. FACT 2026-00123")} className="mono" /></div>
+            )}
             <div className="frow">
               <div className="field"><label>{t("Datum")}</label><input type="date" value={ef.doc_date || ""} onChange={(e) => setF({ doc_date: e.target.value })} /></div>
               <div className="field"><label>{t("Währung")}</label><input value={ef.currency} onChange={(e) => setF({ currency: e.target.value })} style={{ textTransform: "uppercase" }} /></div>
