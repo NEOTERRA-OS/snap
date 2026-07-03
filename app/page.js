@@ -923,8 +923,13 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
                 </div>
               )}
               <div className="field"><label>{it.source === "cash" ? t("Zweck") : t("Händler")}</label><input value={it.merchant} onChange={(e) => upd(it.id, { merchant: e.target.value })} placeholder={it.source === "cash" ? t("wofür war das Geld?") : undefined} /></div>
+              {it.source !== "cash" && (
+                <div className="field"><label>{t("CUI / Cod Fiscal")} {mb(it, "merchant_cui")}</label>
+                  <input value={it.merchant_cui || ""} onChange={(e) => upd(it.id, { merchant_cui: e.target.value })} placeholder="RO12345678" className="mono" /></div>
+              )}
               <div className="field"><label>{t("Datum")}</label><input type="date" value={it.doc_date || ""} onChange={(e) => upd(it.id, { doc_date: e.target.value })} /></div>
-              <div className="field"><label>{t("Betrag brutto")}</label><input type="number" step="0.01" value={it.gross ?? ""} onChange={(e) => upd(it.id, { gross: parseFloat(e.target.value) })} /></div>
+              <div className="field"><label>{t("Betrag brutto")}</label><input type="number" step="0.01" value={it.gross ?? ""} onChange={(e) => upd(it.id, { gross: parseFloat(e.target.value) })} />
+                {netFrom(it.gross, it.vat_rate) != null && <span className="nethint">{t("Netto")}: <b>{money(netFrom(it.gross, it.vat_rate), it.currency)}</b> · {t("MwSt")}: {money(it.gross - netFrom(it.gross, it.vat_rate), it.currency)}</span>}</div>
               <div className="field"><label>{t("Währung")}</label>
                 <select value={it.currency || "EUR"} onChange={(e) => upd(it.id, { currency: e.target.value })}>
                   {Array.from(new Set([it.currency || "EUR", "EUR", "USD", "RON"])).map((c) => <option key={c} value={c}>{c === "RON" ? "RON (Lei)" : c}</option>)}
