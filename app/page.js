@@ -1047,7 +1047,31 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {} }) {
           {chips.map(([k, l]) => <button key={k} className={"fchip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)}</button>)}
         </div>
       </div>
-      <div className="shownline">{sorted.length} {t("von")} {rows.length} {t("Belegen")}</div>
+      <div className="shownline">
+        <label className="selall-inline"><input type="checkbox" checked={allSel} onChange={toggleAll} /> {sel.size ? `${sel.size} ${t("ausgewählt")}` : t("Auswählen")}</label>
+        <span>{sorted.length} {t("von")} {rows.length} {t("Belegen")}</span>
+      </div>
+
+      {sel.size > 0 && (
+        <div className="bulkbar">
+          <span className="bulkbar-c">{sel.size} {t("ausgewählt")}</span>
+          <select value="" disabled={bulkBusy} onChange={(e) => { if (e.target.value) bulkApply({ cost_center_id: e.target.value === "__none" ? null : e.target.value }); e.target.value = ""; }}>
+            <option value="">{t("Kostenstelle setzen …")}</option>
+            <option value="__none">{t("— keine —")}</option>
+            {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
+          </select>
+          <select value="" disabled={bulkBusy} onChange={(e) => { if (e.target.value) bulkApply({ category: e.target.value }); e.target.value = ""; }}>
+            <option value="">{t("Kategorie setzen …")}</option>
+            {catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}
+          </select>
+          <select value="" disabled={bulkBusy} onChange={(e) => { if (e.target.value) bulkApply({ payment_method: e.target.value }); e.target.value = ""; }}>
+            <option value="">{t("Zahlart setzen …")}</option>
+            <option value="company_card">{t("Firmenkarte")}</option>
+            <option value="private">{t("Privat verauslagt")}</option>
+          </select>
+          <button type="button" className="bulkbar-x" onClick={() => setSel(new Set())} title={t("Auswahl aufheben")}><Icon name="x" size={15} /></button>
+        </div>
+      )}
 
       {sorted.length === 0 ? (
         <div className="empty"><Icon name="receipt" size={28} /><p>{q || statusF !== "all" ? t("Keine Treffer im Filter.") : t("Noch keine Belege erfasst.")}</p></div>
