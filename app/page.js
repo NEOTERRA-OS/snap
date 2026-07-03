@@ -454,6 +454,7 @@ function PullToRefresh() {
 
 function Shell({ session }) {
   const { t, lang, setLang } = useT();
+  useCats(); // Kategorien laden + bei Änderungen den ganzen Baum neu rendern
   const [view, setView] = useState("capture");
   const [detail, setDetail] = useState(null);
   const [role, setRole] = useState(null);
