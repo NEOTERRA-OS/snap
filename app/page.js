@@ -147,7 +147,7 @@ async function saveVendorMemory(it) {
   if (!key) return;
   const prev = await loadVendorMemory(it.merchant);
   await supabase.from("vendor_memory").upsert({
-    merchant_key: key, merchant: it.merchant,
+    merchant_key: key, merchant: it.merchant, merchant_cui: (it.merchant_cui || "").trim() || prev?.merchant_cui || null,
     category: it.category || null, cost_center_id: it.cost_center_id || null,
     vat_rate: it.vat_rate ?? null, payment_method: it.payment_method || null,
     currency: it.currency || null, hits: (prev?.hits || 0) + 1, updated_at: new Date().toISOString(),
