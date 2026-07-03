@@ -105,7 +105,7 @@ export async function POST(req) {
   if (!inbox) return NextResponse.json({ skipped: true, reason: "Kein Inbox-Ordner gesetzt" });
   const { data: conn } = await s.from("google_connection").select("refresh_token").eq("id", 1).maybeSingle();
   if (!conn?.refresh_token) return NextResponse.json({ skipped: true, reason: "Google nicht verbunden" });
-  const { data: r } = await s.from("receipts").select("id,user_id,merchant,doc_date,gross,currency,category,file_path,drive_file_id").eq("id", receiptId).single();
+  const { data: r } = await s.from("receipts").select("id,user_id,merchant,doc_date,gross,currency,category,file_path,drive_file_id,invoice_no,source").eq("id", receiptId).single();
   if (!r) return NextResponse.json({ error: "Beleg nicht gefunden" }, { status: 404 });
   if (r.drive_file_id) return NextResponse.json({ ok: true, already: true, fileId: r.drive_file_id });
   if (!r.file_path) return NextResponse.json({ error: "Kein Originalbeleg" }, { status: 400 });
