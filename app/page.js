@@ -2096,13 +2096,19 @@ function Admin({ session }) {
           <button type="button" className="btn ghost" disabled={bfBusy} onClick={backfillOcr} style={{ width: "auto", padding: "11px 18px" }}>{bfBusy ? <span className="spin" /> : <Icon name="sparkles" size={15} />} {t("Jetzt nachtragen")}</button>
           {bfStatus && (
             <div className={"reorg-status " + bfStatus.kind} style={{ marginTop: 12 }}>
-              <div className="reorg-head"><Icon name={bfStatus.kind === "ok" ? "checkcheck" : bfStatus.kind === "err" ? "alert" : "sparkles"} size={15} /><span>{bfStatus.msg}</span></div>
+              <div className="reorg-head">
+                <Icon name={bfStatus.kind === "ok" ? "checkcheck" : bfStatus.kind === "err" ? "alert" : "sparkles"} size={15} />
+                <span>{bfStatus.msg}</span>
+                {bfStatus.total > 0 && <span className="num" style={{ marginLeft: "auto", fontWeight: 700 }}>{bfStatus.pct}%</span>}
+              </div>
+              {bfStatus.total > 0 && (
+                <div className="pbar" style={{ marginTop: 9 }}><div className={"pbar-fill" + (bfStatus.kind === "run" ? " anim" : "")} style={{ width: (bfStatus.pct || 0) + "%" }} /></div>
+              )}
               {bfStatus.stats && (
                 <div className="reorg-stats">
                   <span><b className="num">{bfStatus.stats.updated}</b> {t("Rechnungsnummern")}</span>
                   <span><b className="num">{bfStatus.stats.cui}</b> CUI</span>
                   {bfStatus.stats.errs > 0 && <span className="reorg-err"><b className="num">{bfStatus.stats.errs}</b> {t("Fehler")}</span>}
-                  {bfStatus.stats.remaining != null && bfStatus.stats.remaining > 0 && <span><b className="num">{bfStatus.stats.remaining}</b> {t("offen")}</span>}
                 </div>
               )}
             </div>
