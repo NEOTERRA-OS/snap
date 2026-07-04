@@ -53,8 +53,8 @@ function useCats() {
   return { info: catInfo, opts: catOpts };
 }
 const STATUS = {
-  draft: "Entwurf", review: "In Prüfung", submitted: "Freigabe",
-  approved: "Genehmigt", booked: "Gebucht", rejected: "Abgelehnt",
+  draft: "Entwurf", review: "In Prüfung", submitted: "In Prüfung",
+  approved: "Freigabe", booked: "Gebucht", rejected: "Abgelehnt",
 };
 const eur = (n) => (n == null ? "—" : Number(n).toLocaleString("de-DE", { style: "currency", currency: "EUR" }));
 // Currency-aware money formatter — never assume EUR for foreign receipts.
@@ -1034,7 +1034,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const statusMatch = (r) => statusF === "all" ? true
-    : statusF === "review" ? ["review", "submitted"].includes(r.status)
+    : statusF === "submitted" ? ["review", "submitted"].includes(r.status)
     : r.status === statusF;
   const filtered = rows.filter((r) => statusMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
   const sorted = [...filtered].sort((a, b) => {
