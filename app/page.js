@@ -1049,7 +1049,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
   const eurOf = (r) => (r.gross_eur != null ? Number(r.gross_eur) : ((!r.currency || r.currency === "EUR") ? Number(r.gross || 0) : null));
   const openSum = open.reduce((s, r) => s + (eurOf(r) ?? 0), 0);
   const openUnconverted = open.filter((r) => eurOf(r) == null).length;
-  const chips = [["all", "Alle"], ["draft", "Entwurf"], ["review", "In Prüfung"], ["approved", "Genehmigt"], ["booked", "Gebucht"], ["rejected", "Abgelehnt"]];
+  const chips = [["all", "Alle"], ["draft", "Entwurf"], ["submitted", "In Prüfung"], ["approved", "Freigabe"], ["booked", "Gebucht"], ["rejected", "Abgelehnt"]];
   const flagged = (r) => (r.flags?.length > 0 || r.duplicate_of);
   const allSel = sorted.length > 0 && sorted.every((r) => sel.has(r.id));
   const toggleAll = () => setSel(allSel ? new Set() : new Set(sorted.map((r) => r.id)));
