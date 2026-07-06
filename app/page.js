@@ -430,9 +430,10 @@ function Shell({ session }) {
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
   const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
   useEffect(() => { supabase.from("profiles").select("role,must_change_password").eq("id", uid).single().then(({ data }) => { setRole(data?.role || "employee"); setMustChange(!!data?.must_change_password); }); }, [uid]);
-  const nav = (v, ic, label) => (
+  const nav = (v, ic, label, badge) => (
     <button className={"snav" + (view === v && !detail ? " on" : "")} onClick={() => { setDetail(null); setView(v); }}>
       <Icon name={ic} size={18} /> <span>{t(label)}</span>
+      {badge > 0 && <span className="snav-badge">{badge}</span>}
     </button>
   );
   const bnav = (v, ic, label) => (
