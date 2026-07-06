@@ -674,3 +674,6 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 /* ===== DS-Canon-Korrekturen (exakt gegen tokens/radius.css) =====
    Buttons & Eingaben = 10px (--radius-control). 999px NUR für Badges/Tags/Toggles. */
 .btn, .sb-cta, .dz-btn { border-radius: 10px; }
+.chip{background:var(--thead)}
+.badge.b-draft{background:var(--thead)}
+.lthumb{background:var(--thead)}
