@@ -229,8 +229,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 @media(min-width:860px){
   /* Schwebende, gerundete App-Hülle auf warmem Hintergrund (exakt DS) */
   body{background:#E7E6DD}
-  /* Schwebende Card auf allen Seiten (exakt DS) */
-  .shell{margin:16px;height:calc(100vh - 32px);min-height:0;border-radius:20px;overflow:hidden;box-shadow:0 12px 40px rgba(27,33,26,.12);background:var(--bg)}
+  /* Randlos: kein grauer Rand, Sidebar bündig an allen Kanten */
+  .shell{margin:0;height:100vh;min-height:0;border-radius:0;overflow:hidden;box-shadow:none;background:var(--bg)}
   .sidebar{display:flex;flex-direction:column;gap:3px;width:236px;flex:0 0 236px;background:var(--surface);border-right:1px solid var(--line);padding:16px 12px;height:100%;overflow-y:auto}
   .maincol{height:100%;overflow-y:auto}
   .bottomnav{display:none}
