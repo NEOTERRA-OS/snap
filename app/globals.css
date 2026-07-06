@@ -906,3 +906,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .cap-dz-ic .i{width:22px;height:22px}
 .cap-dz-h{font-size:14.5px;font-weight:700;color:var(--ink)}
 .cap-dz-p{font-size:12.5px;color:var(--muted)}
+
+/* Manuell & Barauslage farblich absetzen (kein Datei-Upload) */
+.cap-src.alt{background:var(--surface-sunken);border-color:transparent}
+.cap-src.alt:hover{background:#E6E8DF;border-color:var(--green)}
+.cap-src.alt .cap-src-ic{background:var(--surface)}
