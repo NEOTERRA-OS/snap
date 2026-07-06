@@ -468,7 +468,7 @@ function Shell({ session }) {
         <div className="content">
           <div className="container">
             {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} onClose={() => { setDetail(null); setView("receipts"); }} inbound={inbound} onInboundHandled={() => setInbound(null)} />
-              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} />
+              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} onCapture={() => { setDetail(null); setView("capture"); }} />
               : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} onCapture={() => { setDetail(null); setView("capture"); }} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "activity" ? <ActivityLog />
