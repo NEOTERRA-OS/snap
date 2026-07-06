@@ -1882,8 +1882,8 @@ const monthLabel = (k) => { const [y, m] = k.split("-"); return `${MONTHS_DE[(+m
 const shortEur = (v) => (v >= 1000 ? (v / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + "k" : Math.round(v).toString());
 
 // Monatschart: SVG mit Gitter, Ø-Linie, hervorgehobenem aktuellem Monat (NEOS-konform).
-function MonthlyChart({ months, data }) {
-  const vals = months.map((k) => data[k] || 0);
+function MonthlyChart({ months, data, mult = 1 }) {
+  const vals = months.map((k) => (data[k] || 0) * mult);
   const max = Math.max(1, ...vals);
   const avg = vals.reduce((s, v) => s + v, 0) / (vals.length || 1);
   const n = months.length;
