@@ -30,7 +30,8 @@
 .neos .nprof-sec { display: block; margin: 18px 2px 9px; }
 .neos .nprof-row { display: flex; align-items: center; gap: 12px; width: 100%; background: var(--card); border: 1px solid var(--border-card); border-radius: var(--r-card); padding: 13px 14px; cursor: pointer; font-family: var(--font-ui); margin-bottom: 8px; text-align: left; }
 .neos .nprof-row-ic { color: var(--text-2); display: flex; flex: 0 0 auto; }
-.neos .nprof-row-tx { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); }
+.neos .nprof-row-tx { flex: 1; display: flex; flex-direction: column; font-size: 14px; font-weight: 600; color: var(--text); }
+.neos .nprof-row-sub { font-size: 11px; font-weight: 500; color: var(--text-3); margin-top: 1px; }
 .neos .nprof-chev { color: var(--text-3); }
 .neos .nprof-val { font-size: 13px; color: var(--text-3); font-weight: 600; }
 .neos .nprof-logout .nprof-row-ic, .neos .nprof-logout .nprof-row-tx { color: var(--error); }
