@@ -508,6 +508,63 @@ function MobileCamera({ onCapture, onClose, onManual, onCash, onEmail, onImport 
   );
 }
 
+// Persönlicher Verlauf (mobil): Aktivität rund um die eigenen Belege.
+const HIST_VERB = { "receipt.created": "erfasst", "receipt.submitted": "eingereicht", "receipt.approved": "freigegeben", "receipt.booked": "gebucht", "receipt.rejected": "zurückgewiesen", "receipt.edited": "bearbeitet", "receipt.withdrawn": "zurückgezogen", "receipt.status": "aktualisiert" };
+const HIST_ICON = { "receipt.created": "camera", "receipt.submitted": "upload", "receipt.approved": "check", "receipt.booked": "checkcheck", "receipt.rejected": "x", "receipt.edited": "pencil", "receipt.withdrawn": "chevronleft", "receipt.status": "clock" };
+function relTime(iso, t) {
+  const d = new Date(iso), s = (Date.now() - d.getTime()) / 1000;
+  if (s < 60) return t("gerade eben");
+  if (s < 3600) return `${t("vor")} ${Math.floor(s / 60)} ${t("Min")}`;
+  if (s < 86400) return `${t("vor")} ${Math.floor(s / 3600)} ${t("Std")}`;
+  const days = Math.floor(s / 86400);
+  if (days === 1) return t("gestern");
+  if (days < 7) return `${t("vor")} ${days} ${t("Tagen")}`;
+  return d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit" });
+}
+function MobileHistory({ uid, onOpen }) {
+  const { t } = useT();
+  const [rows, setRows] = useState(null);
+  const [names, setNames] = useState({});
+  const [filter, setFilter] = useState("all");
+  const [q, setQ] = useState("");
+  useEffect(() => {
+    (async () => {
+      const { data: recs } = await supabase.from("receipts").select("id").or(`user_id.eq.${uid},created_by.eq.${uid}`);
+      const mine = new Set((recs || []).map((r) => r.id));
+      const { data } = await supabase.from("activity_log").select("id,created_at,actor_id,action,entity_id,summary").order("created_at", { ascending: false }).limit(120);
+      setRows((data || []).filter((a) => a.actor_id === uid || mine.has(a.entity_id)));
+      supabase.from("profiles").select("id,full_name").then(({ data: p }) => { const m = {}; (p || []).forEach((x) => (m[x.id] = x.full_name)); setNames(m); });
+    })();
+  }, [uid]);
+  const chips = [["all", "Alle"], ["receipt.created", "Erfasst"], ["receipt.submitted", "Eingereicht"], ["receipt.approved", "Freigabe"], ["receipt.booked", "Gebucht"]];
+  const list = (rows || []).filter((a) => (filter === "all" || a.action === filter) && (!q || (a.summary || "").toLowerCase().includes(q.toLowerCase())));
+  const tone = (a) => a.startsWith("receipt.rejected") ? "err" : a === "receipt.approved" ? "info" : a === "receipt.booked" ? "ok" : "green";
+  return (
+    <div className="neos nhist">
+      <div className="nhist-h1">{t("Verlauf")}</div>
+      <div className="nhist-sub">{t("Wer · was · wann")}</div>
+      <div className="nmob-srch" style={{ marginTop: 12 }}><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Verlauf durchsuchen …")} /></div>
+      <div className="nmob-chips" style={{ marginTop: 10 }}>
+        {chips.map(([k, l]) => <button type="button" key={k} className={"nmob-chip" + (filter === k ? " on" : "")} onClick={() => setFilter(k)}>{t(l)}</button>)}
+      </div>
+      {rows === null ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div>
+        : list.length === 0 ? <div className="nmob-empty">{t("Noch keine Aktivität aufgezeichnet.")}</div> : (
+        <div className="nhist-list">
+          {list.map((a) => (
+            <button type="button" key={a.id} className="nhist-row" onClick={() => a.entity_id && onOpen(a.entity_id)}>
+              <span className={"nhist-ic t-" + tone(a.action)}><Icon name={HIST_ICON[a.action] || "receipt"} size={14} /></span>
+              <span className="nhist-main">
+                <span className="nhist-t">{a.summary ? `${a.summary} ${t(HIST_VERB[a.action] || "")}` : t(HIST_VERB[a.action] || a.action)}</span>
+                <span className="nhist-m">{names[a.actor_id] || t("System")} · {relTime(a.created_at, t)}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Mobile Profil-Screen (nach Claude-Design): Nutzerkarte, Einstellungen, Sprache, Darstellung.
 const ROLE_MOB = { employee: "Mitarbeiter", approver: "Genehmiger", accounting: "Buchhaltung", admin: "Administrator" };
 function MobileProfile({ who, initials, role, lang, setLang, theme, toggleTheme, onSignOut, onImport }) {
