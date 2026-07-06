@@ -1313,7 +1313,7 @@ function CmdHeader({ icon, title, search, children }) {
   );
 }
 
-function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who = "" }) {
+function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who = "", onCapture = null }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [statusF, setStatusF] = useState("all");
