@@ -870,13 +870,14 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
             <span className="cap">{t("Offene Erstattung")}</span>
             <span className="nmob-cur">EUR</span>
           </div>
-          <div className="nmob-hero-amt">{eur(openReimbSum)}</div>
+          <div className="nmob-hero-amt">{fmtN(openReimbSum)} <span className="nmob-hero-unit">EUR</span></div>
           <div className="nmob-hero-stats">
             <div><b>{openReimb.length}</b><span>{t("Belege")}</span></div>
             <div><b>{inReviewCount}</b><span>{t("In Prüfung")}</span></div>
-            <div><b>{eur(vorsteuer)}</b><span>{t("Vorsteuer")}</span></div>
+            <div><b>{fmtN0(vorsteuer)}</b><span>{t("Vorsteuer")}</span></div>
           </div>
         </div>
+        <NeosInstallBanner />
         <div className="nmob-search">
           <div className="nmob-srch"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Händler, Betrag, CUI …")} /></div>
           <button type="button" className="nmob-sort" onClick={() => setDir(dir === "asc" ? "desc" : "asc")}>{t("Datum")} <Icon name={dir === "asc" ? "arrowup" : "arrowdown"} size={14} /></button>
