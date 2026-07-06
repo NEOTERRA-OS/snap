@@ -979,8 +979,9 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   );
   if (stage === "pick") return (
     <>
-      <h1 className="title">{t("Beleg erfassen")}</h1>
-      <p className="lead">{t("Foto, Scan, Upload oder per E-Mail — die OCR füllt die Felder automatisch.")}</p>
+      <CmdHeader icon="camera" title={t("Beleg erfassen")}>
+        <button className="cmdh-ghost" onClick={() => setEmailInfo(true)}><Icon name="mail" size={14} /> {t("E-Mail-Inbox")}</button>
+      </CmdHeader>
       <div className="capwrap">
         <InstallGuide />
         <div className="sources">
