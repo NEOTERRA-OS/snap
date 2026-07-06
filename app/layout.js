@@ -1,4 +1,6 @@
 import "./globals.css";
+import "./neos-tokens.css";
+import "./neos-mobile.css";
 
 export const metadata = {
   title: "NEOS Snap",
