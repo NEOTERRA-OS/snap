@@ -365,7 +365,9 @@ function Shell({ session }) {
       </div>
       <input ref={fabCamRef} type="file" accept="image/*,application/pdf" capture="environment" multiple hidden
         onChange={(e) => { const fs = Array.from(e.target.files || []); e.target.value = ""; if (fs.length) { setInbound(fs); setDetail(null); setView("capture"); } }} />
-      {detail && (
+      {detail && (isMobile ? (
+        <MobileDetail id={detail} onClose={() => setDetail(null)} />
+      ) : (
         <div className="sheet-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
           <div className="sheet">
             <div className="sheet-bar">
@@ -375,7 +377,7 @@ function Shell({ session }) {
             <div className="sheet-body"><Detail id={detail} onBack={() => setDetail(null)} /></div>
           </div>
         </div>
-      )}
+      ))}
       <Toasts />
     </div>
   );
