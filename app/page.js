@@ -579,6 +579,11 @@ function MobileProfile({ who, initials, role, lang, setLang, theme, toggleTheme,
       </div>
 
       <div className="nprof-sec cap">{t("Einstellungen")}</div>
+      <button type="button" className="nprof-row" onClick={onDelegations}>
+        <span className="nprof-row-ic"><Icon name="user" size={16} /></span>
+        <span className="nprof-row-tx">{t("Vertretungen")}<span className="nprof-row-sub">{t("Wer darf Belege für mich erfassen?")}</span></span>
+        <Icon name="arrowright" size={15} className="nprof-chev" />
+      </button>
       <button type="button" className="nprof-row" onClick={onImport}>
         <span className="nprof-row-ic"><Icon name="filetext" size={16} /></span>
         <span className="nprof-row-tx">{t("Excel / CSV importieren")}</span>
