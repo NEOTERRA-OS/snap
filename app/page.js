@@ -2111,22 +2111,28 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
           <button className="cmdh-cta" onClick={exportPdf}><Icon name="download" size={15} /> {t("Export")}</button>
         </div>
       </div>
-      {/* Sub-Filterzeile */}
-      <div className="subfilter">
-        <select className="cmdh-sel" value={cc} onChange={(e) => setCc(e.target.value)}>
-          <option value="">{t("Alle Kostenstellen")}</option>
-          {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
-        </select>
-        <select className="cmdh-sel" value={cat} onChange={(e) => setCat(e.target.value)}>
-          <option value="">{t("Alle Kategorien")}</option>
-          {catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}
-        </select>
-        <select className="cmdh-sel" value={emp} onChange={(e) => setEmp(e.target.value)}>
-          <option value="">{t("Alle Mitarbeiter")}</option>
-          {empList.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
-        </select>
-        <button className="btn ghost" style={{ width: "auto", padding: "0 12px", height: "var(--h-filter)", fontSize: 12.5 }} onClick={exportCsv}><Icon name="upload" size={14} /> {t("CSV-Export")}</button>
-        <span className="shown">{f.length} {t("Belege")}</span>
+      {/* Scope-Zeile: Kostenstelle/Mitarbeiter-Umschalter + Chips */}
+      <div className="aws-scope">
+        <div className="fseg">
+          <button className={"fs" + (chipMode === "cc" ? " on" : "")} onClick={() => setChipMode("cc")}><Icon name="package" size={13} /> {t("Kostenstelle")}</button>
+          <button className={"fs" + (chipMode === "emp" ? " on" : "")} onClick={() => setChipMode("emp")}><Icon name="user" size={13} /> {t("Mitarbeiter")}</button>
+        </div>
+        <div className="aws-chips">
+          {chipMode === "cc" ? (<>
+            <button className={"aws-chip" + (!cc ? " on" : "")} onClick={() => setCc("")}>{t("Alle Kostenstellen")}</button>
+            {ccs.map((c) => <button key={c.id} className={"aws-chip" + (cc === c.id ? " on" : "")} onClick={() => setCc(c.id)}>{c.name}</button>)}
+          </>) : (<>
+            <button className={"aws-chip" + (!emp ? " on" : "")} onClick={() => setEmp("")}>{t("Alle Mitarbeiter")}</button>
+            {empList.map((e) => <button key={e.id} className={"aws-chip" + (emp === e.id ? " on" : "")} onClick={() => setEmp(e.id)}>{e.name}</button>)}
+          </>)}
+        </div>
+        <span className="aws-scope-sp" />
+        <button className="aws-share" onClick={exportCsv}><Icon name="share" size={14} /> {t("Bericht teilen")}</button>
+        <span className="aws-anzeige">{t("Anzeige")}</span>
+        <div className="cur-tog">
+          <button className={cur === "EUR" ? "on" : ""} onClick={() => setCur("EUR")}>EUR</button>
+          <button className={cur === "RON" ? "on" : ""} onClick={() => toast(t("RON-Umrechnung folgt bald"), "err")}>RON</button>
+        </div>
       </div>
 
       <div className="kpis kx">
