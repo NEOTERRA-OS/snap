@@ -2483,7 +2483,8 @@ function ActivityLog() {
   );
 }
 
-function Admin({ session }) {
+function Admin({ session, only }) {
+  const catsOnly = only === "categories";
   const { t } = useT();
   const [users, setUsers] = useState(null);
   const [aq, setAq] = useState("");
