@@ -507,6 +507,33 @@ function MobileCamera({ onCapture, onClose, onManual, onCash, onEmail, onImport 
   );
 }
 
+// Fertig-Screen (nach dem Einreichen) mit Status-Leiter (Erfasst → In Prüfung → Freigabe → Gebucht).
+function MobileDone({ onClose }) {
+  const { t } = useT();
+  const ladder = [
+    { icon: "scan", title: "Erfasst", sub: "gerade eben", state: "done" },
+    { icon: "clock", title: "In Prüfung", sub: "wartet auf Genehmiger", state: "active" },
+    { icon: "check", title: "Freigabe", sub: "—", state: "todo" },
+    { icon: "link", title: "Gebucht", sub: "—", state: "todo" },
+  ];
+  return (
+    <div className="neos ndone">
+      <div className="ndone-ic"><Icon name="check" size={30} /></div>
+      <div className="ndone-h1">{t("Eingereicht!")}</div>
+      <div className="ndone-sub">{t("Deine Belege sind in Prüfung. Du wirst bei Freigabe benachrichtigt.")}</div>
+      <div className="ndone-ladder">
+        {ladder.map((l, i) => (
+          <div className={"ndone-step " + l.state} key={i}>
+            <span className="ndone-node"><Icon name={l.icon} size={14} /></span>
+            <div className="ndone-txt"><b>{t(l.title)}</b><span>{t(l.sub)}</span></div>
+          </div>
+        ))}
+      </div>
+      <button type="button" className="ndone-btn" onClick={onClose}>{t("Fertig")}</button>
+    </div>
+  );
+}
+
 function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   const { t } = useT();
   const [stage, setStage] = useState("pick"); // pick | review
