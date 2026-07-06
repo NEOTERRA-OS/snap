@@ -1483,12 +1483,9 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
       <div className="subfilter">
         <div className="fchips">
           {dchips.map(([k, l]) => <button key={k} className={"fchip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
+          {curList.length > 1 && <span className="fchips-div" />}
+          {curList.length > 1 && curList.map((c) => <button key={c} className={"fchip" + (curF === c ? " on" : "")} onClick={() => setCurF(curF === c ? "all" : c)}>{c} <span className="cnt">{curCount(c)}</span></button>)}
         </div>
-        {curList.length > 1 && (
-          <div className="fchips fchips-cur">
-            {curList.map((c) => <button key={c} className={"fchip" + (curF === c ? " on" : "")} onClick={() => setCurF(curF === c ? "all" : c)}>{c} <span className="cnt">{curCount(c)}</span></button>)}
-          </div>
-        )}
         <span className="aws-scope-sp" />
         <div className="srt">
           <select className="cmdh-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
