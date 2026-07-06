@@ -793,7 +793,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
   const [bulkBusy, setBulkBusy] = useState(false);
   const [names, setNames] = useState({});
   const load = useCallback(() => {
-    let qb = supabase.from("receipts").select("id,merchant,doc_date,gross,gross_eur,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method,user_id").order("doc_date", { ascending: false });
+    let qb = supabase.from("receipts").select("id,merchant,doc_date,gross,gross_eur,vat_rate,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method,user_id").order("doc_date", { ascending: false });
     if (!allScope) qb = qb.eq("user_id", uid);   // „Meine Belege": nur eigene; Admin-Blick „Alle Belege": ungefiltert
     qb.then(({ data }) => setRows(data || []));
   }, [allScope, uid]);
