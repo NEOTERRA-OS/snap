@@ -1153,7 +1153,8 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   }
 
   return (
-    <>
+    <div className="cap-modal-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose?.(); }}>
+      <div className="cap-modal cap-modal-lg">
       <CmdHeader icon="scan" title={`${t("Prüfen & ergänzen")} (${items.length})`}>
         {owners.length > 0 && (
           <div className="forsel">
