@@ -782,7 +782,7 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
 
 const dShort = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—");
 
-function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false }) {
+function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who = "" }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [statusF, setStatusF] = useState("all");
