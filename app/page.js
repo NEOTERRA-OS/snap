@@ -2128,40 +2128,38 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
 
       <div className="kpis kx">
         <div className="kpi">
-          <div className="kt"><Icon name="banknote" />{t("Volumen")}</div><div className="n mono">{eur(total)}</div>
+          <div className="kt"><Icon name="banknote" />{t("Volumen")}</div>
+          <div className="n mono"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
           {volDelta == null
             ? <div className="ksub neu">{t("Gesamtzeitraum")}</div>
             : <div className={"ksub " + (volDelta >= 0 ? "pos" : "neg")}><Icon name={volDelta >= 0 ? "trendup" : "trenddown"} size={12} />{(volDelta >= 0 ? "+" : "") + volDelta.toFixed(1)}% {t("ggü. Vorperiode")}</div>}
         </div>
         <div className="kpi">
-          <div className="kt"><Icon name="receipt" />{t("Belege")}</div><div className="n mono">{f.length}</div>
-          <div className="ksub neu">{cntDelta == null ? t("Gesamtzeitraum") : `${cntDelta >= 0 ? "+" : ""}${cntDelta} ${t("ggü. Vorperiode")}`}</div>
+          <div className="kt"><Icon name="receipt" />{t("Belege")}</div>
+          <div className="n mono"><span className="nv">{f.length}</span></div>
+          <div className="ksub neu">{cntDelta == null ? t("gesamt") : `${cntDelta >= 0 ? "+" : ""}${cntDelta} ${t("ggü. Vorperiode")}`}</div>
         </div>
         <div className="kpi">
-          <div className="kt"><Icon name="layers" />{t("Ø Betrag")}</div><div className="n mono">{eur(avg)}</div>
+          <div className="kt"><Icon name="layers" />{t("Ø Betrag")}</div>
+          <div className="n mono"><span className="nv">{fmtN0(avg)}</span><span className="nu">EUR</span></div>
           <div className="ksub neu">{t("pro Beleg")}</div>
-        </div>
-        <div className="kpi">
-          <div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div><div className="n mono">{eur(sum(booked))}</div>
-          <div className="ksub neu">{bookedPct}% {t("des Volumens")}</div>
         </div>
       </div>
       <div className="kpis kx" style={{ marginTop: 14 }}>
         <div className="kpi">
-          <div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div><div className="n mono">{eur(sum(openReimb))}</div>
+          <div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div>
+          <div className="n mono"><span className="nv">{fmtN0(sum(booked))}</span><span className="nu">EUR</span></div>
+          <div className="ksub neu">{bookedPct}% {t("des Volumens")}</div>
+        </div>
+        <div className="kpi">
+          <div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div>
+          <div className={"n mono" + (openReimb.length ? " warnv" : "")}><span className="nv">{fmtN0(sum(openReimb))}</span><span className="nu">EUR</span></div>
           <div className={"ksub " + (openReimb.length ? "warn" : "neu")}>{openReimb.length} {t("privat · erstattungsfähig")}</div>
         </div>
         <div className="kpi">
-          <div className="kt"><Icon name="layers" />{t("Vorsteuer")}</div><div className="n mono">{eur(vat)}</div>
+          <div className="kt"><Icon name="layers" />{t("Vorsteuer")}</div>
+          <div className="n mono"><span className="nv">{fmtN0(vat)}</span><span className="nu">EUR</span></div>
           <div className="ksub neu">{t("abziehbar (EUR)")}</div>
-        </div>
-        <div className="kpi">
-          <div className="kt"><Icon name="clock" />{t("In Prüfung")}</div><div className="n mono">{inReview.length}</div>
-          <div className={"ksub " + (inReview.length ? "warn" : "neu")}>{t("Belege zur Freigabe")}</div>
-        </div>
-        <div className="kpi">
-          <div className="kt"><Icon name="trend" />{t("Ø pro Monat")}</div><div className="n mono">{eur(total / (months.length || 1))}</div>
-          <div className="ksub neu">{months.length} {t("Monate")}</div>
         </div>
       </div>
 
