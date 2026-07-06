@@ -1032,7 +1032,17 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
             <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} />
           </label>
         </div>
-        <div className="cap-modal-hint"><Icon name="scan" size={13} /> {t("Dateien hierher ziehen — Format wird automatisch erkannt. OCR startet automatisch.")}</div>
+        <div className="cap-modal-dzwrap">
+          <label className={"cap-dz" + (drag ? " over" : "")}
+            onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
+            onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
+            onDrop={smartDrop}>
+            <span className="cap-dz-ic"><Icon name="upload" size={24} /></span>
+            <span className="cap-dz-h">{t("Dateien hierher ziehen oder auswählen")}</span>
+            <span className="cap-dz-p">{t("JPG, PNG, PDF, CSV, XLSX — Format wird automatisch erkannt")}</span>
+            <input ref={allRef} type="file" accept="image/*,application/pdf,.csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple hidden onChange={onPickAny} />
+          </label>
+        </div>
         <input ref={imgRef} type="file" accept="image/*" capture="environment" multiple hidden onChange={onPick} />
         <input ref={pdfRef} type="file" accept="application/pdf" multiple hidden onChange={onPick} />
         {err && <div className="err" style={{ margin: "0 18px 16px" }}>{err}</div>}
