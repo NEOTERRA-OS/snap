@@ -1643,12 +1643,13 @@ function MonthlyChart({ months, data }) {
   );
 }
 
-function Dashboard({ onOpen }) {
+function Dashboard({ onOpen, uid }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [ccs, setCcs] = useState([]);
   const [profiles, setProfiles] = useState({});
   const [period, setPeriod] = useState("12m");
+  const [scope, setScope] = useState("firma"); // mobile Umfang: me | firma
   const [cc, setCc] = useState("");
   const [cat, setCat] = useState("");
   const [emp, setEmp] = useState("");
