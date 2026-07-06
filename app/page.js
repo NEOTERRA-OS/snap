@@ -337,8 +337,8 @@ function Shell({ session }) {
         <div className="content">
           <div className="container">
             {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} inbound={inbound} onInboundHandled={() => setInbound(null)} />
-              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} />
-              : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope />
+              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} />
+              : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "activity" ? <ActivityLog />
               : view === "admin" ? <Admin session={session} />
