@@ -507,6 +507,52 @@ function MobileCamera({ onCapture, onClose, onManual, onCash, onEmail, onImport 
   );
 }
 
+// Mobile Profil-Screen (nach Claude-Design): Nutzerkarte, Einstellungen, Sprache, Darstellung.
+const ROLE_MOB = { employee: "Mitarbeiter", approver: "Genehmiger", accounting: "Buchhaltung", admin: "Administrator" };
+function MobileProfile({ who, initials, role, lang, setLang, theme, toggleTheme, onSignOut, onImport }) {
+  const { t } = useT();
+  const langs = [["de", "DE"], ["en", "ENG"], ["ro", "RO"]];
+  return (
+    <div className="neos nprof">
+      <div className="nprof-user">
+        <span className="nprof-av">{initials || "?"}</span>
+        <div><div className="nprof-name">{who}</div><div className="nprof-role">{t(ROLE_MOB[role] || "Mitarbeiter")}</div></div>
+      </div>
+
+      <div className="nprof-sec cap">{t("Einstellungen")}</div>
+      <button type="button" className="nprof-row" onClick={onImport}>
+        <span className="nprof-row-ic"><Icon name="filetext" size={16} /></span>
+        <span className="nprof-row-tx">{t("Excel / CSV importieren")}</span>
+        <Icon name="arrowright" size={15} className="nprof-chev" />
+      </button>
+      <button type="button" className="nprof-app" onClick={() => toast(t("Über das Teilen-Menü „Zum Home-Bildschirm“ hinzufügen."), "info")}>
+        <span className="nprof-app-ic"><Icon name="smartphone" size={20} /></span>
+        <span className="nprof-app-tx"><b>{t("App aufs Handy laden")}</b><span>{t("QR scannen · iOS & Android")}</span></span>
+        <Icon name="arrowright" size={15} />
+      </button>
+
+      <div className="nprof-sec cap">{t("Sprache")}</div>
+      <div className="nprof-langs">
+        {langs.map(([code, lbl]) => (
+          <button type="button" key={code} className={"nprof-lang" + (lang === code ? " on" : "")}
+            onClick={() => code === "ro" ? toast(t("Rumänisch folgt in Kürze."), "info") : setLang(code)}>{lbl}</button>
+        ))}
+      </div>
+      <button type="button" className="nprof-row" onClick={toggleTheme}>
+        <span className="nprof-row-ic"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></span>
+        <span className="nprof-row-tx">{t("Darstellung")}</span>
+        <span className="nprof-val">{theme === "dark" ? t("Dunkel") : t("Hell")}</span>
+      </button>
+      <button type="button" className="nprof-row nprof-logout" onClick={onSignOut}>
+        <span className="nprof-row-ic"><Icon name="logout" size={16} /></span>
+        <span className="nprof-row-tx">{t("Abmelden")}</span>
+      </button>
+
+      <div className="nprof-foot">NEOS Snap · v1.0 · Neoterra Grupul</div>
+    </div>
+  );
+}
+
 // Fertig-Screen (nach dem Einreichen) mit Status-Leiter (Erfasst → In Prüfung → Freigabe → Gebucht).
 function MobileDone({ onClose }) {
   const { t } = useT();
