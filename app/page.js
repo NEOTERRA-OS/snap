@@ -2090,32 +2090,39 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
         </div>
       </div>
 
-      {/* ===== Desktop (bestehend) ===== */}
+      {/* ===== Desktop ===== */}
       <div className="rx-desktop">
-      <div className="ahead">
-        <h1 className="title">{t("Auswertungen")}</h1>
-        <div className="ahead-actions">
-          <button className="btn ghost" onClick={exportPdf}><Icon name="filetext" size={15} /> PDF</button>
-          <button className="btn ghost" onClick={exportCsv}><Icon name="upload" size={15} /> {t("CSV-Export")}</button>
+      {/* CommandHeader — exakt DS (58px, Icon-Tile + Titel + Suche + Perioden-Segmented + Export) */}
+      <div className="cmdh">
+        <div className="cmdh-ic"><Icon name="barchart" size={17} /></div>
+        <h1 className="cmdh-title">{t("Auswertungen")}</h1>
+        <label className="cmdh-search">
+          <Icon name="search" size={15} />
+          <input value={dq} onChange={(e) => setDq(e.target.value)} placeholder={t("Händler suchen…")} />
+        </label>
+        <div className="cmdh-right">
+          <div className="fseg">
+            {[["week", "Woche"], ["1m", "Monat"], ["3m", "Quartal"], ["12m", "Jahr"]].map(([k, l]) => (
+              <button key={k} className={"fs" + (period === k ? " on" : "")} onClick={() => setPeriod(k)}>{t(l)}</button>))}
+          </div>
+          <button className="cmdh-cta" onClick={exportPdf}><Icon name="download" size={15} /> {t("Export")}</button>
         </div>
       </div>
-      <div className="filterbar">
-        <div className="fseg">
-          {[["1m", "Monat"], ["3m", "3 Monate"], ["12m", "12 Monate"], ["all", "Alle"]].map(([k, l]) => (
-            <button key={k} className={"fs" + (period === k ? " on" : "")} onClick={() => setPeriod(k)}>{t(l)}</button>))}
-        </div>
-        <select value={cc} onChange={(e) => setCc(e.target.value)}>
+      {/* Sub-Filterzeile */}
+      <div className="subfilter">
+        <select className="cmdh-sel" value={cc} onChange={(e) => setCc(e.target.value)}>
           <option value="">{t("Alle Kostenstellen")}</option>
           {ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
         </select>
-        <select value={cat} onChange={(e) => setCat(e.target.value)}>
+        <select className="cmdh-sel" value={cat} onChange={(e) => setCat(e.target.value)}>
           <option value="">{t("Alle Kategorien")}</option>
           {catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}
         </select>
-        <select value={emp} onChange={(e) => setEmp(e.target.value)}>
+        <select className="cmdh-sel" value={emp} onChange={(e) => setEmp(e.target.value)}>
           <option value="">{t("Alle Mitarbeiter")}</option>
           {empList.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
         </select>
+        <button className="btn ghost" style={{ width: "auto", padding: "0 12px", height: "var(--h-filter)", fontSize: 12.5 }} onClick={exportCsv}><Icon name="upload" size={14} /> {t("CSV-Export")}</button>
         <span className="shown">{f.length} {t("Belege")}</span>
       </div>
 
