@@ -568,7 +568,7 @@ function MobileHistory({ uid, onOpen }) {
 
 // Mobile Profil-Screen (nach Claude-Design): Nutzerkarte, Einstellungen, Sprache, Darstellung.
 const ROLE_MOB = { employee: "Mitarbeiter", approver: "Genehmiger", accounting: "Buchhaltung", admin: "Administrator" };
-function MobileProfile({ who, initials, role, lang, setLang, theme, toggleTheme, onSignOut, onImport }) {
+function MobileProfile({ who, initials, role, lang, setLang, theme, toggleTheme, onSignOut, onImport, onDelegations }) {
   const { t } = useT();
   const langs = [["de", "DE"], ["en", "ENG"], ["ro", "RO"]];
   return (
