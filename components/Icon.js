@@ -69,11 +69,42 @@ const P = {
   image: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
   zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
 };
+// Cache für dynamisch aus der Lucide-Bibliothek nachgeladene Icons (CDN).
+const remoteCache = {};
+// Lucide-Namen aus freier Eingabe/Link extrahieren und säubern (nur a-z0-9-).
+function cleanLucide(name) {
+  return String(name || "")
+    .trim().toLowerCase()
+    .replace(/^.*\/icons\//, "")   // lucide.dev/icons/<name> oder .../icons/<name>.svg
+    .replace(/\.svg.*$/, "")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
 export default function Icon({ name, size = 16, color, style, className }) {
+  const local = P[name];
+  const [inner, setInner] = useState(local || (name != null ? remoteCache[name] : "") || "");
+  useEffect(() => {
+    if (local) { setInner(local); return; }
+    if (!name) { setInner(""); return; }
+    if (remoteCache[name] !== undefined) { setInner(remoteCache[name]); return; }
+    const clean = cleanLucide(name);
+    if (!clean) { setInner(""); return; }
+    let cancelled = false;
+    fetch(`https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/${clean}.svg`)
+      .then((r) => (r.ok ? r.text() : ""))
+      .then((txt) => {
+        const m = txt && txt.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
+        const body = m ? m[1] : "";
+        remoteCache[name] = body;
+        if (!cancelled) setInner(body);
+      })
+      .catch(() => { if (!cancelled) setInner(""); });
+    return () => { cancelled = true; };
+  }, [name, local]);
   return (
     <svg className={"i " + (className || "")} width={size} height={size} viewBox="0 0 24 24"
       style={{ color, width: size, height: size, ...(style || {}) }} aria-hidden="true"
-      dangerouslySetInnerHTML={{ __html: P[name] || "" }} />
+      dangerouslySetInnerHTML={{ __html: inner }} />
   );
 }
 // NEOS Snap / Expenses module mark: yellow rounded tile with the green expenses glyph.
