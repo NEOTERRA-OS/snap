@@ -2046,7 +2046,7 @@ function Dashboard({ onOpen, uid, mode = "analysis", onCapture = null, onOpenApp
             <div className="rlab" title={k}>{t(k)}</div>
             <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
           </div>
-          <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / tot * 100)}%</span>{keyOf && <Icon name="chevronleft" size={14} style={{ transform: "rotate(180deg)", color: "var(--muted2)" }} />}</div>
+          <div className="rrgt"><span className="rv">{mC(v)}</span><span className="rpct">{Math.round(v / tot * 100)}%</span>{keyOf && <Icon name="chevronleft" size={14} style={{ transform: "rotate(180deg)", color: "var(--muted2)" }} />}</div>
         </div>))}
     </div>);
   };
