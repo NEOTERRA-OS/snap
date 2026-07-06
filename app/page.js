@@ -2192,7 +2192,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
             <div className="kpis kx">
               <div className="kpi">
                 <div className="kt"><Icon name="banknote" />{t("Volumen")}</div>
-                <div className="n mono"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
+                <div className="n mono posv"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
                 {volDelta == null
                   ? <div className="ksub neu">{t("Gesamtzeitraum")}</div>
                   : <div className={"ksub " + (volDelta >= 0 ? "pos" : "neg")}><Icon name={volDelta >= 0 ? "trendup" : "trenddown"} size={12} />{(volDelta >= 0 ? "+" : "") + volDelta.toFixed(1)}% {t("ggü. Vorperiode")}</div>}
@@ -2211,7 +2211,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
             <div className="kpis kx" style={{ marginTop: 14 }}>
               <div className="kpi">
                 <div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div>
-                <div className="n mono"><span className="nv">{fmtN0(sum(booked))}</span><span className="nu">EUR</span></div>
+                <div className="n mono posv"><span className="nv">{fmtN0(sum(booked))}</span><span className="nu">EUR</span></div>
                 <div className="ksub neu">{bookedPct}% {t("des Volumens")}</div>
               </div>
               <div className="kpi">
@@ -2266,7 +2266,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
               </div>
               <div className="kpi">
                 <div className="kt"><Icon name="banknote" />{t("Volumen")}</div>
-                <div className="n mono"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
+                <div className="n mono posv"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
                 <div className="ksub neu">{t("Bruttovolumen")}</div>
               </div>
               <div className="kpi">
