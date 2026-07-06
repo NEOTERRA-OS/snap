@@ -1721,7 +1721,15 @@ function Dashboard({ onOpen, uid }) {
   const prevTotal = sum(prevF);
   const volDelta = prevTotal > 0 ? (total - prevTotal) / prevTotal * 100 : null;
   const cntDelta = prevF.length ? f.length - prevF.length : null;
+  const prevAvg = prevF.length ? prevTotal / prevF.length : 0;
+  const avgDelta = prevAvg > 0 ? (avg - prevAvg) / prevAvg * 100 : null;
   const bookedPct = total > 0 ? Math.round(sum(booked) / total * 100) : 0;
+  // Kategorie-Statistik (Summe + Anzahl + Icon) für die mobile Balken-Aufschlüsselung.
+  const catStats = {};
+  f.forEach((r) => { const info = catInfo(r.category); (catStats[info.label] ||= { sum: 0, count: 0, icon: info.icon }); catStats[info.label].sum += eurOf(r) ?? 0; catStats[info.label].count++; });
+  const catArr = Object.entries(catStats).map(([label, v]) => ({ label, ...v })).sort((a, b) => b.sum - a.sum);
+  const catTotal = catArr.reduce((s, c) => s + c.sum, 0) || 1;
+  const mPeriods = [["week", "Woche"], ["1m", "Monat"], ["3m", "Quartal"], ["12m", "Jahr"]];
 
   // currency breakdown (original + EUR)
   const byCur = {};
