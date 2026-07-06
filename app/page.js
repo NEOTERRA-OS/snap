@@ -2750,17 +2750,18 @@ function Admin({ session, only }) {
   return (
     <>
       <div className="rx-desktop">
-        <CmdHeader icon="cog" title={t("Admin")}
-          search={<label className="cmdh-search" style={{ maxWidth: 520 }}><Icon name="search" size={15} /><input value={aq} onChange={(e) => setAq(e.target.value)} placeholder={t("Nutzer, E-Mail …")} /></label>}>
-          <span className="aws-anzeige">{t("Nutzer · Rollen · Kostenstellen · Drive")}</span>
+        <CmdHeader icon={catsOnly ? "tag" : "cog"} title={catsOnly ? t("Kategorien") : t("Admin")}
+          search={catsOnly ? undefined : <label className="cmdh-search" style={{ maxWidth: 520 }}><Icon name="search" size={15} /><input value={aq} onChange={(e) => setAq(e.target.value)} placeholder={t("Nutzer, E-Mail …")} /></label>}>
+          <span className="aws-anzeige">{catsOnly ? t("Belegkategorien verwalten") : t("Nutzer · Rollen · Kostenstellen · Drive")}</span>
         </CmdHeader>
       </div>
       <div className="rx-mobile">
-        <h1 className="title">{t("Admin")}</h1>
-        <p className="lead">{t("Nutzer & Rollen verwalten und die Beleg-Ablage konfigurieren.")}</p>
+        <h1 className="title">{catsOnly ? t("Kategorien") : t("Admin")}</h1>
+        <p className="lead">{catsOnly ? t("Belegkategorien verwalten.") : t("Nutzer & Rollen verwalten und die Beleg-Ablage konfigurieren.")}</p>
       </div>
       {err && <div className="err" style={{ marginBottom: 12 }}>{err}</div>}
 
+      {!catsOnly && (<>
       {/* ===== NUTZER & ROLLEN ===== */}
       <div className="adm-sec">
         <div className="adm-sec-h">
