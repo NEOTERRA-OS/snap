@@ -2245,7 +2245,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
         <span className="aws-anzeige">{t("Anzeige")}</span>
         <div className="cur-tog">
           <button className={cur === "EUR" ? "on" : ""} onClick={() => setCur("EUR")}>EUR</button>
-          <button className={cur === "RON" ? "on" : ""} onClick={() => toast(t("RON-Umrechnung folgt bald"), "err")}>RON</button>
+          <button className={cur === "RON" ? "on" : ""} onClick={() => setCur("RON")}>RON</button>
         </div>
       </div>
 
