@@ -465,7 +465,8 @@ function Shell({ session }) {
           <button className="sb-logout" onClick={signOut}><Icon name="logout" size={14} /> {t("Abmelden")}</button>
           <span className="langtog">
             <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
-            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
+            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>ENG</button>
+            <button onClick={() => toast(t("Rumänisch folgt in Kürze"), "err")}>RO</button>
           </span>
         </div>
       </aside>
