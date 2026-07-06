@@ -670,3 +670,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .rtrack{height:8px;border-radius:3px;background:var(--thead)}
 .rtrack > i{border-radius:3px}
 .rtrack > i.f1,.rtrack > i.f2,.rtrack > i.f3{background:linear-gradient(90deg,var(--r1),var(--r3))}
+
+/* ===== DS-Canon-Korrekturen (exakt gegen tokens/radius.css) =====
+   Buttons & Eingaben = 10px (--radius-control). 999px NUR für Badges/Tags/Toggles. */
+.btn, .sb-cta, .dz-btn { border-radius: 10px; }
