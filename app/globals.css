@@ -820,3 +820,6 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .adm-row .r-badge{font-size:12px;font-weight:600;color:var(--emerald);display:inline-flex;align-items:center;gap:5px}
 
 .adm-card .role-sel.hi{background:var(--yellow);color:var(--green);border-color:var(--yellow)}
+
+/* Detail als eingebettetes Desktop-SlideOver (statt fullscreen fixed) */
+.neos.ndetail.emb, .neos.nrev.emb{position:static;inset:auto;z-index:auto;flex:1 1 auto;min-height:0;height:auto;background:var(--bg)}
