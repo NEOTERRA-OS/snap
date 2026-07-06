@@ -501,6 +501,7 @@ function Shell({ session }) {
       </div>
       <input ref={fabCamRef} type="file" accept="image/*,application/pdf" capture="environment" multiple hidden
         onChange={(e) => { const fs = Array.from(e.target.files || []); e.target.value = ""; if (fs.length) { setInbound(fs); setDetail(null); setCaptureOpen(true); } }} />
+      {captureOpen && <Capture uid={uid} onDone={() => setCaptureOpen(false)} onClose={() => setCaptureOpen(false)} inbound={inbound} onInboundHandled={() => setInbound(null)} />}
       {detail && (isMobile ? (
         <MobileDetail id={detail} onClose={() => setDetail(null)} />
       ) : (
