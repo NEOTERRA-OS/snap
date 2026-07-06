@@ -1352,6 +1352,11 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const openReimbSum = openReimb.reduce((s, r) => s + (eurOf(r) ?? 0), 0);
   const inReviewCount = open.filter((r) => ["review", "submitted"].includes(r.status)).length;
   const vorsteuer = open.reduce((s, r) => { const e = eurOf(r); return s + (e && r.vat_rate ? e - e / (1 + r.vat_rate / 100) : 0); }, 0);
+  // Währungsumschaltung (EUR ⇄ RON) für die aggregierten Beträge; Kurs aus echten Belegen.
+  const ronR = rows.filter((r) => r.currency === "RON" && Number(r.gross_eur) > 0 && Number(r.gross) > 0);
+  const RON_RATE = ronR.length ? ronR.reduce((s, r) => s + Number(r.gross), 0) / ronR.reduce((s, r) => s + Number(r.gross_eur), 0) : 4.97;
+  const curUnit = cur === "RON" ? "RON" : "EUR";
+  const cvR = (e) => (cur === "RON" ? (e || 0) * RON_RATE : (e || 0));
   const hour = new Date().getHours();
   const greet = hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend";
   const firstName = ((who || "").split(/[ @.]/)[0]) || who;
@@ -1388,13 +1393,13 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
         <div className="nmob-hero">
           <div className="nmob-hero-top">
             <span className="cap">{t("Offene Erstattung")}</span>
-            <span className="nmob-cur">EUR <Icon name="swap" size={11} /></span>
+            <button type="button" className="nmob-cur" onClick={() => setCur(cur === "EUR" ? "RON" : "EUR")}>{curUnit} <Icon name="swap" size={11} /></button>
           </div>
-          <div className="nmob-hero-amt">{fmtN(openReimbSum)}</div>
+          <div className="nmob-hero-amt">{fmtN(cvR(openReimbSum))}</div>
           <div className="nmob-hero-stats">
             <div><b>{openReimb.length}</b><span>{t("Belege")}</span></div>
             <div><b>{inReviewCount}</b><span>{t("In Prüfung")}</span></div>
-            <div><b>{fmtN0(vorsteuer)}</b><span>{t("Vorsteuer")}</span></div>
+            <div><b>{fmtN0(cvR(vorsteuer))}</b><span>{t("Vorsteuer")}</span></div>
           </div>
         </div>
         <NeosInstallBanner />
