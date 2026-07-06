@@ -354,7 +354,7 @@ function Shell({ session }) {
           {bnav("receipts", "receipt", "Belege")}
           {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
         </div>
-        <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { fabCamRef.current?.click(); setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="plus" size={26} /></button>
+        <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { fabCamRef.current?.click(); setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="camera" size={24} /></button>
         <div className="bnav-side">
           {bnav("dashboard", "barchart", "Analyse")}
           <button type="button" className="bnav" onClick={() => setDelegModal(true)}><Icon name="user" size={20} />{t("Vertretungen")}</button>
