@@ -457,7 +457,6 @@ function Shell({ session }) {
         <button className={"snav" + (delegModal ? " on" : "")} onClick={() => setDelegModal(true)}><Icon name="user" size={18} /> <span>{t("Vertretungen")}</span></button>
         {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "cog", "Admin")}{nav("categories", "tag", "Kategorien")}</>}
         <div className="sb-spacer" />
-        <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
         <div className="sb-user">
           <span className="sb-av">{initials}</span>
           <div className="sb-id"><div className="nm">{who}</div><div className="ml">{email}</div></div>
