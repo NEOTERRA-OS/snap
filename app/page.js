@@ -482,7 +482,7 @@ function Shell({ session }) {
               : view === "history" ? <MobileHistory uid={uid} onOpen={setDetail} />
               : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => { setDetail(null); setView("capture"); }} onDelegations={() => setDelegModal(true)} />
               : view === "admin" ? <Admin session={session} />
-              : view === "categories" ? <Admin session={session} />
+              : view === "categories" ? <Admin session={session} only="categories" />
               : view === "analytics" ? <Dashboard onOpen={setDetail} uid={uid} />
               : <Dashboard onOpen={setDetail} uid={uid} mode="dashboard" onCapture={() => { setDetail(null); setView("capture"); }} onOpenApprovals={() => { setDetail(null); setView("approvals"); }} />}
           </div>
