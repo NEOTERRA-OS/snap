@@ -247,8 +247,10 @@ function PullToRefresh() {
 }
 
 // Mobile Beleg-Detail (Vollbild, nach Claude-Design): Ansicht + Bearbeiten + Status-Leiter.
-function MobileDetail({ id, onClose }) {
+function MobileDetail({ id, onClose, embedded = false }) {
   const { t } = useT();
+  const oc = "neos ndetail" + (embedded ? " emb" : "");
+  const ocEdit = "neos nrev" + (embedded ? " emb" : "");
   const [r, setR] = useState(null);
   const [ccs, setCcs] = useState([]);
   const [preview, setPreview] = useState(null);
@@ -275,7 +277,7 @@ function MobileDetail({ id, onClose }) {
       {r && !["approved", "booked"].includes(r.status) && !editing ? <button type="button" className="ndet-edit" onClick={startEdit}><Icon name="pencil" size={16} /></button> : <span style={{ width: 34 }} />}
     </div>
   );
-  if (!r) return <div className="neos ndetail">{head(t("Beleg"))}<div className="center" style={{ minHeight: 200 }}><span className="spin" /></div></div>;
+  if (!r) return <div className={oc}>{head(t("Beleg"))}<div className="center" style={{ minHeight: 200 }}><span className="spin" /></div></div>;
 
   const info = catInfo(r.category);
   const cc = ccs.find((c) => c.id === r.cost_center_id);
