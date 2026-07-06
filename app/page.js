@@ -1537,12 +1537,20 @@ function Approvals({ onOpen }) {
   const [busy, setBusy] = useState(false);
   const [sel, setSel] = useState(() => new Set());
   const [names, setNames] = useState({});
+  const [ccs, setCcs] = useState([]);
+  const [q, setQ] = useState("");
+  const [vmode, setVmode] = useState("list"); // list | cards
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of,user_id,created_by,creator_name,source,recipient").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
+    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of,user_id,created_by,creator_name,source,recipient,cost_center_id,invoice_no,merchant_cui").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
   }, []);
   useEffect(() => { load(); }, [load]);
-  useEffect(() => { supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); }); }, []);
+  useEffect(() => {
+    supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); });
+    supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || []));
+  }, []);
   if (!rows) return <div className="center"><span className="spin" /></div>;
+  const ccMap = {}; ccs.forEach((c) => (ccMap[c.id] = c));
+  const filtered = rows.filter((r) => !q || [r.merchant, r.merchant_cui, String(r.gross)].some((x) => (x || "").toString().toLowerCase().includes(q.toLowerCase())));
 
   const toggle = (id) => setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const allSel = rows.length > 0 && sel.size === rows.length;
