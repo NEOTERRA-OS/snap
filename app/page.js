@@ -1442,11 +1442,6 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
           <button className="dirbtn" onClick={() => setDir(dir === "asc" ? "desc" : "asc")} title={dir === "asc" ? t("Aufsteigend") : t("Absteigend")}><Icon name={dir === "asc" ? "arrowup" : "arrowdown"} size={15} /></button>
         </div>
       </div>
-      <div className="shownline">
-        <label className="selall-inline"><input type="checkbox" checked={allSel} onChange={toggleAll} /> {sel.size ? `${sel.size} ${t("ausgewählt")}` : t("Auswählen")}</label>
-        <span>{sorted.length} {t("von")} {rows.length} {t("Belegen")}</span>
-      </div>
-
       {sel.size > 0 && (
         <div className="bulkbar">
           <span className="bulkbar-c">{sel.size} {t("ausgewählt")}</span>
