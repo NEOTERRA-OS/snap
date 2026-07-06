@@ -345,7 +345,7 @@ function Shell({ session }) {
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "activity" ? <ActivityLog />
               : view === "history" ? <MobileHistory uid={uid} onOpen={setDetail} />
-              : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => { setDetail(null); setView("capture"); }} />
+              : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => { setDetail(null); setView("capture"); }} onDelegations={() => setDelegModal(true)} />
               : view === "admin" ? <Admin session={session} />
               : <Dashboard onOpen={setDetail} uid={uid} />}
           </div>
