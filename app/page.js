@@ -996,47 +996,47 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
     </>
   );
   if (stage === "pick") return (
-    <>
-      <CmdHeader icon="camera" title={t("Beleg erfassen")}>
-        <button className="cmdh-ghost" onClick={() => setEmailInfo(true)}><Icon name="mail" size={14} /> {t("E-Mail-Inbox")}</button>
-      </CmdHeader>
-      <div className="capwrap">
-        <InstallGuide />
-        <div className="sources">
-          <button type="button" className={"src" + (activeSrc === "foto" ? " on" : "")} onClick={() => { setActiveSrc("foto"); camRef.current?.click(); }}><Icon name="camera" size={20} /> {t("Foto")}</button>
-          <button type="button" className={"src" + (activeSrc === "scan" ? " on" : "")} onClick={() => { setActiveSrc("scan"); camRef.current?.click(); }}><Icon name="scan" size={20} /> {t("Scan")}</button>
-          <button type="button" className={"src" + (activeSrc === "upload" ? " on" : "")} onClick={() => { setActiveSrc("upload"); upRef.current?.click(); }}><Icon name="upload" size={20} /> {t("Upload")}</button>
-          <button type="button" className={"src" + (activeSrc === "email" ? " on" : "")} onClick={() => { setActiveSrc("email"); setEmailInfo(true); }}><Icon name="mail" size={20} /> {t("E-Mail-Inbox")}</button>
+    <div className="cap-modal-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose?.(); }}>
+      <div className={"cap-modal" + (drag ? " over" : "")}
+        onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
+        onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
+        onDrop={smartDrop}>
+        <div className="cap-modal-head">
+          <span className="cap-modal-ic"><Icon name="plus" size={18} /></span>
+          <div className="cap-modal-tt"><b>{t("Beleg erfassen")}</b><span>{t("Quelle wählen")}</span></div>
+          <button type="button" className="cap-modal-x" onClick={() => onClose?.()} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
         </div>
-        <label className={"dropzone" + (drag ? " over" : "")}
-          onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
-          onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
-          onDrop={onDrop}>
-          <span className="dz-ic"><Icon name="upload" size={30} /></span>
-          <span className="dz-h">{t("Belege hierher ziehen oder auswählen")}</span>
-          <span className="dz-p">{t("Mehrere Dateien möglich · JPG, PNG oder PDF")}</span>
-          <span className="dz-btn"><Icon name="camera" size={15} /> {t("Dateien auswählen")}</span>
-          <input ref={camRef} type="file" accept="image/*,application/pdf" capture="environment" multiple hidden onChange={onPick} />
-        </label>
-        <input ref={upRef} type="file" accept="image/*,application/pdf" multiple hidden onChange={onPick} />
-        <div className="tip"><Icon name="scan" size={14} /> {t("OCR startet automatisch — du prüfst nur die markierten Felder.")}</div>
-        <div className="capdiv"><span>{t("oder")}</span></div>
-        <div className="capalt">
-          <button type="button" className="btn ghost" onClick={addManual}><Icon name="plus" size={15} /> {t("Manuell erfassen")}</button>
-          <label className="btn ghost" style={{ cursor: "pointer" }}><Icon name="filetext" size={15} /> {t("Excel/CSV importieren")}
-            <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} /></label>
-          <button type="button" className="btn ghost" onClick={addCash}><Icon name="banknote" size={15} /> {t("Barauslage erfassen")}</button>
+        <div className="cap-modal-grid">
+          <button type="button" className="cap-src" onClick={() => imgRef.current?.click()}>
+            <span className="cap-src-ic"><Icon name="image" size={20} /></span>
+            <b>{t("Bild / Foto")}</b><span>{t("JPG, PNG · OCR")}</span>
+          </button>
+          <button type="button" className="cap-src" onClick={() => pdfRef.current?.click()}>
+            <span className="cap-src-ic"><Icon name="filetext" size={20} /></span>
+            <b>{t("Datei (PDF)")}</b><span>{t("Rechnung hochladen")}</span>
+          </button>
+          <button type="button" className="cap-src" onClick={() => setEmailInfo(true)}>
+            <span className="cap-src-ic"><Icon name="mail" size={20} /></span>
+            <b>{t("E-Mail-Inbox")}</b><span>{t("Weitergeleitete Belege")}</span>
+          </button>
+          <button type="button" className="cap-src" onClick={addManual}>
+            <span className="cap-src-ic"><Icon name="keyboard" size={20} /></span>
+            <b>{t("Manuell")}</b><span>{t("Felder selbst füllen")}</span>
+          </button>
+          <button type="button" className="cap-src" onClick={addCash}>
+            <span className="cap-src-ic"><Icon name="wallet" size={20} /></span>
+            <b>{t("Barauslage")}</b><span>{t("mit Empfänger")}</span>
+          </button>
+          <label className="cap-src" style={{ cursor: "pointer" }}>
+            <span className="cap-src-ic"><Icon name="filespreadsheet" size={20} /></span>
+            <b>{t("Excel / CSV")}</b><span>{t("Mehrere auf einmal")}</span>
+            <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} />
+          </label>
         </div>
-        <div className="tip"><Icon name="filetext" size={14} /> {t("Import-Spalten: Datum, Händler, Brutto, Währung, MwSt, Kategorie, Kostenstelle, Zahlart, Anlass, Teilnehmer.")}</div>
-        <button type="button" className="delegcta" onClick={() => setDelegOpen(true)}>
-          <span className="delegcta-ic"><Icon name="user" size={16} /></span>
-          <span className="delegcta-txt">
-            <b>{t("Vertretungen verwalten")}</b>
-            <span>{t("Wer darf Belege für mich erfassen?")}</span>
-          </span>
-          <Icon name="arrowright" size={16} />
-        </button>
-        {err && <div className="err">{err}</div>}
+        <div className="cap-modal-hint"><Icon name="scan" size={13} /> {t("Dateien hierher ziehen — Format wird automatisch erkannt. OCR startet automatisch.")}</div>
+        <input ref={imgRef} type="file" accept="image/*" capture="environment" multiple hidden onChange={onPick} />
+        <input ref={pdfRef} type="file" accept="application/pdf" multiple hidden onChange={onPick} />
+        {err && <div className="err" style={{ margin: "0 18px 16px" }}>{err}</div>}
       </div>
       {emailInfo && (
         <div className="modal-wrap" onClick={() => setEmailInfo(false)}>
@@ -1051,7 +1051,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
         </div>
       )}
       {delegOpen && <DelegationsModal onClose={() => setDelegOpen(false)} />}
-    </>
+    </div>
   );
 
   // ===== Mobile: Karten-Stepper (Prüfen) + Fertig =====
