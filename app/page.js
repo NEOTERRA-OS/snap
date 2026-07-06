@@ -2970,7 +2970,7 @@ function Admin({ session }) {
           <table className="utable">
             <thead><tr><th>{t("Name")}</th><th>{t("E-Mail")}</th><th>{t("Rolle")}</th><th aria-label={t("Aktionen")} /></tr></thead>
             <tbody>
-              {users.map((u) => {
+              {usersF.map((u) => {
                 const isSelf = u.id === session.user.id;
                 const lastAdmin = u.role === "admin" && adminCount <= 1;
                 const blocked = isSelf || lastAdmin;
