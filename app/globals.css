@@ -898,8 +898,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 
 /* Erfassen-Modal: dedizierte Drag & Drop-Zone */
 .cap-modal-dzwrap{padding:0 20px 18px}
-.cap-dz{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;border:2px dashed var(--line);border-radius:16px;padding:24px 18px;cursor:pointer;background:var(--bg);transition:border-color .15s,background .15s,box-shadow .15s}
-.cap-dz:hover{border-color:var(--green);background:#fcfcfb}
+.cap-dz{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;border:2px dashed rgba(44,60,43,.28);border-radius:16px;padding:40px 18px;cursor:pointer;background:#EEF5EC;transition:border-color .15s,background .15s,box-shadow .15s}
+.cap-dz:hover{border-color:var(--green);background:#E7F0E5}
 .cap-dz.over{border-color:var(--green);background:var(--emerald-bg);box-shadow:0 0 0 4px rgba(44,60,43,.08)}
 .cap-dz *{pointer-events:none}
 .cap-dz-ic{width:48px;height:48px;border-radius:12px;background:var(--emerald-bg);color:var(--green);display:grid;place-items:center;margin-bottom:6px}
