@@ -39,9 +39,10 @@
 
 /* Suche + Sortierung */
 .neos .nmob-search { display: flex; gap: 8px; margin-top: 12px; }
-.neos .nmob-srch { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 9px 13px; color: var(--text-3); }
-.neos .nmob-srch input { flex: 1; border: 0; background: none; outline: 0; font-size: 13.5px; color: var(--text); font-family: var(--font-ui); }
-.neos .nmob-sort { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 9px 12px; font-size: 12.5px; font-weight: 600; color: var(--text-2); cursor: pointer; }
+.neos .nmob-srch { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-btn); padding: 8px 12px; color: var(--text-3); }
+.neos .nmob-srch input { flex: 1; border: 0; background: none; outline: 0; font-size: 13px; color: var(--text); font-family: var(--font-ui); }
+.neos .nmob-sort { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-btn); padding: 8px 12px; font-size: 12.5px; font-weight: 600; color: var(--text); cursor: pointer; font-family: var(--font-ui); }
+.neos .nmob-sort .i { color: var(--text-3); }
 
 /* Filter-Chips */
 .neos .nmob-chips { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
