@@ -4,6 +4,9 @@ import { supabase } from "@/lib/supabaseClient";
 import Icon, { Logo } from "@/components/Icon";
 import { LangProvider, useT } from "@/lib/i18n";
 import { CATS, CAT_ICONS, loadCats, catInfo, catOpts, useCats, STATUS, eur, money, dDE, netFrom, netOf, plausFlags, findDuplicate, nextSeq, parseAmount, parseDateAny, normCurC, mapCategory, mapPayment, pickField, importRow, loadVendorMemory, saveVendorMemory, syncToDrive, fileToBase64, sha256, fxToEur, mockOcr, toast, onToast } from "@/lib/core";
+// Zahlformat ohne Währungssymbol (Design zeigt Betrag + Einheit getrennt).
+const fmtN = (n) => (n == null ? "—" : Number(n).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const fmtN0 = (n) => (n == null ? "—" : Math.round(Number(n)).toLocaleString("de-DE"));
 
 export default function Page() {
   return <LangProvider><App /></LangProvider>;
