@@ -2893,52 +2893,51 @@ function Admin({ session }) {
         <button type="button" className="btn" disabled={warnBusy} onClick={saveWarn} style={{ width: "auto", padding: "11px 18px" }}>{warnBusy ? <span className="spin" /> : <Icon name="check" size={15} />} {t("Speichern")}</button>
       </div>
 
-      <div className="card">
-        <div className="pw"><Icon name="layers" /> {t("Kostenstellen")}</div>
-        <form onSubmit={addCc}>
-          <div className="row2">
-            <div className="field"><label>{t("Code")} <span className="mut" style={{ fontWeight: 400 }}>({t("optional")})</span></label>
-              <input value={ccForm.code} onChange={(e) => setCcForm({ ...ccForm, code: e.target.value })} placeholder={t("wird sonst generiert")} className="mono" /></div>
-            <div className="field"><label>{t("Bezeichnung")}</label>
-              <input value={ccForm.name} onChange={(e) => setCcForm({ ...ccForm, name: e.target.value })} placeholder={t("z. B. Vertrieb")} required /></div>
+      {/* ===== KOSTENSTELLEN ===== */}
+      <div className="adm-sec">
+        <div className="adm-sec-h">
+          <span className="lbl">{t("Kostenstellen")}</span>
+          <button className="adm-cta" onClick={() => setShowNewCc((v) => !v)}><Icon name={showNewCc ? "x" : "plus"} size={14} /> {t("Kostenstelle anlegen")}</button>
+        </div>
+        {showNewCc && (
+          <div className="card">
+            <form onSubmit={addCc}>
+              <div className="row2">
+                <div className="field"><label>{t("Code")} <span className="mut" style={{ fontWeight: 400 }}>({t("optional")})</span></label>
+                  <input value={ccForm.code} onChange={(e) => setCcForm({ ...ccForm, code: e.target.value })} placeholder={t("wird sonst generiert")} className="mono" /></div>
+                <div className="field"><label>{t("Bezeichnung")}</label>
+                  <input value={ccForm.name} onChange={(e) => setCcForm({ ...ccForm, name: e.target.value })} placeholder={t("z. B. Vertrieb")} required /></div>
+              </div>
+              <button className="btn" disabled={ccBusy} style={{ width: "auto", padding: "11px 18px" }}>{ccBusy ? <span className="spin" /> : <Icon name="plus" size={15} />} {t("Anlegen")}</button>
+            </form>
           </div>
-          <button className="btn" disabled={ccBusy} style={{ width: "auto", padding: "11px 18px" }}>{ccBusy ? <span className="spin" /> : <Icon name="plus" size={15} />} {t("Anlegen")}</button>
-        </form>
-        {ccList === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div> : ccList.length === 0 ? (
-          <p className="hint" style={{ marginTop: 12 }}>{t("Noch keine Kostenstellen — lege oben die erste an.")}</p>
-        ) : (
-          <table className="utable" style={{ marginTop: 14 }}>
-            <thead><tr><th>{t("Code")}</th><th>{t("Bezeichnung")}</th><th>{t("Status")}</th><th aria-label={t("Aktionen")} /></tr></thead>
-            <tbody>
-              {ccList.map((cc) => {
-                const editing = ccEdit?.id === cc.id;
-                return (
-                <tr key={cc.id} style={cc.active ? undefined : { opacity: 0.5 }}>
+        )}
+        {ccList === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div>
+          : ccList.length === 0 ? <p className="hint">{t("Noch keine Kostenstellen — lege oben die erste an.")}</p> : (
+          <div className="adm-grid">
+            {ccList.map((cc) => {
+              const editing = ccEdit?.id === cc.id;
+              return (
+                <div className="adm-card adm-cc" key={cc.id} style={cc.active ? undefined : { opacity: 0.55 }}>
                   {editing ? (
                     <>
-                      <td><input className="mono" value={ccEdit.code} onChange={(e) => setCcEdit({ ...ccEdit, code: e.target.value })} placeholder={t("wird sonst generiert")} style={{ padding: "7px 9px" }} /></td>
-                      <td><input value={ccEdit.name} onChange={(e) => setCcEdit({ ...ccEdit, name: e.target.value })} style={{ padding: "7px 9px" }} /></td>
-                      <td><button type="button" className="fchip" onClick={() => toggleCc(cc)}>{cc.active ? t("Aktiv") : t("Inaktiv")}</button></td>
-                      <td style={{ textAlign: "right", whiteSpace: "nowrap", width: 80 }}>
-                        <button type="button" className="brem" onClick={saveCcEdit} title={t("Speichern")} style={{ marginRight: 6, color: "var(--green)" }}><Icon name="check" size={15} /></button>
-                        <button type="button" className="brem" onClick={() => setCcEdit(null)} title={t("Abbrechen")}><Icon name="x" size={15} /></button>
-                      </td>
+                      <input className="mono" value={ccEdit.code} onChange={(e) => setCcEdit({ ...ccEdit, code: e.target.value })} placeholder={t("Code")} style={{ width: 84, height: 32, padding: "0 8px" }} />
+                      <input value={ccEdit.name} onChange={(e) => setCcEdit({ ...ccEdit, name: e.target.value })} style={{ flex: 1, height: 32, padding: "0 8px" }} />
+                      <button type="button" className="icobtn" onClick={saveCcEdit} title={t("Speichern")} style={{ color: "var(--green)" }}><Icon name="check" size={14} /></button>
+                      <button type="button" className="icobtn" onClick={() => setCcEdit(null)} title={t("Abbrechen")}><Icon name="x" size={14} /></button>
                     </>
                   ) : (
                     <>
-                      <td className="mono">{cc.code}</td>
-                      <td>{cc.name}</td>
-                      <td><button type="button" className="fchip" onClick={() => toggleCc(cc)} title={t("Status umschalten")}>{cc.active ? t("Aktiv") : t("Inaktiv")}</button></td>
-                      <td style={{ textAlign: "right", whiteSpace: "nowrap", width: 80 }}>
-                        <button type="button" className="brem" onClick={() => setCcEdit({ id: cc.id, code: cc.code || "", name: cc.name || "" })} title={t("Bearbeiten")} style={{ marginRight: 6 }}><Icon name="pencil" size={15} /></button>
-                        <button type="button" className="brem" onClick={() => delCc(cc)} title={t("Löschen")}><Icon name="trash" size={15} /></button>
-                      </td>
+                      <span className="cc-l"><span className="adm-cc-ic"><Icon name="package" size={15} /></span><span className="nm2">{cc.name}</span></span>
+                      <button type="button" className="bdg" onClick={() => toggleCc(cc)} title={t("Status umschalten")} style={{ background: "none", border: 0, cursor: "pointer", fontFamily: "inherit" }}>{cc.code}</button>
+                      <button type="button" className="icobtn" onClick={() => setCcEdit({ id: cc.id, code: cc.code || "", name: cc.name || "" })} title={t("Bearbeiten")}><Icon name="pencil" size={14} /></button>
+                      <button type="button" className="icobtn" onClick={() => delCc(cc)} title={t("Löschen")}><Icon name="trash" size={14} /></button>
                     </>
                   )}
-                </tr>
-              );})}
-            </tbody>
-          </table>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 
