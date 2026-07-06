@@ -499,11 +499,7 @@ function Shell({ session }) {
       ) : (
         <div className="sheet-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
           <div className="sheet">
-            <div className="sheet-bar">
-              <span className="sheet-title">{t("Beleg-Status")}</span>
-              <button className="sheet-x" onClick={() => setDetail(null)} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
-            </div>
-            <div className="sheet-body"><Detail id={detail} onBack={() => setDetail(null)} /></div>
+            <MobileDetail id={detail} onClose={() => setDetail(null)} embedded />
           </div>
         </div>
       ))}
