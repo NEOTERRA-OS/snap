@@ -2024,6 +2024,14 @@ function Dashboard({ onOpen, uid, mode = "analysis", onCapture = null, onOpenApp
   const sorted = (m) => Object.entries(m).sort((a, b) => b[1] - a[1]);
   const months = Object.keys(byMonth).sort();
   const rampClass = (i) => (i === 0 ? "f1" : i <= 2 ? "f2" : "f3");
+  // EUR→RON-Kurs aus echten Belegen ableiten (gespeicherte gross_eur vs. Original-RON); Fallback ~4,97.
+  const ronR = rows.filter((r) => r.currency === "RON" && Number(r.gross_eur) > 0 && Number(r.gross) > 0);
+  const RON_RATE = ronR.length ? ronR.reduce((s, r) => s + Number(r.gross), 0) / ronR.reduce((s, r) => s + Number(r.gross_eur), 0) : 4.97;
+  const curUnit = cur === "RON" ? "RON" : "EUR";
+  const cv = (e) => (cur === "RON" ? (e || 0) * RON_RATE : (e || 0)); // EUR → Anzeigewährung
+  const mN = (e) => fmtN0(cv(e));                                     // ganzzahlig (für KPI-Wert)
+  const mC = (e) => (cur === "RON" ? fmtN(cv(e)) + " RON" : eur(e));  // mit Dezimalen + Einheit
+
   const Bars = ({ map, label, limit, keyOf }) => {
     const items = sorted(map).slice(0, limit || 99);
     const mx = Math.max(1, ...items.map((i) => i[1]));
