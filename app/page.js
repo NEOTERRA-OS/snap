@@ -248,6 +248,7 @@ function PullToRefresh() {
 
 function Shell({ session }) {
   const { t, lang, setLang } = useT();
+  const isMobile = useIsMobile();
   useCats(); // Kategorien laden + bei Änderungen den ganzen Baum neu rendern
   const [view, setView] = useState("receipts");
   const [detail, setDetail] = useState(null);
