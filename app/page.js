@@ -1445,23 +1445,23 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
 
       {/* ===== Desktop (bestehend) ===== */}
       <div className="rx-desktop">
-      <h1 className="title">{allScope ? t("Alle Belege") : t("Meine Belege")}</h1>
-      <div className="kpis" style={{ marginTop: 18 }}>
-        <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n mono">{open.length}</div></div>
-        <div className="kpi"><div className="kt"><Icon name="wallet" />{t("Offenes Volumen")}</div><div className="n mono">{eur(openSum)}</div>
-          <div className="ksub neu">{openUnconverted > 0 ? `${t("in EUR umgerechnet")} · ${openUnconverted} ${t("ohne Kurs")}` : t("in EUR umgerechnet")}</div></div>
-      </div>
+      <CmdHeader icon="receipt" title={allScope ? t("Alle Belege") : t("Meine Belege")}
+        search={<label className="cmdh-search"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Händler suchen …")} /></label>}>
+        {onCapture && <button className="cmdh-ghost" onClick={onCapture}><Icon name="upload" size={14} /> {t("Import")}</button>}
+        <button className="cmdh-ghost" onClick={doExport}><Icon name="download" size={14} /> {t("Export")}</button>
+        {onCapture && <button className="cmdh-cta" onClick={onCapture}><Icon name="plus" size={15} /> {t("Beleg erfassen")}</button>}
+      </CmdHeader>
 
-      <div className="filterbox">
-        <div className="srch"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Belege durchsuchen …")} /></div>
+      <div className="subfilter">
+        <div className="fchips">
+          {dchips.map(([k, l]) => <button key={k} className={"fchip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
+        </div>
+        <span className="aws-scope-sp" />
         <div className="srt">
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <select className="cmdh-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="date">{t("Datum")}</option><option value="amount">{t("Betrag")}</option><option value="merchant">{t("Händler")}</option>
           </select>
           <button className="dirbtn" onClick={() => setDir(dir === "asc" ? "desc" : "asc")} title={dir === "asc" ? t("Aufsteigend") : t("Absteigend")}><Icon name={dir === "asc" ? "arrowup" : "arrowdown"} size={15} /></button>
-        </div>
-        <div className="fchips">
-          {chips.map(([k, l]) => <button key={k} className={"fchip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)}</button>)}
         </div>
       </div>
       <div className="shownline">
