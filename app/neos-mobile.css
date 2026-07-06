@@ -2,6 +2,32 @@
    NEOS Snap — Mobile „Meine Belege" (Home) — Neubau nach Claude-Design
    Alles unter .neos gescopt; nutzt die Tokens aus neos-tokens.css.
    ========================================================================== */
+/* App-Header auf dem Handy ausblenden — Sprache/Theme/Abmelden leben jetzt im Profil */
+@media (max-width: 759px) { .topbar { display: none !important; } }
+
+/* ===== Mobile Profil ===== */
+.neos.nprof { background: var(--bg); color: var(--text); margin: -16px -18px 0; min-height: 100vh; padding: calc(env(safe-area-inset-top) + 22px) 16px calc(92px + env(safe-area-inset-bottom)); }
+.neos .nprof-user { display: flex; align-items: center; gap: 13px; margin-bottom: 22px; }
+.neos .nprof-av { width: 46px; height: 46px; border-radius: 50%; background: var(--green); color: var(--on-dark); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex: 0 0 auto; }
+.neos .nprof-name { font-size: 16px; font-weight: 800; }
+.neos .nprof-role { font-size: 12.5px; color: var(--text-2); margin-top: 1px; }
+.neos .nprof-sec { display: block; margin: 18px 2px 9px; }
+.neos .nprof-row { display: flex; align-items: center; gap: 12px; width: 100%; background: var(--card); border: 1px solid var(--border-card); border-radius: var(--r-card); padding: 13px 14px; cursor: pointer; font-family: var(--font-ui); margin-bottom: 8px; text-align: left; }
+.neos .nprof-row-ic { color: var(--text-2); display: flex; flex: 0 0 auto; }
+.neos .nprof-row-tx { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); }
+.neos .nprof-chev { color: var(--text-3); }
+.neos .nprof-val { font-size: 13px; color: var(--text-3); font-weight: 600; }
+.neos .nprof-logout .nprof-row-ic, .neos .nprof-logout .nprof-row-tx { color: var(--error); }
+.neos .nprof-app { display: flex; align-items: center; gap: 12px; width: 100%; background: var(--green); color: var(--on-dark); border: 0; border-radius: var(--r-card); padding: 13px 14px; cursor: pointer; font-family: var(--font-ui); text-align: left; }
+.neos .nprof-app-ic { width: 42px; height: 42px; border-radius: 10px; background: rgba(255,255,255,.10); display: grid; place-items: center; flex: 0 0 auto; color: var(--on-dark); }
+.neos .nprof-app-tx { flex: 1; min-width: 0; }
+.neos .nprof-app-tx b { display: block; font-size: 14px; font-weight: 700; }
+.neos .nprof-app-tx span { font-size: 11.5px; color: #a9b7a1; }
+.neos .nprof-langs { display: flex; gap: 4px; background: var(--sunken); border-radius: var(--r-btn); padding: 4px; margin-bottom: 8px; }
+.neos .nprof-lang { flex: 1; text-align: center; padding: 9px 0; border: 0; border-radius: 8px; font-size: 12.5px; font-weight: 700; letter-spacing: .02em; color: var(--text-2); background: transparent; cursor: pointer; font-family: var(--font-ui); }
+.neos .nprof-lang.on { background: var(--green); color: #fff; }
+.neos .nprof-foot { text-align: center; font-size: 11px; color: var(--text-3); margin-top: 26px; }
+
 /* Mobil/Desktop-Umschaltung (block-tauglich, im Gegensatz zu .only-desktop=table) */
 .rx-mobile { display: block; }
 .rx-desktop { display: none; }
