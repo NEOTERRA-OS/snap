@@ -1146,7 +1146,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
             </select>
           </div>
         )}
-      </div>
+      </CmdHeader>
       {items.map((it) => (
         <div className="card bcard" key={it.id}>
           <div className="bcard-head">
