@@ -831,6 +831,18 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const openSum = open.reduce((s, r) => s + (eurOf(r) ?? 0), 0);
   const openUnconverted = open.filter((r) => eurOf(r) == null).length;
   const chips = [["all", "Alle"], ["draft", "Entwurf"], ["submitted", "In Prüfung"], ["approved", "Freigabe"], ["booked", "Gebucht"], ["rejected", "Abgelehnt"]];
+  // ---- Mobile-Home (Neubau nach Claude-Design) ----
+  const openReimb = open.filter((r) => r.payment_method === "private");
+  const openReimbSum = openReimb.reduce((s, r) => s + (eurOf(r) ?? 0), 0);
+  const inReviewCount = open.filter((r) => ["review", "submitted"].includes(r.status)).length;
+  const vorsteuer = open.reduce((s, r) => { const e = eurOf(r); return s + (e && r.vat_rate ? e - e / (1 + r.vat_rate / 100) : 0); }, 0);
+  const hour = new Date().getHours();
+  const greet = hour < 11 ? "Guten Morgen" : hour < 18 ? "Guten Tag" : "Guten Abend";
+  const firstName = ((who || "").split(/[ @.]/)[0]) || who;
+  const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
+  const kw = (() => { const d = new Date(); const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = dt.getUTCDay() || 7; dt.setUTCDate(dt.getUTCDate() + 4 - day); const ys = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1)); return Math.ceil((((dt - ys) / 86400000) + 1) / 7); })();
+  const mchips = [["all", "Alle"], ["submitted", "In Prüfung"], ["approved", "Freigabe"], ["booked", "Gebucht"]];
+  const chipCount = (k) => k === "all" ? rows.length : rows.filter((r) => k === "submitted" ? ["review", "submitted"].includes(r.status) : r.status === k).length;
   const flagged = (r) => (r.flags?.length > 0 || r.duplicate_of);
   const allSel = sorted.length > 0 && sorted.every((r) => sel.has(r.id));
   const toggleAll = () => setSel(allSel ? new Set() : new Set(sorted.map((r) => r.id)));
