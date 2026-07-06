@@ -796,6 +796,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   const upRef = useRef(null);    // Datei-Upload (ohne Kamera-Zwang)
   const imgRef = useRef(null);   // Bild / Foto (nur Bilder)
   const pdfRef = useRef(null);   // Datei (PDF)
+  const allRef = useRef(null);   // Drag&Drop-Zone: alle Formate
   const [activeSrc, setActiveSrc] = useState("foto");
   const [emailInfo, setEmailInfo] = useState(false);
   const [emps, setEmps] = useState([]); // Mitarbeiternamen für Barauslage-Empfänger-Vorschläge
