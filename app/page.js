@@ -1908,7 +1908,7 @@ function MonthlyChart({ months, data }) {
   );
 }
 
-function Dashboard({ onOpen, uid }) {
+function Dashboard({ onOpen, uid, mode = "analysis", onCapture = null, onOpenApprovals = null }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [ccs, setCcs] = useState([]);
