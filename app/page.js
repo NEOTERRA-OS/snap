@@ -1358,7 +1358,11 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
     : statusF === "priv" ? r.payment_method === "private"
     : statusF === "submitted" ? ["review", "submitted"].includes(r.status)
     : r.status === statusF;
-  const filtered = rows.filter((r) => statusMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
+  const curMatch = (r) => curF === "all" || (r.currency || "EUR") === curF;
+  const filtered = rows.filter((r) => statusMatch(r) && curMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
+  // Währungen im Datenbestand + Zähler (für Filter-Chips)
+  const curList = [...new Set(rows.map((r) => r.currency || "EUR"))].sort();
+  const curCount = (c) => rows.filter((r) => (r.currency || "EUR") === c).length;
   const sorted = [...filtered].sort((a, b) => {
     let c = 0;
     if (sortBy === "amount") c = Number(a.gross || 0) - Number(b.gross || 0);
