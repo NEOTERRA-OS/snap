@@ -749,3 +749,54 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .aws-insight{background:var(--green-soft);border:1px solid var(--border-card);border-radius:var(--radius-panel);padding:11px 14px;font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:8px;margin:0 0 14px}
 .aws-insight .i{color:var(--green);flex:0 0 auto}
 .aws-insight b{color:var(--green)}
+
+/* ===== DS DataTable-Verfeinerungen + Screen-Bausteine ===== */
+/* Händler-Zelle mit Belegnummer darunter */
+.jtable .tdmerch .m-name{font-weight:700;color:var(--ink)}
+.jtable .tdmerch .m-doc{display:block;font-size:11px;color:var(--muted2);font-family:"JetBrains Mono",ui-monospace,monospace;margin-top:1px}
+.jtable .catcell .cat-ic{width:26px;height:26px;border-radius:7px;background:var(--thead);display:grid;place-items:center;color:var(--muted);flex:0 0 auto}
+.jtable .catcell .cat-ic .i{width:14px;height:14px}
+.jtable td .amt-u{color:var(--muted2);font-weight:600;margin-left:4px;font-size:12px}
+/* Mitarbeiter-Zelle mit User-Icon */
+.jtable .emp-c{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.jtable .emp-c .i{width:13px;height:13px;color:var(--muted2)}
+/* Chip-Counts */
+.fchip .cnt{margin-left:6px;font-variant-numeric:tabular-nums;opacity:.7;font-weight:700}
+/* Import/Export Ghost im CommandHeader */
+.cmdh-ghost{display:inline-flex;align-items:center;gap:6px;height:var(--h-control);padding:0 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-control);color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.cmdh-ghost .i{width:14px;height:14px;color:var(--muted)}
+/* Freigeben-Pill je Zeile */
+.appr-btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;background:var(--yellow);color:var(--green);border:0;border-radius:var(--radius-control);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.appr-btn .i{width:14px;height:14px;color:var(--green)}
+/* Admin-Sektionen */
+.adm-sec{margin:0 0 26px}
+.adm-sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.adm-sec-h .lbl{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2)}
+.adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.adm-grid{grid-template-columns:1fr}}
+.adm-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-panel);padding:13px 14px}
+.adm-av{width:34px;height:34px;border-radius:9px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-size:12px;font-weight:700;flex:0 0 auto}
+.adm-card .who2{flex:1;min-width:0}
+.adm-card .who2 .n2{font-size:13.5px;font-weight:700;color:var(--ink)}
+.adm-card .who2 .s2{font-size:11.5px;color:var(--muted)}
+.adm-card .icobtn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--muted);cursor:pointer;flex:0 0 auto}
+.adm-card .icobtn .i{width:14px;height:14px}
+.adm-cc{justify-content:space-between}
+.adm-cc .lbl2{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.adm-cc .lbl2 .i{color:var(--muted2);width:15px;height:15px}
+.adm-cc .bdg{font-size:12.5px;color:var(--muted);font-family:"JetBrains Mono",ui-monospace,monospace}
+/* Aktivität-Timeline */
+.act-day{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);display:flex;align-items:center;justify-content:space-between;margin:18px 2px 8px}
+.act-day .c{color:var(--muted2);font-weight:600}
+.act-row{display:flex;align-items:flex-start;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-panel);padding:13px 14px;margin-bottom:8px}
+.act-ic{width:32px;height:32px;border-radius:8px;background:var(--thead);color:var(--muted);display:grid;place-items:center;flex:0 0 auto}
+.act-ic .i{width:16px;height:16px}
+.act-main{flex:1;min-width:0}
+.act-tl{font-size:13.5px;color:var(--ink)}
+.act-tl b{font-weight:700}
+.act-tl .amt2{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:700}
+.act-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.act-role{font-size:11px;color:var(--muted2);margin-top:2px}
+.act-time{font-size:12px;color:var(--muted2);font-family:"JetBrains Mono",ui-monospace,monospace;flex:0 0 auto}
+.userchips{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0 0 8px}
+.userchips .ulbl{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);margin-right:2px}
