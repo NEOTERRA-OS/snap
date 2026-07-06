@@ -1572,39 +1572,78 @@ function Approvals({ onOpen }) {
   const bulkApprove = () => decideMany([...sel], "approved");
   const bulkReject = () => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decideMany([...sel], "rejected", reason); };
 
+  const cards = (list) => list.map((r) => (
+    <div className={"lcard" + (sel.has(r.id) ? " selrow" : "")} key={r.id} style={{ cursor: "default" }}>
+      <label className="selbox" onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={sel.has(r.id)} onChange={() => toggle(r.id)} /></label>
+      <div className="lthumb" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}><Icon name={catInfo(r.category).icon} size={19} /></div>
+      <div className="meta" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}>
+        <div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "")}</div>
+        <div className="d">{dDE(r.doc_date)} · {t(catInfo(r.category).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
+        <div className="d">{names[r.user_id] || r.creator_name || "—"}{r.created_by && r.created_by !== r.user_id ? <span className="mut"> · {t("im Auftrag von")} {names[r.created_by] || "—"}</span> : ""}</div>
+        {(r.flags?.length > 0 || r.duplicate_of) && <span className="st st-app" style={{ marginTop: 6 }}><Icon name="alert" size={11} /> {r.duplicate_of ? t("mögliche Dublette") : `${r.flags.length} ${t("Hinweise")}`}</span>}
+      </div>
+      <div style={{ textAlign: "right" }}>
+        <div className="amt">{money(r.gross, r.currency)}</div>
+        <div style={{ display: "flex", gap: 6, marginTop: 8, justifyContent: "flex-end" }}>
+          <button className="ap-ok" disabled={busy} onClick={() => decide(r.id, "approved")} title={t("Freigeben")}><Icon name="check" size={15} /></button>
+          <button className="ap-no" disabled={busy} onClick={() => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decide(r.id, "rejected", reason); }} title={t("Ablehnen")}>✕</button>
+        </div>
+      </div>
+    </div>
+  ));
+
   return (
     <>
-      <h1 className="title">{t("Freigaben")}</h1>
-      <p className="lead">{rows.length} {t("zur Freigabe")}</p>
-      {rows.length === 0 && <div className="empty"><Icon name="checkcheck" size={28} /><p>{t("Nichts zur Freigabe.")}</p></div>}
-      {rows.length > 0 && (
-        <div className="bulkbar">
-          <label className="selall"><input type="checkbox" checked={allSel} onChange={toggleAll} />{sel.size > 0 ? `${sel.size} ${t("ausgewählt")}` : t("Alle auswählen")}</label>
-          <div className="bulkacts">
-            <button className="btn ghost" disabled={busy || !sel.size} onClick={bulkReject}><Icon name="x" size={15} /> {t("Ablehnen")}</button>
-            <button className="btn" disabled={busy || !sel.size} onClick={bulkApprove}>{busy ? <span className="spin" /> : <Icon name="checkcheck" size={15} />} {t("Freigeben")}{sel.size ? ` (${sel.size})` : ""}</button>
+      {/* ===== Desktop ===== */}
+      <div className="rx-desktop">
+        <CmdHeader icon="checkcheck" title={t("Freigaben")}
+          search={<label className="cmdh-search"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Händler, CUI, Betrag …")} /></label>}>
+          <div className="fseg">
+            <button className={"fs" + (vmode === "list" ? " on" : "")} onClick={() => setVmode("list")}>{t("Liste")}</button>
+            <button className={"fs" + (vmode === "cards" ? " on" : "")} onClick={() => setVmode("cards")}>{t("Karten")}</button>
           </div>
-        </div>
-      )}
-      {rows.map((r) => (
-        <div className={"lcard" + (sel.has(r.id) ? " selrow" : "")} key={r.id} style={{ cursor: "default" }}>
-          <label className="selbox" onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={sel.has(r.id)} onChange={() => toggle(r.id)} /></label>
-          <div className="lthumb" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}><Icon name={catInfo(r.category).icon} size={19} /></div>
-          <div className="meta" style={{ cursor: "pointer" }} onClick={() => onOpen(r.id)}>
-            <div className="t">{r.merchant || (r.source === "cash" ? t("Barauslage") : "")}</div>
-            <div className="d">{dDE(r.doc_date)} · {t(catInfo(r.category).label)}{r.source === "cash" && <span className="mut"> · {t("Barauslage")}{r.recipient ? ` → ${r.recipient}` : ""}</span>}</div>
-            <div className="d">{names[r.user_id] || r.creator_name || "—"}{r.created_by && r.created_by !== r.user_id ? <span className="mut"> · {t("im Auftrag von")} {names[r.created_by] || "—"}</span> : ""}</div>
-            {(r.flags?.length > 0 || r.duplicate_of) && <span className="st st-app" style={{ marginTop: 6 }}><Icon name="alert" size={11} /> {r.duplicate_of ? t("mögliche Dublette") : `${r.flags.length} ${t("Hinweise")}`}</span>}
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div className="amt">{money(r.gross, r.currency)}</div>
-            <div style={{ display: "flex", gap: 6, marginTop: 8, justifyContent: "flex-end" }}>
-              <button className="ap-ok" disabled={busy} onClick={() => decide(r.id, "approved")} title={t("Freigeben")}><Icon name="check" size={15} /></button>
-              <button className="ap-no" disabled={busy} onClick={() => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decide(r.id, "rejected", reason); }} title={t("Ablehnen")}>✕</button>
+          <button className="cmdh-cta" disabled={busy || !rows.length} onClick={() => decideMany(rows.map((r) => r.id), "approved")}><Icon name="checkcheck" size={15} /> {t("Alle freigeben")}</button>
+        </CmdHeader>
+
+        {rows.length === 0 ? <div className="empty"><Icon name="checkcheck" size={28} /><p>{t("Nichts zur Freigabe.")}</p></div>
+          : vmode === "list" ? (
+            <table className="jtable">
+              <thead><tr>
+                <th className="thc">{t("Händler")}</th><th className="thc">{t("Mitarbeiter")}</th><th className="thc">{t("Kostenstelle")}</th>
+                <th className="thc">{t("Datum")}</th><th className="thc r">{t("Betrag")}</th><th className="thc r">{t("Aktion")}</th>
+              </tr></thead>
+              <tbody>
+                {filtered.map((r) => (
+                  <tr key={r.id} className={sel.has(r.id) ? "selrow" : undefined}>
+                    <td className="tdmerch" onClick={() => onOpen(r.id)}><span className="m-name">{(r.flags?.length > 0 || r.duplicate_of) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{r.invoice_no && <span className="m-doc">{r.invoice_no}</span>}</td>
+                    <td><span className="emp-c"><Icon name="user" size={13} /> {names[r.user_id] || r.creator_name || "—"}</span></td>
+                    <td className="mut">{ccMap[r.cost_center_id]?.name || "—"}</td>
+                    <td className="mono">{dShort(r.doc_date)}</td>
+                    <td className="r mono amt">{money(r.gross, r.currency)}</td>
+                    <td className="r"><button className="appr-btn" disabled={busy} onClick={() => decide(r.id, "approved")}><Icon name="check" size={14} /> {t("Freigeben")}</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : <div className="agrid">{cards(filtered)}</div>}
+      </div>
+
+      {/* ===== Mobile ===== */}
+      <div className="rx-mobile">
+        <h1 className="title">{t("Freigaben")}</h1>
+        <p className="lead">{rows.length} {t("zur Freigabe")}</p>
+        {rows.length === 0 && <div className="empty"><Icon name="checkcheck" size={28} /><p>{t("Nichts zur Freigabe.")}</p></div>}
+        {rows.length > 0 && (
+          <div className="bulkbar">
+            <label className="selall"><input type="checkbox" checked={allSel} onChange={toggleAll} />{sel.size > 0 ? `${sel.size} ${t("ausgewählt")}` : t("Alle auswählen")}</label>
+            <div className="bulkacts">
+              <button className="btn ghost" disabled={busy || !sel.size} onClick={bulkReject}><Icon name="x" size={15} /> {t("Ablehnen")}</button>
+              <button className="btn" disabled={busy || !sel.size} onClick={bulkApprove}>{busy ? <span className="spin" /> : <Icon name="checkcheck" size={15} />} {t("Freigeben")}{sel.size ? ` (${sel.size})` : ""}</button>
             </div>
           </div>
-        </div>
-      ))}
+        )}
+        {cards(rows)}
+      </div>
     </>
   );
 }
