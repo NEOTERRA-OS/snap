@@ -410,6 +410,7 @@ function Shell({ session }) {
   const [searchQ, setSearchQ] = useState("");
   const fabCamRef = useRef(null);          // App-Ebene: Kamera direkt aus FAB-Klick öffnen (iOS-Geste)
   const [inbound, setInbound] = useState(null); // per FAB aufgenommene Dateien → an Capture
+  const [captureOpen, setCaptureOpen] = useState(false); // Erfassen als Overlay-Modal (DS)
   const [pendingCount, setPendingCount] = useState(0); // offene Freigaben → Sidebar-Badge
   useEffect(() => { supabase.from("receipts").select("id", { count: "exact", head: true }).eq("status", "submitted").then(({ count }) => setPendingCount(count || 0)); }, [view]);
   const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
@@ -1261,7 +1262,8 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
         </>)}
       </div>
       <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => { setItems([]); setDraftFirst(false); setStage("pick"); }}>{t("Abbrechen")}</button>
-    </>
+      </div>
+    </div>
   );
 }
 
