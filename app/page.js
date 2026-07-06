@@ -999,10 +999,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   );
   if (stage === "pick") return (
     <div className="cap-modal-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose?.(); }}>
-      <div className={"cap-modal" + (drag ? " over" : "")}
-        onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
-        onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
-        onDrop={smartDrop}>
+      <div className="cap-modal">
         <div className="cap-modal-head">
           <span className="cap-modal-ic"><Icon name="plus" size={18} /></span>
           <div className="cap-modal-tt"><b>{t("Beleg erfassen")}</b><span>{t("Quelle wählen")}</span></div>
