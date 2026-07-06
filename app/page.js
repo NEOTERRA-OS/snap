@@ -2976,6 +2976,13 @@ function Admin({ session, only }) {
               ))}
             </div>
           </div>
+          <div className="field"><label>{t("Eigenes Lucide-Icon (Link einfügen)")}</label>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <input value={catForm.icon} onChange={(e) => setCatForm({ ...catForm, icon: e.target.value })} placeholder="https://lucide.dev/icons/coffee" />
+              <span className="iconpick-b on" style={{ flex: "0 0 auto" }}><Icon name={catForm.icon} size={18} /></span>
+            </div>
+            <p className="hint" style={{ margin: "6px 0 0" }}>{t("Passendes Icon auf")} <a className="linkbtn" style={{ color: "var(--green)" }} href="https://lucide.dev/icons" target="_blank" rel="noreferrer">lucide.dev/icons</a> {t("aussuchen und den Link hier einfügen.")}</p>
+          </div>
           <button className="btn" disabled={catBusy} style={{ width: "auto", padding: "11px 18px" }}>{catBusy ? <span className="spin" /> : <Icon name="plus" size={15} />} {t("Anlegen")}</button>
         </form>
         {catAdmin === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div> : (
