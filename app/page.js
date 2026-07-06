@@ -1136,8 +1136,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
 
   return (
     <>
-      <div className="ahead">
-        <h1 className="title">{t("Prüfen & ergänzen")} ({items.length})</h1>
+      <CmdHeader icon="scan" title={`${t("Prüfen & ergänzen")} (${items.length})`}>
         {owners.length > 0 && (
           <div className="forsel">
             <label>{t("Für Mitarbeiter")}</label>
