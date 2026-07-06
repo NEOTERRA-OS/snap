@@ -491,7 +491,7 @@ function Shell({ session }) {
           <div className="container">
             {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} onClose={() => { setDetail(null); setView("receipts"); }} inbound={inbound} onInboundHandled={() => setInbound(null)} />
               : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} />
-              : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} />
+              : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} onCapture={() => { setDetail(null); setView("capture"); }} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "activity" ? <ActivityLog />
               : view === "history" ? <MobileHistory uid={uid} onOpen={setDetail} />
@@ -1496,19 +1496,19 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
         <table className="jtable only-desktop">
           <thead><tr>
             <th className="thc thc-chk"><input type="checkbox" checked={allSel} onChange={toggleAll} aria-label={t("Alle auswählen")} /></th>
-            <th className="thc">{t("Datum")}</th><th className="thc">{t("Händler")}</th>{allScope && <th className="thc">{t("Mitarbeiter")}</th>}<th className="thc">{t("Kategorie")}</th>
-            <th className="thc">{t("Status")}</th><th className="thc r">{t("Betrag")}</th>
+            <th className="thc">{t("Händler")}</th>{allScope && <th className="thc">{t("Mitarbeiter")}</th>}<th className="thc">{t("Kategorie")}</th>
+            <th className="thc">{t("Datum")}</th><th className="thc r">{t("Betrag")}</th><th className="thc">{t("Status")}</th>
           </tr></thead>
           <tbody>
             {sorted.map((r) => (
               <tr key={r.id} onClick={() => onOpen(r.id)} className={sel.has(r.id) ? "selrow" : undefined}>
                 <td className="td-chk" onClick={(e) => toggleSel(r.id, e)}><input type="checkbox" checked={sel.has(r.id)} onChange={(e) => toggleSel(r.id, e)} onClick={(e) => e.stopPropagation()} aria-label={t("Auswählen")} /></td>
+                <td className="tdmerch"><span className="m-name">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{r.invoice_no && <span className="m-doc">{r.invoice_no}</span>}</td>
+                {allScope && <td><span className="emp-c"><Icon name="user" size={13} /> {names[r.user_id] || "—"}</span></td>}
+                <td><span className="catcell"><span className="cat-ic"><Icon name={catInfo(r.category).icon} size={14} /></span> {t(catInfo(r.category).label)}</span></td>
                 <td className="mono">{dShort(r.doc_date)}</td>
-                <td className="tdmerch">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || "—"}</td>
-                {allScope && <td className="mut">{names[r.user_id] || "—"}</td>}
-                <td><span className="catcell"><Icon name={catInfo(r.category).icon} size={14} /> {t(catInfo(r.category).label)}</span></td>
-                <td><span className={"badge b-" + r.status}><span className="dot" />{t(STATUS[r.status])}</span></td>
                 <td className="r mono amt">{money(r.gross, r.currency)}</td>
+                <td><span className={"badge b-" + r.status}><span className="dot" />{t(STATUS[r.status])}</span></td>
               </tr>
             ))}
           </tbody>
