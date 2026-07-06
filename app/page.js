@@ -2365,6 +2365,9 @@ const ACT_LABEL = {
   "receipt.edited": "Beleg bearbeitet", "receipt.deleted": "Beleg gelöscht", "receipt.status": "Status geändert",
 };
 const ACT_ICON = { "receipt.created": "plus", "receipt.submitted": "arrowright", "receipt.approved": "check", "receipt.rejected": "x", "receipt.booked": "link", "receipt.edited": "pencil", "receipt.deleted": "trash", "receipt.withdrawn": "chevronleft" };
+const ACT_VERB = { "receipt.created": "erfasst", "receipt.submitted": "eingereicht", "receipt.approved": "freigegeben", "receipt.rejected": "abgelehnt", "receipt.booked": "gebucht", "receipt.withdrawn": "zurückgezogen", "receipt.edited": "bearbeitet", "receipt.deleted": "gelöscht", "receipt.status": "Status geändert" };
+// Filter-Chips → Aktions-Set
+const ACT_CHIPS = [["all", "Alle", null], ["created", "Erfasst", ["receipt.created"]], ["edited", "Bearbeitet", ["receipt.edited"]], ["approvals", "Freigaben", ["receipt.approved", "receipt.rejected", "receipt.submitted"]], ["booked", "Gebucht", ["receipt.booked"]], ["withdrawn", "Zurückgezogen", ["receipt.withdrawn"]]];
 const dtLong = (s) => (s ? new Date(s).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—");
 
 // Aktivitätsprotokoll — eigene Seite, nur für Admins (RLS auf activity_log).
