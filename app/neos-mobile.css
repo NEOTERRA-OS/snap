@@ -2,6 +2,11 @@
    NEOS Snap — Mobile „Meine Belege" (Home) — Neubau nach Claude-Design
    Alles unter .neos gescopt; nutzt die Tokens aus neos-tokens.css.
    ========================================================================== */
+/* Mobil/Desktop-Umschaltung (block-tauglich, im Gegensatz zu .only-desktop=table) */
+.rx-mobile { display: block; }
+.rx-desktop { display: none; }
+@media (min-width: 760px) { .rx-mobile { display: none; } .rx-desktop { display: block; } }
+
 .neos.nmob { background: var(--bg); color: var(--text); margin: -16px -18px 0; padding: 14px 16px calc(84px + env(safe-area-inset-bottom)); min-height: 100vh; }
 
 /* Kopf */
