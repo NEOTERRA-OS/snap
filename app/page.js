@@ -346,7 +346,7 @@ function Shell({ session }) {
               : view === "activity" ? <ActivityLog />
               : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => { setDetail(null); setView("capture"); }} />
               : view === "admin" ? <Admin session={session} />
-              : <Dashboard onOpen={setDetail} />}
+              : <Dashboard onOpen={setDetail} uid={uid} />}
           </div>
         </div>
       </div>
