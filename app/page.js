@@ -427,7 +427,87 @@ function InstallGuide() {
   );
 }
 
-function Capture({ uid, onDone, inbound, onInboundHandled }) {
+function useIsMobile() {
+  const [m, setM] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 759px)");
+    const on = () => setM(mq.matches); on();
+    mq.addEventListener ? mq.addEventListener("change", on) : mq.addListener(on);
+    return () => { mq.removeEventListener ? mq.removeEventListener("change", on) : mq.removeListener(on); };
+  }, []);
+  return m;
+}
+
+// Vollbild-Kamera für die mobile Erfassung (nach Claude-Design): Live-Vorschau via
+// getUserMedia mit Scan-Rahmen; Auslöser nimmt ein Frame auf. Ohne Kamerazugriff
+// Fallback auf die native Kamera. Alle Quellen (Upload/Galerie/E-Mail/Manuell/Barauslage/CSV).
+function MobileCamera({ onCapture, onClose, onManual, onCash, onEmail, onImport }) {
+  const { t } = useT();
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const [ready, setReady] = useState(false);
+  const [noCam, setNoCam] = useState(false);
+  const [torch, setTorch] = useState(false);
+  const nativeRef = useRef(null), upRef = useRef(null), galRef = useRef(null), csvRef = useRef(null);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error("no");
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+        if (cancelled) { stream.getTracks().forEach((x) => x.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.play?.().catch(() => {}); }
+        setReady(true);
+      } catch { setNoCam(true); }
+    })();
+    return () => { cancelled = true; streamRef.current?.getTracks().forEach((x) => x.stop()); };
+  }, []);
+  const take = (fl) => { const a = Array.from(fl || []); if (a.length) onCapture(a); };
+  function snap() {
+    const v = videoRef.current;
+    if (!ready || !v || !v.videoWidth) { nativeRef.current?.click(); return; }
+    const c = document.createElement("canvas"); c.width = v.videoWidth; c.height = v.videoHeight;
+    c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+    c.toBlob((b) => { if (b) onCapture([new File([b], `beleg-${Date.now()}.jpg`, { type: "image/jpeg" })]); }, "image/jpeg", 0.92);
+  }
+  async function toggleTorch() {
+    const track = streamRef.current?.getVideoTracks?.()[0];
+    try { await track?.applyConstraints({ advanced: [{ torch: !torch }] }); setTorch(!torch); } catch {}
+  }
+  return (
+    <div className="ncam">
+      <div className="ncam-top">
+        <button type="button" className="ncam-ic" onClick={onClose} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
+        <span className="ncam-hint"><i className="ncam-dot" /> {ready ? t("Beleg in den Rahmen legen") : noCam ? t("Zum Fotografieren antippen") : t("Kamera startet …")}</span>
+        <button type="button" className={"ncam-ic" + (torch ? " on" : "")} onClick={toggleTorch} aria-label="flash"><Icon name="zap" size={16} /></button>
+      </div>
+      <div className="ncam-view" onClick={noCam ? snap : undefined}>
+        {!noCam && <video ref={videoRef} className="ncam-video" playsInline muted autoPlay />}
+        <div className="ncam-frame"><i className="c tl" /><i className="c tr" /><i className="c bl" /><i className="c br" /></div>
+        {noCam && <div className="ncam-nocam"><Icon name="camera" size={40} /><span>{t("Zum Fotografieren antippen")}</span></div>}
+      </div>
+      <div className="ncam-actions">
+        <button type="button" className="ncam-pill" onClick={() => upRef.current?.click()}><Icon name="upload" size={14} /> {t("Upload")}</button>
+        <button type="button" className="ncam-pill" onClick={onEmail}><Icon name="mail" size={14} /> {t("E-Mail")}</button>
+        <button type="button" className="ncam-pill" onClick={onManual}><Icon name="filetext" size={14} /> {t("Manuell")}</button>
+        <button type="button" className="ncam-pill" onClick={onCash}><Icon name="banknote" size={14} /> {t("Barauslage")}</button>
+        <button type="button" className="ncam-pill" onClick={() => csvRef.current?.click()}><Icon name="filetext" size={14} /> CSV/Excel</button>
+      </div>
+      <div className="ncam-bar">
+        <button type="button" className="ncam-side" onClick={() => galRef.current?.click()}><Icon name="image" size={20} /><span>{t("Galerie")}</span></button>
+        <button type="button" className="ncam-shutter" onClick={snap} aria-label={t("Aufnehmen")} />
+        <button type="button" className="ncam-side" onClick={onClose}><Icon name="checkcheck" size={20} /><span>{t("Fertig")}</span></button>
+      </div>
+      <input ref={nativeRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { take(e.target.files); e.target.value = ""; }} />
+      <input ref={upRef} type="file" accept="image/*,application/pdf" multiple hidden onChange={(e) => { take(e.target.files); e.target.value = ""; }} />
+      <input ref={galRef} type="file" accept="image/*" multiple hidden onChange={(e) => { take(e.target.files); e.target.value = ""; }} />
+      <input ref={csvRef} type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} />
+    </div>
+  );
+}
+
+function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   const { t } = useT();
   const [stage, setStage] = useState("pick"); // pick | review
   const [items, setItems] = useState([]);
