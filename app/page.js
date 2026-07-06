@@ -446,14 +446,16 @@ function Shell({ session }) {
       {delegModal && <DelegationsModal onClose={() => setDelegModal(false)} />}
       <aside className="sidebar">
         <button type="button" className="sb-brand" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
-        <div className="sb-grp">{t("Arbeiten")}</div>
-        {nav("capture", "camera", "Erfassen")}
+        <div className="sb-grp">{t("Workspace")}</div>
+        {nav("dashboard", "dashboard", "Dashboard")}
         {nav("receipts", "receipt", "Belege")}
+        {["accounting", "admin"].includes(role) && nav("allreceipts", "layers", "Alle Belege")}
         {["approver", "accounting", "admin"].includes(role) && nav("approvals", "checkcheck", "Freigaben", pendingCount)}
+        {["accounting", "admin"].includes(role) && nav("activity", "clock", "Aktivität")}
         <div className="sb-grp">{t("Auswerten")}</div>
-        {nav("dashboard", "barchart", "Auswertungen")}
-        <button className="snav" onClick={() => setDelegModal(true)}><Icon name="user" size={18} /> <span>{t("Vertretungen")}</span></button>
-        {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("allreceipts", "layers", "Alle Belege")}{nav("activity", "clock", "Aktivität")}{nav("admin", "user", "Admin")}</>}
+        {nav("analytics", "barchart", "Auswertungen")}
+        <button className={"snav" + (delegModal ? " on" : "")} onClick={() => setDelegModal(true)}><Icon name="user" size={18} /> <span>{t("Vertretungen")}</span></button>
+        {role === "admin" && <><div className="sb-grp">{t("System")}</div>{nav("admin", "cog", "Admin")}{nav("categories", "sprout", "Kategorien")}</>}
         <div className="sb-spacer" />
         <button className="sb-cta" onClick={() => { setDetail(null); setView("capture"); }}><Icon name="plus" size={15} /> {t("Neuer Beleg")}</button>
         <div className="sb-user">
