@@ -2997,41 +2997,6 @@ function Admin({ session }) {
         )}
       </div>
 
-      <div className="card">
-        <div className="pw"><Icon name="user" /> {t("Nutzer")} {users ? `(${users.length})` : ""}</div>
-        {!users ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div> : (
-          <table className="utable">
-            <thead><tr><th>{t("Name")}</th><th>{t("E-Mail")}</th><th>{t("Rolle")}</th><th aria-label={t("Aktionen")} /></tr></thead>
-            <tbody>
-              {usersF.map((u) => {
-                const isSelf = u.id === session.user.id;
-                const lastAdmin = u.role === "admin" && adminCount <= 1;
-                const blocked = isSelf || lastAdmin;
-                return (
-                <tr key={u.id}>
-                  <td>{u.full_name || "—"}</td>
-                  <td className="muted">{u.email}</td>
-                  <td><select value={u.role} onChange={(e) => changeRole(u.id, e.target.value)}>
-                    {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
-                  </select></td>
-                  <td style={{ textAlign: "right", width: 84, whiteSpace: "nowrap" }}>
-                    <button type="button" className="brem" onClick={() => askReset(u)}
-                      title={t("Passwort zurücksetzen")} style={{ marginRight: 6 }}>
-                      <Icon name="key" size={15} />
-                    </button>
-                    <button type="button" className="brem" onClick={() => delUser(u)} disabled={blocked}
-                      title={isSelf ? t("Du kannst dich nicht selbst löschen.") : lastAdmin ? t("Der letzte Administrator kann nicht gelöscht werden.") : t("Nutzer löschen")}
-                      style={blocked ? { opacity: 0.35, cursor: "not-allowed" } : undefined}>
-                      <Icon name="trash" size={15} />
-                    </button>
-                  </td>
-                </tr>
-              );})}
-            </tbody>
-          </table>
-        )}
-      </div>
-
       {confirmUser && (
         <div className="modal-wrap" onClick={() => { if (!delBusy) setConfirmUser(null); }}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
