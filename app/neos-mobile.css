@@ -201,8 +201,8 @@
 .neos .nrev-in:focus { border-color: var(--green-ink); }
 .neos .nrev-in-lg { font-size: 17px; font-weight: 700; }
 .neos .nrev-amt-row { display: flex; gap: 10px; }
-.neos .nrev-amt-field { flex: 1.4; }
-.neos .nrev-cur-field { flex: 1; }
+.neos .nrev-amt-field { flex: 1.4; min-width: 0; }
+.neos .nrev-cur-field { flex: 1; min-width: 0; }
 .neos .nrev-amt { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 18px; font-weight: 700; }
 .neos .nrev-note { font-size: 11.5px; color: var(--text-3); margin-top: 7px; font-variant-numeric: tabular-nums; }
 .neos .nrev-note b { color: var(--text); font-weight: 700; }
