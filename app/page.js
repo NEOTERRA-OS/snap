@@ -2137,6 +2137,67 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
 
       {/* ===== Desktop ===== */}
       <div className="rx-desktop">
+      {mode === "dashboard" ? (<>
+        {/* CommandHeader — Dashboard */}
+        <div className="cmdh">
+          <div className="cmdh-ic"><Icon name="dashboard" size={17} /></div>
+          <h1 className="cmdh-title">{t("Dashboard")}</h1>
+          <label className="cmdh-search"><Icon name="search" size={15} /><input value={dq} onChange={(e) => setDq(e.target.value)} placeholder={t("Händler, CUI, Betrag …")} /></label>
+          <div className="cmdh-right">
+            <div className="fseg">
+              {[["week", "Woche"], ["1m", "Monat"], ["3m", "Quartal"], ["12m", "Jahr"]].map(([k, l]) => (
+                <button key={k} className={"fs" + (period === k ? " on" : "")} onClick={() => setPeriod(k)}>{t(l)}</button>))}
+            </div>
+            {onCapture && <button className="cmdh-cta" onClick={onCapture}><Icon name="plus" size={15} /> {t("Beleg erfassen")}</button>}
+          </div>
+        </div>
+        <InstallGuide />
+        <div className="kpis kx kx4">
+          <div className="kpi">
+            <div className="kt"><Icon name="banknote" />{t("Volumen (Firma)")}</div>
+            <div className="n mono posv"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
+            {volDelta == null ? <div className="ksub neu">{t("Gesamtzeitraum")}</div>
+              : <div className={"ksub " + (volDelta >= 0 ? "pos" : "neg")}><Icon name={volDelta >= 0 ? "trendup" : "trenddown"} size={12} />{(volDelta >= 0 ? "+" : "") + volDelta.toFixed(0)}% {t("ggü. Vormonat")}</div>}
+          </div>
+          <div className="kpi">
+            <div className="kt"><Icon name="receipt" />{t("Belege")}</div>
+            <div className="n mono"><span className="nv">{f.length}</span></div>
+            <div className="ksub neu">{inReview.length} {t("offen")}</div>
+          </div>
+          <div className="kpi">
+            <div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div>
+            <div className={"n mono" + (openReimb.length ? " warnv" : "")}><span className="nv">{fmtN0(sum(openReimb))}</span><span className="nu">EUR</span></div>
+            <div className={"ksub " + (openReimb.length ? "warn" : "neu")}>{openReimb.length} {t("privat verauslagt")}</div>
+          </div>
+          <div className="kpi">
+            <div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div>
+            <div className="n mono posv"><span className="nv">{fmtN0(sum(booked))}</span><span className="nu">EUR</span></div>
+            <div className="ksub neu">{bookedPct}% {t("des Volumens")}</div>
+          </div>
+        </div>
+        <div className="agrid" style={{ marginTop: 16 }}>
+          <div className="panel">
+            <div className="pw">{t("Ausgaben pro Monat")}<span className="pw-hint">{t("grau = Vormonat")}</span></div>
+            {months.length === 0 ? <div className="empty"><Icon name="trend" size={26} /><p>{t("Keine Daten im Filter.")}</p></div>
+              : <MonthlyChart months={months} data={byMonth} />}
+          </div>
+          <div className="panel">
+            <div className="pw">{t("Offene Freigaben")}<span className="pw-hint">{onOpenApprovals && <button className="linkbtn" onClick={onOpenApprovals}>{t("Alle")} →</button>}</span></div>
+            {(() => { const subs = rows.filter((r) => r.status === "submitted"); return subs.length === 0
+              ? <p className="hint">{t("Nichts offen.")}</p>
+              : subs.slice(0, 5).map((r) => (
+                <div className="of-row" key={r.id} onClick={() => onOpen?.(r.id)}>
+                  <span className="of-ic"><Icon name={catInfo(r.category).icon} size={15} /></span>
+                  <div className="of-main"><div className="of-t">{r.merchant || "—"}</div><div className="of-s">{(profiles[r.user_id] || "—")} · {dShort(r.doc_date)}</div></div>
+                  <span className="of-amt">{money(r.gross, r.currency)}</span>
+                </div>)); })()}
+          </div>
+        </div>
+        <div className="agrid" style={{ marginTop: 14 }}>
+          <Bars map={byCat} label="Top-Kategorien" limit={5} keyOf={keyCat} />
+          <Bars map={byCc} label="Ausgaben nach Kostenstelle" limit={5} keyOf={keyCc} />
+        </div>
+      </>) : (<>
       {/* CommandHeader — exakt DS (58px, Icon-Tile + Titel + Suche + Perioden-Segmented + Export) */}
       <div className="cmdh">
         <div className="cmdh-ic"><Icon name="barchart" size={17} /></div>
@@ -2294,6 +2355,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
             </div>)}
         </div>
       </div>
+      </>)}
 
       {drill && (() => {
         const list = f.filter(drill.predicate);
