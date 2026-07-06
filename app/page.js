@@ -1876,6 +1876,7 @@ function Dashboard({ onOpen, uid }) {
   const [cc, setCc] = useState("");
   const [cat, setCat] = useState("");
   const [emp, setEmp] = useState("");
+  const [dq, setDq] = useState("");
   const [drill, setDrill] = useState(null); // { title, predicate }
 
   const loadRows = useCallback(() => {
@@ -1911,6 +1912,7 @@ function Dashboard({ onOpen, uid }) {
     if (cc && r.cost_center_id !== cc) return false;
     if (cat && r.category !== cat) return false;
     if (emp && r.user_id !== emp) return false;
+    if (dq && !((r.merchant || "").toLowerCase().includes(dq.toLowerCase()))) return false;
     if (scope === "me" && uid && r.user_id !== uid) return false;
     if (cutoff && r.doc_date && new Date(r.doc_date) < cutoff) return false;
     return true;
