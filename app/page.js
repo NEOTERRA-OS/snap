@@ -465,14 +465,6 @@ function Shell({ session }) {
         </div>
       </aside>
       <div className="maincol">
-        {/* Mobile-only Top-Leiste (Marke + Theme). Desktop-Chrome liegt komplett in Sidebar + Modul-CommandHeader. */}
-        <div className="topbar mob-only-bar">
-          <button type="button" className="brand" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={22} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
-          <span className="spacer" />
-          <button className="themetog" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme">
-            <Icon name={theme === "dark" ? "sun" : "moon"} size={16} />
-          </button>
-        </div>
         <div className="content">
           <div className="container">
             {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} onClose={() => { setDetail(null); setView("receipts"); }} inbound={inbound} onInboundHandled={() => setInbound(null)} />
