@@ -899,9 +899,9 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
         <div className="nmob-hero">
           <div className="nmob-hero-top">
             <span className="cap">{t("Offene Erstattung")}</span>
-            <span className="nmob-cur">EUR</span>
+            <span className="nmob-cur">EUR <Icon name="swap" size={11} /></span>
           </div>
-          <div className="nmob-hero-amt">{fmtN(openReimbSum)} <span className="nmob-hero-unit">EUR</span></div>
+          <div className="nmob-hero-amt">{fmtN(openReimbSum)}</div>
           <div className="nmob-hero-stats">
             <div><b>{openReimb.length}</b><span>{t("Belege")}</span></div>
             <div><b>{inReviewCount}</b><span>{t("In Prüfung")}</span></div>
