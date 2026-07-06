@@ -927,3 +927,5 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .ndet-pdf-open{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;font-size:12.5px;font-weight:600;color:var(--green);border-top:1px solid var(--line);text-decoration:none}
 .ndet-pdf-open:hover{background:var(--thead)}
 .ndet-pdf-open .i{color:var(--green)}
+
+.fchips-div{flex:0 0 auto;width:1px;height:22px;align-self:center;background:var(--line);margin:0 5px}
