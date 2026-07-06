@@ -911,3 +911,9 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .cap-src.alt{background:var(--surface-sunken);border-color:transparent}
 .cap-src.alt:hover{background:#E6E8DF;border-color:var(--green)}
 .cap-src.alt .cap-src-ic{background:var(--surface)}
+
+/* Dark-Mode: hartcodierte Hell-Grüns im Erfassen-Modal korrigieren */
+[data-theme="dark"] .cap-dz{background:#14231a;border-color:rgba(255,255,255,.16)}
+[data-theme="dark"] .cap-dz:hover{background:#182b1e}
+[data-theme="dark"] .cap-src:hover{background:#20231f}
+[data-theme="dark"] .cap-src.alt:hover{background:#23261f;border-color:var(--green)}
