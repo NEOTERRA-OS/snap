@@ -229,7 +229,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 @media(min-width:860px){
   /* Schwebende, gerundete App-Hülle auf warmem Hintergrund (exakt DS) */
   body{background:#E7E6DD}
-  .shell{margin:16px;height:calc(100vh - 32px);min-height:0;border-radius:20px;overflow:hidden;box-shadow:0 10px 34px rgba(27,33,26,.10);background:var(--bg)}
+  /* Links bündig (kein Rand), rechts/oben/unten schwebend & gerundet */
+  .shell{margin:14px 14px 14px 0;height:calc(100vh - 28px);min-height:0;border-radius:0 20px 20px 0;overflow:hidden;box-shadow:0 10px 34px rgba(27,33,26,.10);background:var(--bg)}
   .sidebar{display:flex;flex-direction:column;gap:3px;width:236px;flex:0 0 236px;background:var(--surface);border-right:1px solid var(--line);padding:16px 12px;height:100%;overflow-y:auto}
   .maincol{height:100%;overflow-y:auto}
   .bottomnav{display:none}
@@ -685,7 +686,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 
 /* ===== NEOS DS-Tokens (exakt aus _ds/tokens) + Komponenten-Canon ===== */
 :root{
-  --radius-card:12px; --radius-panel:14px; --radius-seg:7px; --radius-chip:6px;
+  --radius-control:10px; --radius-card:12px; --radius-panel:14px; --radius-seg:7px; --radius-chip:6px;
   --h-command:58px; --h-control:38px; --h-filter:34px; --h-th:38px; --h-seg:26px;
   --fs-module-title:15px; --fs-kpi-value:24px; --fs-caption-kpi:10.5px; --ls-kpi:.05em;
   --fs-caption:11px; --ls-caption:.06em; --fs-th:10.5px; --ls-th:.04em;
