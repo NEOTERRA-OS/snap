@@ -410,6 +410,8 @@ function Shell({ session }) {
   const [searchQ, setSearchQ] = useState("");
   const fabCamRef = useRef(null);          // App-Ebene: Kamera direkt aus FAB-Klick öffnen (iOS-Geste)
   const [inbound, setInbound] = useState(null); // per FAB aufgenommene Dateien → an Capture
+  const [pendingCount, setPendingCount] = useState(0); // offene Freigaben → Sidebar-Badge
+  useEffect(() => { supabase.from("receipts").select("id", { count: "exact", head: true }).eq("status", "submitted").then(({ count }) => setPendingCount(count || 0)); }, [view]);
   const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
   // Service Worker bewusst NICHT mehr registrieren (Stale-Cache vermeiden);
   // ein bereits installierter SW wird über /sw.js automatisch abgemeldet.

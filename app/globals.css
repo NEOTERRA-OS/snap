@@ -828,3 +828,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 
 /* Detail als eingebettetes Desktop-SlideOver (statt fullscreen fixed) */
 .neos.ndetail.emb, .neos.nrev.emb{position:static;inset:auto;z-index:auto;flex:1 1 auto;min-height:0;height:auto;background:var(--bg)}
+
+/* Sidebar: Zähler-Badge (z. B. offene Freigaben) — exakt DS */
+.snav-badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--yellow);color:var(--green);font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;flex:0 0 auto}
+.sidebar .snav.on .snav-badge{background:#2C3C2B;color:var(--yellow)}
