@@ -103,6 +103,44 @@
 
 .neos .nmob-empty { text-align: center; color: var(--text-3); padding: 40px 20px; font-size: 13px; }
 
+/* ===== Mobile Stats (Auswerten) ===== */
+.neos.nstat { background: var(--bg); color: var(--text); margin: -16px -18px 0; min-height: 100vh; padding: calc(env(safe-area-inset-top) + 16px) 16px calc(84px + env(safe-area-inset-bottom)); }
+.neos .nstat-h1 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+.neos .nstat-sub { font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
+.neos .nstat-pills { display: flex; gap: 8px; margin-top: 14px; overflow-x: auto; scrollbar-width: none; }
+.neos .nstat-pills::-webkit-scrollbar { display: none; }
+.neos .nstat-pill { flex: 0 0 auto; border: 1px solid var(--border-btn); background: var(--card); color: var(--text-2); border-radius: 999px; padding: 7px 15px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: var(--font-ui); }
+.neos .nstat-pill.on { background: var(--green); color: var(--on-dark); border-color: var(--green); }
+.neos .nstat-scope { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.neos .nstat-scope .cap { margin-right: 2px; }
+.neos .nstat-sc { border: 1px solid var(--border-btn); background: var(--card); color: var(--text-2); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font-ui); }
+.neos .nstat-sc.on { background: var(--green); color: var(--on-dark); border-color: var(--green); }
+.neos .nstat-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.neos .nstat-kpi { background: var(--card); border: 1px solid var(--border-card); border-radius: var(--r-card); padding: 12px 13px; box-shadow: var(--sh-card); }
+.neos .nstat-v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; letter-spacing: -.01em; margin: 4px 0 3px; }
+.neos .nstat-u { font-size: 11px; font-weight: 600; color: var(--text-3); font-family: var(--font-ui); }
+.neos .nstat-d { font-size: 11px; font-weight: 600; }
+.neos .nstat-d.pos { color: var(--success); }
+.neos .nstat-d.neg { color: var(--error); }
+.neos .nstat-d.warn { color: var(--warning); }
+.neos .nstat-d.neu { color: var(--text-3); }
+.neos .nstat-cur { display: inline-flex; gap: 3px; background: var(--sunken); border-radius: 999px; padding: 3px; margin: 14px 0 0; float: right; }
+.neos .nstat-cur button { border: 0; background: transparent; color: var(--text-3); border-radius: 999px; padding: 4px 13px; font-size: 11.5px; font-weight: 700; cursor: pointer; font-family: var(--font-ui); }
+.neos .nstat-cur button.on { background: var(--green); color: #fff; }
+.neos .nstat-card { clear: both; background: var(--card); border: 1px solid var(--border-card); border-radius: var(--r-card); padding: 14px; margin-top: 14px; box-shadow: var(--sh-card); }
+.neos .nstat-card-h { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+.neos .nstat-card-h b { font-size: 14px; font-weight: 700; }
+.neos .nstat-card-h span { font-size: 11px; color: var(--text-3); }
+.neos .nstat-story { display: flex; align-items: center; gap: 7px; background: var(--green-soft); color: var(--green-ink); border-radius: 10px; padding: 9px 11px; font-size: 11.5px; font-weight: 600; margin: 8px 0 14px; }
+.neos .nstat-bar { margin-bottom: 14px; }
+.neos .nstat-bar-top { display: flex; align-items: center; justify-content: space-between; }
+.neos .nstat-bar-l { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); }
+.neos .nstat-bar-l .i { color: var(--text-2); }
+.neos .nstat-bar-v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; }
+.neos .nstat-track { height: 8px; border-radius: var(--r-bar); background: var(--sunken); overflow: hidden; margin: 7px 0 5px; }
+.neos .nstat-track i { display: block; height: 100%; border-radius: var(--r-bar); background: linear-gradient(90deg, var(--bar-from), var(--bar-to)); }
+.neos .nstat-bar-s { font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+
 /* ===== Vollbild-Kamera (Erfassen) ===== */
 .ncam { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; background: #0c0e0b; color: #f3f5f0; font-family: "Google Sans Flex", system-ui, sans-serif; }
 .ncam-top { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 12px) 16px 10px; gap: 10px; }
