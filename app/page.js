@@ -2741,27 +2741,59 @@ function Admin({ session }) {
       </div>
       {err && <div className="err" style={{ marginBottom: 12 }}>{err}</div>}
 
-      <div className="card">
-        <div className="pw"><Icon name="user" /> {t("Nutzer anlegen")}</div>
-        <form onSubmit={createUser}>
-          <div className="field"><label>{t("E-Mail")}</label>
-            <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@neoterra.ag" /></div>
-          <div className="row2">
-            <div className="field"><label>{t("Vorname")}</label>
-              <input value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} placeholder="Max" /></div>
-            <div className="field"><label>{t("Nachname")}</label>
-              <input value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} placeholder="Mustermann" /></div>
+      {/* ===== NUTZER & ROLLEN ===== */}
+      <div className="adm-sec">
+        <div className="adm-sec-h">
+          <span className="lbl">{t("Nutzer & Rollen")}</span>
+          <button className="adm-cta" onClick={() => setShowNewUser((v) => !v)}><Icon name={showNewUser ? "x" : "plus"} size={14} /> {t("Nutzer anlegen")}</button>
+        </div>
+        {showNewUser && (
+          <div className="card">
+            <form onSubmit={createUser}>
+              <div className="field"><label>{t("E-Mail")}</label>
+                <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@neoterra.ag" /></div>
+              <div className="row2">
+                <div className="field"><label>{t("Vorname")}</label>
+                  <input value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} placeholder="Max" /></div>
+                <div className="field"><label>{t("Nachname")}</label>
+                  <input value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} placeholder="Mustermann" /></div>
+              </div>
+              <div className="field"><label>{t("Rolle")}</label>
+                <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+                  {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
+                </select></div>
+              <button className="btn" disabled={busy} style={{ width: "auto", padding: "12px 18px" }}>{busy ? <span className="spin" /> : <Icon name="plus" />} {t("Anlegen")}</button>
+            </form>
+            {created && (
+              <div className="ok" style={{ marginTop: 12 }}>
+                <b>{t("Nutzer angelegt")}:</b> {created.email}<br />
+                {t("Passwort (einmalig anzeigen):")} <span className="mono">{created.password}</span>
+              </div>
+            )}
           </div>
-          <div className="field"><label>{t("Rolle")}</label>
-            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-              {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
-            </select></div>
-          <button className="btn" disabled={busy} style={{ width: "auto", padding: "12px 18px" }}>{busy ? <span className="spin" /> : <Icon name="plus" />} {t("Anlegen")}</button>
-        </form>
-        {created && (
-          <div className="ok" style={{ marginTop: 12 }}>
-            <b>{t("Nutzer angelegt")}:</b> {created.email}<br />
-            {t("Passwort (einmalig anzeigen):")} <span className="mono">{created.password}</span>
+        )}
+        {!users ? <div className="center" style={{ minHeight: 80 }}><span className="spin" /></div> : (
+          <div className="adm-grid">
+            {usersF.map((u) => {
+              const isSelf = u.id === session.user.id;
+              const lastAdmin = u.role === "admin" && adminCount <= 1;
+              const blocked = isSelf || lastAdmin;
+              const ini = (u.full_name || u.email || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
+              return (
+                <div className="adm-card" key={u.id}>
+                  <span className="adm-av">{ini}</span>
+                  <div className="who2">
+                    <div className="n2">{u.full_name || "—"}</div>
+                    <div className="s2">{u.email}</div>
+                  </div>
+                  <select className={"role-sel" + (["admin", "approver"].includes(u.role) ? " hi" : "")} value={u.role} onChange={(e) => changeRole(u.id, e.target.value)} aria-label={t("Rolle")}>
+                    {Object.keys(ROLE_LABELS).map((r) => <option key={r} value={r}>{t(ROLE_LABELS[r])}</option>)}
+                  </select>
+                  <button type="button" className="icobtn" onClick={() => askReset(u)} title={t("Passwort zurücksetzen")}><Icon name="key" size={14} /></button>
+                  <button type="button" className="icobtn" onClick={() => delUser(u)} disabled={blocked} title={isSelf ? t("Du kannst dich nicht selbst löschen.") : lastAdmin ? t("Der letzte Administrator kann nicht gelöscht werden.") : t("Nutzer löschen")} style={blocked ? { opacity: 0.35, cursor: "not-allowed" } : undefined}><Icon name="trash" size={14} /></button>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
