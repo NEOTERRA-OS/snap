@@ -859,3 +859,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .sb-logout{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
 
 /* sync 1783353339 */
+
+/* Ausgaben pro Monat: grüner Gradient, aktueller (letzter) Balken gelb */
+.mc2-bar{background:linear-gradient(180deg,#46A557 0%,#2C6E3D 100%)}
+.mc2-bar.cur{background:linear-gradient(180deg,#FFDE59 0%,#FAD201 100%)}
+.mc2-bar.cur .mc2-val{color:var(--ink)}
