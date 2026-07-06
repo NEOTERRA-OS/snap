@@ -660,3 +660,13 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .sidebar .langtog button.on{background:var(--yellow);color:#2C3C2B}
 .sidebar .sb-logout{color:rgba(239,241,233,.6)}
 .sidebar .sb-logout:hover{color:#fff}
+
+/* ===== NEOS Desktop: KPI-Karten & Balken-Canon ===== */
+.kpi{border-radius:14px;padding:14px 15px}
+.kpi .kt{text-transform:uppercase;letter-spacing:.05em;font-size:10.5px;color:var(--muted2);font-weight:600}
+.kpi .kt .i{color:var(--muted2);width:13px;height:13px}
+.kpi .n{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;font-size:24px;letter-spacing:-.01em;margin-top:8px}
+/* Horizontale Balken: 3px-Radius, Grün-Verlauf über die ganze Serie (DS-Canon) */
+.rtrack{height:8px;border-radius:3px;background:var(--thead)}
+.rtrack > i{border-radius:3px}
+.rtrack > i.f1,.rtrack > i.f2,.rtrack > i.f3{background:linear-gradient(90deg,var(--r1),var(--r3))}
