@@ -2799,6 +2799,7 @@ function Admin({ session }) {
         )}
       </div>
 
+      <div className="adm-sec-h" style={{ marginTop: 4 }}><span className="lbl">{t("Ablage & Regeln")}</span></div>
       <div className="card">
         <div className="pw"><Icon name="layers" /> {t("Beleg-Ablage (Google Drive)")}</div>
         <div className="kv" style={{ borderBottom: "1px solid var(--line2)", paddingBottom: 12, marginBottom: 12 }}>
