@@ -693,6 +693,21 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
 
   const anyLoading = items.some((it) => it.loading);
 
+  if (stage === "pick" && isMobile) return (
+    <>
+      <MobileCamera onCapture={addFiles} onClose={() => onClose?.()} onManual={addManual} onCash={addCash} onEmail={() => setEmailInfo(true)} onImport={onImport} />
+      {emailInfo && (
+        <div className="modal-wrap" onClick={() => setEmailInfo(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-ic" style={{ background: "rgba(44,60,43,.1)", color: "var(--green)" }}><Icon name="mail" size={20} /></div>
+            <h3>{t("E-Mail-Inbox")}</h3>
+            <p>{t("Diese Funktion folgt in Kürze: Du kannst Belege dann einfach an eine persönliche Sammeladresse weiterleiten — sie werden automatisch ausgelesen und hier erfasst. Nutze bis dahin Foto, Scan oder Upload.")}</p>
+            <div className="modal-actions"><button type="button" className="modal-btn ghost" onClick={() => setEmailInfo(false)}>{t("Verstanden")}</button></div>
+          </div>
+        </div>
+      )}
+    </>
+  );
   if (stage === "pick") return (
     <>
       <h1 className="title">{t("Beleg erfassen")}</h1>
