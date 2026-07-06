@@ -243,7 +243,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 [data-theme="dark"] body{background:#0c0f0b}
 
 /* capture: sources + big dropzone */
-.capwrap{max-width:680px}
+.capwrap{max-width:680px;margin:0 auto}
 .sources{display:flex;gap:10px;margin-bottom:14px;min-width:0}
 .src{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:88px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px 6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;overflow-wrap:anywhere;font-family:inherit}
 .src:active{transform:scale(.98)}
