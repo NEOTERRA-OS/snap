@@ -793,6 +793,8 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   const [draftFirst, setDraftFirst] = useState(false); // Import → Entwurf als Standardaktion
   const camRef = useRef(null);   // Kamera (Foto/Scan)
   const upRef = useRef(null);    // Datei-Upload (ohne Kamera-Zwang)
+  const imgRef = useRef(null);   // Bild / Foto (nur Bilder)
+  const pdfRef = useRef(null);   // Datei (PDF)
   const [activeSrc, setActiveSrc] = useState("foto");
   const [emailInfo, setEmailInfo] = useState(false);
   const [emps, setEmps] = useState([]); // Mitarbeiternamen für Barauslage-Empfänger-Vorschläge
