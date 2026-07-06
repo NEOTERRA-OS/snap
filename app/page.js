@@ -510,6 +510,7 @@ function MobileCamera({ onCapture, onClose, onManual, onCash, onEmail, onImport 
 function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   const { t } = useT();
   const [stage, setStage] = useState("pick"); // pick | review
+  const isMobile = useIsMobile();
   const [items, setItems] = useState([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
