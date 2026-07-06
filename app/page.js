@@ -898,7 +898,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
                   <span className="nmob-meta">{t(catInfo(r.category).label)} · {dShort(r.doc_date)}{allScope ? ` · ${names[r.user_id] || "—"}` : ""}</span>
                 </span>
                 <span className="nmob-right">
-                  <span className="nmob-amt">{money(r.gross, r.currency)}</span>
+                  <span className="nmob-amt">{fmtN(r.gross)} <span className="nmob-unit">{r.currency || "EUR"}</span></span>
                   <span className={"nmob-badge s-" + r.status}><i />{t(STATUS[r.status])}</span>
                 </span>
               </button>
