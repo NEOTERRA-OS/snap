@@ -633,3 +633,30 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 [data-theme="dark"] .bflag.mem{background:#10231b;color:#34d399;border-color:#1f4435}
 [data-theme="dark"] .rcpt-prev img{background:#ffffff0a}
 [data-theme="dark"] .dropzone:hover,[data-theme="dark"] .dropzone.over{background:#1a1a1a}
+
+/* ===== NEOS Desktop-Sidebar (dunkelgrün, nach Claude-Design) =====
+   .sidebar-Prefix hebt Spezifität über die Dark-Theme-Regeln; am Dateiende → gewinnt. */
+.sidebar{background:#2C3C2B;border-right:0}
+.sidebar .sb-brand{color:#EFF1E9}
+.sidebar .sb-brand .pn b{color:#fff}
+.sidebar .sb-brand .pn .sub{color:#9fb096}
+.sidebar .sb-grp{color:rgba(239,241,233,.42)}
+.sidebar .snav{color:rgba(239,241,233,.80)}
+.sidebar .snav:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar .snav .i{color:rgba(239,241,233,.62)}
+.sidebar .snav.on{background:var(--yellow);color:#2C3C2B;font-weight:700}
+.sidebar .snav.on .i{color:#2C3C2B}
+.sidebar .sb-sub{color:rgba(239,241,233,.72)}
+.sidebar .sb-sub:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar .sb-sub .i{color:rgba(239,241,233,.6)}
+.sidebar .sb-user{background:rgba(255,255,255,.06)}
+.sidebar .sb-av{background:var(--yellow);color:#2C3C2B}
+.sidebar .sb-id .nm{color:#fff}
+.sidebar .sb-id .ml{color:#9fb096}
+.sidebar .sb-theme{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#EFF1E9}
+.sidebar .sb-theme:hover{border-color:var(--yellow);color:#fff}
+.sidebar .langtog{border-color:rgba(255,255,255,.16)}
+.sidebar .langtog button{background:transparent;color:rgba(239,241,233,.62)}
+.sidebar .langtog button.on{background:var(--yellow);color:#2C3C2B}
+.sidebar .sb-logout{color:rgba(239,241,233,.6)}
+.sidebar .sb-logout:hover{color:#fff}
