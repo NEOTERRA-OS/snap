@@ -484,7 +484,7 @@ function Shell({ session }) {
               : view === "admin" ? <Admin session={session} />
               : view === "categories" ? <Admin session={session} only="categories" />
               : view === "analytics" ? <Dashboard onOpen={setDetail} uid={uid} />
-              : <Dashboard onOpen={setDetail} uid={uid} mode="dashboard" onCapture={() => { setDetail(null); setView("capture"); }} onOpenApprovals={() => { setDetail(null); setView("approvals"); }} />}
+              : <Dashboard onOpen={setDetail} uid={uid} mode="dashboard" onCapture={() => setCaptureOpen(true)} onOpenApprovals={() => { setDetail(null); setView("approvals"); }} />}
           </div>
         </div>
       </div>
