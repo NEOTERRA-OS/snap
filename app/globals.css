@@ -608,8 +608,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 
 /* ===== Dark Mode (neutral surfaces + Emerald-Akzent, NEOS-Guideline) ===== */
 [data-theme="dark"]{
-  --bg:#121212;--surface:#1f1f1f;--thead:#262626;
-  --ink:#f4f5f5;--muted:#9ca3af;--muted2:#6b7280;--line:#2c2c2c;--line2:#232323;
+  --bg:#111312;--surface:#1B1D1C;--thead:#272A28;
+  --ink:#ECEEEB;--muted:#BFC4BB;--muted2:#969C90;--line:#313431;--line2:#292C29;
   --green:#10b981;                 /* Brand-Akzent in Dark = Emerald (Icons/Fills/Progress) */
   --emerald:#34d399;--emerald-bg:#10231b;--emerald-bd:#1f4435;
   --amber-bg:#241d0e;--amber-bd:#4a3a16;--red:#f87171;--red-bg:#2a1414;
