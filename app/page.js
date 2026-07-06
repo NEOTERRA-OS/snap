@@ -1439,6 +1439,11 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
         <div className="nmob-chips">
           {mchips.map(([k, l]) => <button type="button" key={k} className={"nmob-chip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
         </div>
+        {curList.length > 1 && (
+          <div className="nmob-chips" style={{ marginTop: 8 }}>
+            {curList.map((c) => <button type="button" key={c} className={"nmob-chip" + (curF === c ? " on" : "")} onClick={() => setCurF(curF === c ? "all" : c)}>{c} <span className="cnt">{curCount(c)}</span></button>)}
+          </div>
+        )}
         <div className="nmob-secbar"><span className="cap">{sorted.length} {t("Belege")}</span></div>
         {sorted.length === 0 ? (
           <div className="nmob-empty">{q || statusF !== "all" ? t("Keine Treffer im Filter.") : t("Noch keine Belege erfasst.")}</div>

@@ -918,3 +918,5 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 [data-theme="dark"] .cap-dz:hover{background:#182b1e}
 [data-theme="dark"] .cap-src:hover{background:#20231f}
 [data-theme="dark"] .cap-src.alt:hover{background:#23261f;border-color:var(--green)}
+
+.fchips-cur{margin-left:4px;padding-left:12px;border-left:1px solid var(--line)}
