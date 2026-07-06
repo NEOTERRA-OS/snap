@@ -364,7 +364,12 @@ function MobileDetail({ id, onClose, embedded = false }) {
         <div className="ndet-amt">{money(r.gross, r.currency)}{foreign && <span className="ndet-eur"> ≈ {eur(r.gross_eur)}</span>}</div>
 
         {preview && (pkind === "pdf"
-          ? <a className="ndet-prev" href={preview} target="_blank" rel="noreferrer"><Icon name="filetext" size={18} /> {t("PDF öffnen")}</a>
+          ? (embedded
+              ? <div className="ndet-pdf">
+                  <iframe src={preview + "#toolbar=1&view=FitH"} title={t("Beleg-PDF")} />
+                  <a className="ndet-pdf-open" href={preview} target="_blank" rel="noreferrer"><Icon name="filetext" size={13} /> {t("In neuem Tab öffnen")}</a>
+                </div>
+              : <a className="ndet-prev" href={preview} target="_blank" rel="noreferrer"><Icon name="filetext" size={18} /> {t("PDF öffnen")}</a>)
           : <a className="ndet-prev-img" href={preview} target="_blank" rel="noreferrer"><img src={preview} alt="" /></a>)}
 
         <div className="ndet-rows">
