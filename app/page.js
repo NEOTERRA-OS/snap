@@ -511,6 +511,8 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   const { t } = useT();
   const [stage, setStage] = useState("pick"); // pick | review
   const isMobile = useIsMobile();
+  const [reviewIdx, setReviewIdx] = useState(0);   // mobile: Karten-Stepper
+  const [subDone, setSubDone] = useState(false);    // mobile: Fertig-Screen
   const [items, setItems] = useState([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
