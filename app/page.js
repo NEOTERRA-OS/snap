@@ -358,7 +358,7 @@ function Shell({ session }) {
         </div>
         <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="camera" size={24} /></button>
         <div className="bnav-side">
-          {bnav("activity", "clock", "Verlauf")}
+          {bnav("history", "clock", "Verlauf")}
           {bnav("profile", "user", "Profil")}
         </div>
       </div>
