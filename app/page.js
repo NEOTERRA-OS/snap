@@ -1877,6 +1877,9 @@ function Dashboard({ onOpen, uid }) {
   const [cat, setCat] = useState("");
   const [emp, setEmp] = useState("");
   const [dq, setDq] = useState("");
+  const [vsel, setVsel] = useState("overview"); // ANSICHTEN-Rail
+  const [chipMode, setChipMode] = useState("cc"); // Scope-Chips: cc | emp
+  const [cur, setCur] = useState("EUR");
   const [drill, setDrill] = useState(null); // { title, predicate }
 
   const loadRows = useCallback(() => {
