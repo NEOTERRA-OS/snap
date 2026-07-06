@@ -981,6 +981,14 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
               <button type="button" className={it.payment_method === "company_card" ? "on" : ""} onClick={() => upd(it.id, { payment_method: "company_card" })}><Icon name="banknote" size={15} /> {t("Firmenkarte")}</button>
             </div>
 
+            {owners.length > 0 && <>
+              <label className="nrev-lab">{t("Erfasst für")}</label>
+              <select className="nrev-in" value={forUser} onChange={(e) => setForUser(e.target.value)}>
+                <option value="">{t("Ich selbst")}</option>
+                {owners.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+              </select>
+            </>}
+
             {flags.length > 0 && <div className="nrev-flags">{flags.map((f) => fchip(f))}</div>}
           </div>
         )}
