@@ -657,7 +657,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
     } catch (e) { upd(id, { loading: false, error: e.message }); }
   }
 
-  async function submitAll(status = "submitted") {
+  async function submitAll(status = "submitted", opts = {}) {
     const ready = items.filter((it) => !it.loading);
     if (!ready.length) return;
     setBusy(true); setErr("");
