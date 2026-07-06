@@ -493,7 +493,7 @@ function Shell({ session }) {
           {bnav("receipts", "receipt", "Belege")}
           {bnav("dashboard", "barchart", "Auswerten")}
         </div>
-        <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="camera" size={24} /></button>
+        <button type="button" className={"bnav-fab" + (captureOpen ? " on" : "")} onClick={() => { setDetail(null); setCaptureOpen(true); }} aria-label={t("Neuer Beleg")}><Icon name="camera" size={24} /></button>
         <div className="bnav-side">
           {bnav("history", "clock", "Verlauf")}
           {bnav("profile", "user", "Profil")}
