@@ -785,6 +785,37 @@ function Capture({ uid, onDone, inbound, onInboundHandled }) {
 
 const dShort = (s) => (s ? new Date(s).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—");
 
+// Install-Banner im NEOS-Design (mobile Home). Blendet sich aus, wenn bereits
+// als App geöffnet oder weggeklickt.
+function NeosInstallBanner() {
+  const { t } = useT();
+  const [show, setShow] = useState(false);
+  const [deferred, setDeferred] = useState(null);
+  useEffect(() => {
+    const standalone = window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    if (standalone) return;
+    try { if (localStorage.getItem("neos-install-hide") === "1") return; } catch {}
+    setShow(true);
+    const onBip = (e) => { e.preventDefault(); setDeferred(e); };
+    window.addEventListener("beforeinstallprompt", onBip);
+    return () => window.removeEventListener("beforeinstallprompt", onBip);
+  }, []);
+  if (!show) return null;
+  const hide = () => { try { localStorage.setItem("neos-install-hide", "1"); } catch {} setShow(false); };
+  const install = async () => {
+    if (deferred) { deferred.prompt(); await deferred.userChoice.catch(() => {}); setDeferred(null); hide(); }
+    else { toast(t("Über das Teilen-Menü „Zum Home-Bildschirm“ hinzufügen."), "info"); }
+  };
+  return (
+    <div className="nmob-inst">
+      <span className="nmob-inst-ic"><Icon name="smartphone" size={17} /></span>
+      <span className="nmob-inst-tx"><b>{t("App installieren")}</b><span>{t("Auf den Startbildschirm · offline-fähig")}</span></span>
+      <button type="button" className="nmob-inst-cta" onClick={install}>{t("Installieren")}</button>
+      <button type="button" className="nmob-inst-x" onClick={hide} aria-label={t("Schließen")}><Icon name="x" size={15} /></button>
+    </div>
+  );
+}
+
 function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who = "" }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
