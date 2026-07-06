@@ -2469,6 +2469,7 @@ function Admin({ session }) {
   const { t } = useT();
   const [users, setUsers] = useState(null);
   const [aq, setAq] = useState("");
+  const [showNewUser, setShowNewUser] = useState(false);
   const [form, setForm] = useState({ email: "", first_name: "", last_name: "", role: "employee" });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
