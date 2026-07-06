@@ -3002,6 +3002,7 @@ function Admin({ session, only }) {
                             <button type="button" key={ic} className={"iconpick-b" + (catEdit.icon === ic ? " on" : "")} onClick={() => setCatEdit({ ...catEdit, icon: ic })} title={ic}><Icon name={ic} size={16} /></button>
                           ))}
                         </div>
+                        <input value={catEdit.icon} onChange={(e) => setCatEdit({ ...catEdit, icon: e.target.value })} placeholder="https://lucide.dev/icons/coffee" style={{ marginTop: 8, padding: "7px 9px" }} />
                       </td>
                       <td><button type="button" className="fchip" onClick={() => toggleCat(c)}>{c.active ? t("Aktiv") : t("Inaktiv")}</button></td>
                       <td style={{ textAlign: "right", whiteSpace: "nowrap", width: 80 }}>
