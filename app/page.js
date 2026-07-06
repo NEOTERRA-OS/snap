@@ -306,7 +306,7 @@ function MobileDetail({ id, onClose, embedded = false }) {
   }
 
   if (editing) return (
-    <div className="neos nrev">
+    <div className={ocEdit}>
       {head(t("Bearbeiten"))}
       <div className="nrev-card">
         <label className="nrev-lab">{r.source === "cash" ? t("Zweck") : t("Händler")}</label>
@@ -351,7 +351,7 @@ function MobileDetail({ id, onClose, embedded = false }) {
   const row = (label, value) => <div className="ndet-row"><span className="ndet-l">{label}</span><span className="ndet-v">{value}</span></div>;
 
   return (
-    <div className="neos ndetail">
+    <div className={oc}>
       {head(t("Beleg"))}
       <div className="ndet-body">
         <div className="ndet-hero">
