@@ -344,6 +344,7 @@ function Shell({ session }) {
               : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "activity" ? <ActivityLog />
+              : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => { setDetail(null); setView("capture"); }} />
               : view === "admin" ? <Admin session={session} />
               : <Dashboard onOpen={setDetail} />}
           </div>
