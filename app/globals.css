@@ -330,9 +330,11 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   display:grid;place-items:center;cursor:pointer}
 .dirbtn:hover{color:var(--ink);border-color:var(--green)}
 .fchips{display:flex;flex-wrap:wrap;gap:7px;width:100%}
-.fchip{border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:12px;font-weight:500;
-  padding:6px 12px;border-radius:999px;cursor:pointer}
-.fchip.on{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
+/* Filter-Chip exakt DS (Chip.jsx): 10px Radius, inaktiv weiß/#3A4137, aktiv grün/weiß */
+.fchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);color:#3A4137;font:inherit;font-size:11.5px;font-weight:600;
+  padding:5px 10px;border-radius:var(--radius-control);cursor:pointer}
+.fchip.on{background:var(--green);color:#fff;border-color:var(--green);font-weight:700}
+[data-theme="dark"] .fchip{color:var(--ink)}
 [data-theme="dark"] .fchip.on{background:#2C3C2B;border-color:#2C3C2B}
 .shownline{font-size:12px;color:var(--muted);margin:0 0 12px;font-weight:500;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .selall-inline{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;color:var(--ink)}
