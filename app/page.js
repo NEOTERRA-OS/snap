@@ -1327,6 +1327,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const [sortBy, setSortBy] = useState("date");
   const [dir, setDir] = useState("desc");
   const [cur, setCur] = useState("EUR");
+  const [curF, setCurF] = useState("all"); // Währungsfilter
   const [ccs, setCcs] = useState([]);
   const [sel, setSel] = useState(() => new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
