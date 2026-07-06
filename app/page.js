@@ -2130,20 +2130,20 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
           <button type="button" className={"nstat-sc" + (scope === "firma" ? " on" : "")} onClick={() => setScope("firma")}>{t("Firma")}</button>
         </div>
         <div className="nstat-kpis">
-          <div className="nstat-kpi"><span className="cap">{t("Volumen")}</span><div className="nstat-v">{fmtN0(total)} <span className="nstat-u">EUR</span></div>{dlt(volDelta)}</div>
+          <div className="nstat-kpi"><span className="cap">{t("Volumen")}</span><div className="nstat-v">{mN(total)} <span className="nstat-u">{curUnit}</span></div>{dlt(volDelta)}</div>
           <div className="nstat-kpi"><span className="cap">{t("Belege")}</span><div className="nstat-v">{f.length}</div><span className="nstat-d warn">{inReview.length} {t("offen")}</span></div>
-          <div className="nstat-kpi"><span className="cap">{t("Ø Betrag")}</span><div className="nstat-v">{fmtN0(avg)} <span className="nstat-u">EUR</span></div>{dlt(avgDelta)}</div>
-          <div className="nstat-kpi"><span className="cap">{t("Vorsteuer")}</span><div className="nstat-v">{fmtN0(vat)} <span className="nstat-u">EUR</span></div><span className="nstat-d pos">{t("abzugsfähig")}</span></div>
+          <div className="nstat-kpi"><span className="cap">{t("Ø Betrag")}</span><div className="nstat-v">{mN(avg)} <span className="nstat-u">{curUnit}</span></div>{dlt(avgDelta)}</div>
+          <div className="nstat-kpi"><span className="cap">{t("Vorsteuer")}</span><div className="nstat-v">{mN(vat)} <span className="nstat-u">{curUnit}</span></div><span className="nstat-d pos">{t("abzugsfähig")}</span></div>
         </div>
-        <div className="nstat-cur"><button type="button" className="on">EUR</button><button type="button" onClick={() => toast(t("RON-Ansicht folgt."), "info")}>RON</button></div>
+        <div className="nstat-cur"><button type="button" className={cur === "EUR" ? "on" : ""} onClick={() => setCur("EUR")}>EUR</button><button type="button" className={cur === "RON" ? "on" : ""} onClick={() => setCur("RON")}>RON</button></div>
         <div className="nstat-card">
           <div className="nstat-card-h"><b>{t("Nach Kategorie")}</b><span>{t("Brutto-Volumen")}</span></div>
           {catArr.length > 0 && (
-            <div className="nstat-story"><Icon name="trend" size={13} /> {t("Größter Posten")}: {catArr[0].label} · {fmtN0(catArr[0].sum)} EUR ({Math.round(catArr[0].sum / catTotal * 100)}%)</div>
+            <div className="nstat-story"><Icon name="trend" size={13} /> {t("Größter Posten")}: {catArr[0].label} · {mN(catArr[0].sum)} {curUnit} ({Math.round(catArr[0].sum / catTotal * 100)}%)</div>
           )}
           {catArr.slice(0, 6).map((c, i) => (
             <div className="nstat-bar" key={c.label}>
-              <div className="nstat-bar-top"><span className="nstat-bar-l"><Icon name={c.icon} size={14} /> {t(c.label)}</span><span className="nstat-bar-v">{fmtN0(c.sum)} <span className="nstat-u">EUR</span></span></div>
+              <div className="nstat-bar-top"><span className="nstat-bar-l"><Icon name={c.icon} size={14} /> {t(c.label)}</span><span className="nstat-bar-v">{mN(c.sum)} <span className="nstat-u">{curUnit}</span></span></div>
               <div className="nstat-track"><i style={{ width: Math.max(3, c.sum / catArr[0].sum * 100) + "%" }} /></div>
               <div className="nstat-bar-s">{Math.round(c.sum / catTotal * 100)}% · {c.count} {t("Belege")}</div>
             </div>
