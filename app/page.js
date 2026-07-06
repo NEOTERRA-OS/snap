@@ -353,12 +353,12 @@ function Shell({ session }) {
       <div className="bottomnav">
         <div className="bnav-side">
           {bnav("receipts", "receipt", "Belege")}
-          {["approver", "accounting", "admin"].includes(role) && bnav("approvals", "checkcheck", "Freigaben")}
+          {bnav("dashboard", "barchart", "Auswerten")}
         </div>
         <button type="button" className={"bnav-fab" + (view === "capture" && !detail ? " on" : "")} onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Neuer Beleg")}><Icon name="camera" size={24} /></button>
         <div className="bnav-side">
-          {bnav("dashboard", "barchart", "Analyse")}
-          <button type="button" className="bnav" onClick={() => setDelegModal(true)}><Icon name="user" size={20} />{t("Vertretungen")}</button>
+          {bnav("activity", "clock", "Verlauf")}
+          {bnav("profile", "user", "Profil")}
         </div>
       </div>
       <input ref={fabCamRef} type="file" accept="image/*,application/pdf" capture="environment" multiple hidden
