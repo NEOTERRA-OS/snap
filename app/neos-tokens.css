@@ -1,0 +1,99 @@
+/* ==========================================================================
+   NEOS Snap — Design Tokens (aus dem Claude-Design-Handoff)
+   Scope: .neos (Light) und .neos.dark (Dark). Wird schrittweise beim
+   Screen-für-Screen-Neubau verwendet. Bricht bestehende Screens nicht,
+   solange sie die .neos-Klasse nicht setzen.
+   ========================================================================== */
+
+.neos {
+  /* Flächen */
+  --bg: #F6F7F2;
+  --card: #FFFFFF;
+  --card-alt: #FBFCF8;
+  --sunken: #EDEFE8;
+  /* Rahmen */
+  --border: #E4E7DE;
+  --border-soft: #EDEFE8;
+  --border-btn: #DCE0D3;
+  --border-card: #E7E9E1;
+  /* Text */
+  --text: #1B211A;
+  --text-2: #5E665B;
+  --text-3: #8C937F;
+  /* Grün */
+  --green: #2C3C2B;
+  --green-2: #39502F;
+  --green-soft: #EEF0E9;
+  --green-ink: #2C3C2B;
+  --on-dark: #EFF1E9;
+  --bar-from: #2C3C2B;
+  --bar-to: #009A17;
+  /* Gelb (Akzent) */
+  --yellow: #FAD201;
+  --yellow-split: #EFC700;
+  --yellow-ink: #2C3C2B;
+  /* Status */
+  --success: #2C7A43;
+  --success-bg: #E7F0E8;
+  --warning: #C2700C;
+  --amber: #E0B100;
+  --warning-bg: #FCF0C4;
+  --error: #C0392B;
+  --error-bg: #FDE8E4;
+  --locate: #2D6FBE;
+
+  /* Radien */
+  --r-btn: 10px;
+  --r-pill: 999px;
+  --r-card: 14px;
+  --r-tile: 11px;
+  --r-bar: 3px;
+
+  /* Schatten */
+  --sh-card: 0 1px 3px rgba(27,33,26,.05);
+  --sh-lift: 0 8px 26px rgba(27,33,26,.10);
+  --sh-pop: 0 16px 40px rgba(27,33,26,.16);
+
+  /* Typo */
+  --font-ui: "Google Sans Flex", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color: var(--text);
+  background: var(--bg);
+  font-family: var(--font-ui);
+}
+
+.neos.dark {
+  --bg: #111312;
+  --canvas: #0A0C09;
+  --card: #1B1D1C;
+  --card-alt: #212422;
+  --sunken: #272A28;
+  --border: #313431;
+  --border-soft: #292C29;
+  --border-btn: #3A3E38;
+  --border-card: #353833;
+  --text: #ECEEEB;
+  --text-2: #BFC4BB;
+  --text-3: #969C90;
+  --green: #2C3C2B;
+  --green-2: #3E5A3A;
+  --green-soft: #1F251D;
+  --green-ink: #9FC796;
+  --bar-from: #059669;
+  --bar-to: #34D399;
+  --yellow: #FAD201;
+  --yellow-ink: #161A13;
+  --success: #63B981;
+  --success-bg: #18251C;
+  --warning: #E0B100;
+  --warning-bg: #2C2610;
+  --error: #E5766A;
+  --error-bg: #2C1B18;
+  --locate: #5B97D9;
+}
+
+/* Zahlen immer Mono + tabular (Kern des Designsystems). */
+.neos .num, .neos .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+/* Label-Kapitälchen */
+.neos .cap { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; color: var(--text-3); }
