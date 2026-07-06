@@ -851,3 +851,9 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .pw-hint .linkbtn{font-size:12px}
 
 /* ds sync 1783346393 */
+
+/* Sidebar-Fuß: Sprachumschalter DE·ENG·RO immer vollständig sichtbar */
+.sb-foot-row{gap:6px}
+.langtog{flex:0 0 auto}
+.langtog button{padding:4px 7px;font-size:10px;letter-spacing:0}
+.sb-logout{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
