@@ -2376,34 +2376,90 @@ function ActivityLog() {
   const [activity, setActivity] = useState(null);
   const [actNames, setActNames] = useState({});
   const [actLimit, setActLimit] = useState(100);
+  const [q, setQ] = useState("");
+  const [af, setAf] = useState("all");
+  const [uf, setUf] = useState("all"); // Nutzer-Filter
   const loadActivity = useCallback(() => {
     supabase.from("activity_log").select("id,created_at,actor_id,action,entity_id,summary").order("created_at", { ascending: false }).limit(actLimit)
       .then(({ data }) => setActivity(data || []));
     supabase.from("profiles").select("id,full_name").then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setActNames(m); });
   }, [actLimit]);
   useEffect(() => { loadActivity(); }, [loadActivity]);
+
+  const exportLog = () => {
+    const esc = (x) => `"${String(x ?? "").replace(/"/g, '""')}"`;
+    const lines = (activity || []).map((a) => [dtLong(a.created_at), actNames[a.actor_id] || "System", ACT_LABEL[a.action] || a.action, a.summary || ""].map(esc).join(","));
+    const blob = new Blob(["﻿" + [["Zeit", "Nutzer", "Aktion", "Detail"].map(esc).join(","), ...lines].join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob); const el = document.createElement("a"); el.href = url; el.download = "aktivitaet.csv"; el.click(); URL.revokeObjectURL(url);
+  };
+
+  const chipSet = (k) => (ACT_CHIPS.find((c) => c[0] === k) || [])[2];
+  const chipCount = (k) => { const s = chipSet(k); return (activity || []).filter((a) => !s || s.includes(a.action)).length; };
+  const actMatch = (a) => { const s = chipSet(af); if (s && !s.includes(a.action)) return false; if (uf !== "all" && a.actor_id !== uf) return false; if (q && !((a.summary || "") + (actNames[a.actor_id] || "")).toLowerCase().includes(q.toLowerCase())) return false; return true; };
+  const filtered = (activity || []).filter(actMatch);
+  const today = new Date().toDateString(); const yest = new Date(Date.now() - 86400000).toDateString();
+  const dayLabel = (k) => k === today ? t("Heute") : k === yest ? t("Gestern") : new Date(k).toLocaleDateString("de-DE", { day: "2-digit", month: "long" });
+  const timeOf = (s) => new Date(s).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+  const groups = []; let cur = null;
+  filtered.forEach((a) => { const k = new Date(a.created_at).toDateString(); if (!cur || cur.k !== k) { cur = { k, items: [] }; groups.push(cur); } cur.items.push(a); });
+  const users = Object.entries(actNames);
+
+  const body = (
+    <>
+      {/* Aktions-Chips */}
+      <div className="subfilter">
+        <div className="fchips">
+          {ACT_CHIPS.map(([k, l]) => <button key={k} className={"fchip" + (af === k ? " on" : "")} onClick={() => setAf(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
+        </div>
+      </div>
+      {/* Nutzer-Chips */}
+      {users.length > 0 && (
+        <div className="userchips">
+          <span className="ulbl">{t("Nutzer")}</span>
+          <button className={"aws-chip" + (uf === "all" ? " on" : "")} onClick={() => setUf("all")}>{t("Alle")}</button>
+          {users.map(([id, nm]) => <button key={id} className={"aws-chip" + (uf === id ? " on" : "")} onClick={() => setUf(id)}>{nm}</button>)}
+        </div>
+      )}
+      {activity === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div>
+        : filtered.length === 0 ? <p className="hint">{t("Noch keine Aktivität aufgezeichnet.")}</p> : (
+        <>
+          {groups.map((g) => (
+            <div key={g.k}>
+              <div className="act-day">{dayLabel(g.k)}<span className="c">{g.items.length} {t("Ereignisse")}</span></div>
+              {g.items.map((a) => (
+                <div className="act-row" key={a.id}>
+                  <span className="act-ic"><Icon name={ACT_ICON[a.action] || "receipt"} size={16} /></span>
+                  <div className="act-main">
+                    <div className="act-tl"><b>{actNames[a.actor_id] || t("System")}</b> {t(ACT_VERB[a.action] || ACT_LABEL[a.action] || a.action)}{a.summary ? <> · {a.summary}</> : ""}</div>
+                  </div>
+                  <span className="act-time">{g.k === today ? timeOf(a.created_at) : dtLong(a.created_at)}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+          {activity.length >= actLimit && (
+            <button type="button" className="linkbtn" style={{ marginTop: 8 }} onClick={() => setActLimit((l) => l + 100)}><Icon name="arrowdown" size={13} /> {t("Mehr laden")}</button>
+          )}
+        </>
+      )}
+    </>
+  );
+
   return (
     <>
-      <h1 className="title">{t("Aktivitätsprotokoll")}</h1>
-      <p className="lead">{t("Wer hat wann was gemacht — nur für Administratoren sichtbar.")}</p>
-      <div className="card">
-        {activity === null ? <div className="center" style={{ minHeight: 60 }}><span className="spin" /></div>
-          : activity.length === 0 ? <p className="hint">{t("Noch keine Aktivität aufgezeichnet.")}</p> : (
-          <div className="actfeed">
-            {activity.map((a) => (
-              <div className="actrow" key={a.id}>
-                <span className={"actic a-" + (a.action || "").replace(/\./g, "-")}><Icon name={ACT_ICON[a.action] || "receipt"} size={13} /></span>
-                <div className="actmain">
-                  <div className="actline"><b>{actNames[a.actor_id] || t("System")}</b> · {t(ACT_LABEL[a.action] || a.action)}{a.summary ? <span className="mut"> · {a.summary}</span> : ""}</div>
-                  <div className="acttime num">{dtLong(a.created_at)}</div>
-                </div>
-              </div>
-            ))}
-            {activity.length >= actLimit && (
-              <button type="button" className="linkbtn" style={{ marginTop: 8 }} onClick={() => setActLimit((l) => l + 100)}><Icon name="arrowdown" size={13} /> {t("Mehr laden")}</button>
-            )}
-          </div>
-        )}
+      {/* Desktop */}
+      <div className="rx-desktop">
+        <CmdHeader icon="clock" title={t("Aktivität")}
+          search={<label className="cmdh-search"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Händler, CUI, Betrag …")} /></label>}>
+          <button className="cmdh-ghost" onClick={exportLog}><Icon name="download" size={14} /> {t("Protokoll exportieren")}</button>
+        </CmdHeader>
+        {body}
+      </div>
+      {/* Mobile */}
+      <div className="rx-mobile">
+        <h1 className="title">{t("Aktivität")}</h1>
+        <p className="lead">{t("Wer hat wann was gemacht.")}</p>
+        {body}
       </div>
     </>
   );
