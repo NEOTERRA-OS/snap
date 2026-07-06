@@ -857,3 +857,5 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .langtog{flex:0 0 auto}
 .langtog button{padding:4px 7px;font-size:10px;letter-spacing:0}
 .sb-logout{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+
+/* sync 1783353339 */
