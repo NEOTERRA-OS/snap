@@ -5,6 +5,22 @@
 /* App-Header auf dem Handy ausblenden — Sprache/Theme/Abmelden leben jetzt im Profil */
 @media (max-width: 759px) { .topbar { display: none !important; } }
 
+/* ===== Mobile Verlauf ===== */
+.neos.nhist { background: var(--bg); color: var(--text); margin: -16px -18px 0; min-height: 100vh; padding: calc(env(safe-area-inset-top) + 16px) 16px calc(84px + env(safe-area-inset-bottom)); }
+.neos .nhist-h1 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+.neos .nhist-sub { font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
+.neos .nhist-list { display: flex; flex-direction: column; margin-top: 14px; }
+.neos .nhist-row { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--border-soft); padding: 12px 2px; cursor: pointer; font-family: var(--font-ui); }
+.neos .nhist-ic { width: 34px; height: 34px; border-radius: 10px; flex: 0 0 auto; display: grid; place-items: center; background: var(--sunken); color: var(--text-2); }
+.neos .nhist-ic.t-green { background: var(--green-soft); color: var(--green-ink); }
+.neos .nhist-ic.t-info { background: #e9f0fa; color: var(--locate); }
+.neos .nhist-ic.t-ok { background: var(--success-bg); color: var(--success); }
+.neos .nhist-ic.t-err { background: var(--error-bg); color: var(--error); }
+[data-theme="dark"] .neos .nhist-ic.t-info { background: #16202c; }
+.neos .nhist-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.neos .nhist-t { font-size: 13.5px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.neos .nhist-m { font-size: 11.5px; color: var(--text-3); }
+
 /* ===== Mobile Profil ===== */
 .neos.nprof { background: var(--bg); color: var(--text); margin: -16px -18px 0; min-height: 100vh; padding: calc(env(safe-area-inset-top) + 22px) 16px calc(92px + env(safe-area-inset-bottom)); }
 .neos .nprof-user { display: flex; align-items: center; gap: 13px; margin-bottom: 22px; }
