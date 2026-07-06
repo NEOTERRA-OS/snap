@@ -246,6 +246,155 @@ function PullToRefresh() {
   );
 }
 
+// Mobile Beleg-Detail (Vollbild, nach Claude-Design): Ansicht + Bearbeiten + Status-Leiter.
+function MobileDetail({ id, onClose }) {
+  const { t } = useT();
+  const [r, setR] = useState(null);
+  const [ccs, setCcs] = useState([]);
+  const [preview, setPreview] = useState(null);
+  const [pkind, setPkind] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [ef, setEf] = useState(null);
+  const [names, setNames] = useState({});
+  const load = useCallback(() => { supabase.from("receipts").select("*").eq("id", id).single().then(({ data }) => setR(data)); }, [id]);
+  useEffect(() => { load(); }, [load]);
+  useEffect(() => { supabase.from("cost_centers").select("id,code,name").order("code").then(({ data }) => setCcs(data || [])); }, []);
+  useEffect(() => {
+    if (!r?.file_path) { setPreview(null); return; }
+    const img = /\.(png|jpe?g|webp|gif|heic)$/i.test(r.file_path), pdf = /\.pdf$/i.test(r.file_path);
+    if (!img && !pdf) { setPreview(null); return; }
+    supabase.storage.from("receipts").createSignedUrl(r.file_path, 300).then(({ data }) => { setPreview(data?.signedUrl || null); setPkind(pdf ? "pdf" : "img"); });
+  }, [r?.file_path]);
+  useEffect(() => { if (r?.created_by && r.created_by !== r.user_id) supabase.from("profiles").select("id,full_name").in("id", [r.user_id, r.created_by].filter(Boolean)).then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); }); }, [r?.created_by, r?.user_id]);
+
+  const head = (title) => (
+    <div className="ndet-top">
+      <button type="button" className="nrev-x" onClick={onClose} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
+      <span className="nrev-prog">{title}</span>
+      {r && !["approved", "booked"].includes(r.status) && !editing ? <button type="button" className="ndet-edit" onClick={startEdit}><Icon name="pencil" size={16} /></button> : <span style={{ width: 34 }} />}
+    </div>
+  );
+  if (!r) return <div className="neos ndetail">{head(t("Beleg"))}<div className="center" style={{ minHeight: 200 }}><span className="spin" /></div></div>;
+
+  const info = catInfo(r.category);
+  const cc = ccs.find((c) => c.id === r.cost_center_id);
+  const net = netOf(r);
+  const foreign = r.currency && r.currency !== "EUR" && r.gross_eur != null;
+
+  async function setStatus(status) {
+    setBusy(true);
+    const { error } = await supabase.from("receipts").update({ status, ...(status === "submitted" ? { reject_reason: null } : {}) }).eq("id", id);
+    setBusy(false);
+    if (error) { toast(error.message, "err"); return; }
+    toast(status === "submitted" ? t("Eingereicht") : t("Zurückgezogen")); load();
+  }
+  function startEdit() { setEf({ merchant: r.merchant || "", merchant_cui: r.merchant_cui || "", invoice_no: r.invoice_no || "", doc_date: r.doc_date || "", gross: r.gross ?? "", currency: r.currency || "EUR", vat_rate: r.vat_rate ?? "", category: r.category || "other", cost_center_id: r.cost_center_id || "", payment_method: r.payment_method || "private" }); setEditing(true); }
+  const setF = (p) => setEf((o) => ({ ...o, ...p }));
+  async function saveEdit() {
+    setBusy(true);
+    const gross = ef.gross === "" ? null : Number(ef.gross);
+    const vr = ef.vat_rate === "" ? null : Number(ef.vat_rate);
+    let nn = null, va = null; if (gross != null && vr != null) { nn = Math.round(gross / (1 + vr / 100) * 100) / 100; va = Math.round((gross - nn) * 100) / 100; }
+    const patch = { merchant: ef.merchant.trim() || null, merchant_cui: ef.merchant_cui.trim() || null, invoice_no: ef.invoice_no.trim() || null, doc_date: ef.doc_date || null, gross, currency: (ef.currency || "EUR").toUpperCase(), vat_rate: vr, net: nn, vat_amount: va, category: ef.category, cost_center_id: ef.cost_center_id || null, payment_method: ef.payment_method };
+    const { error } = await supabase.from("receipts").update(patch).eq("id", id);
+    setBusy(false);
+    if (error) { toast(error.message, "err"); return; }
+    toast(t("Gespeichert")); setEditing(false); load();
+  }
+
+  if (editing) return (
+    <div className="neos nrev">
+      {head(t("Bearbeiten"))}
+      <div className="nrev-card">
+        <label className="nrev-lab">{r.source === "cash" ? t("Zweck") : t("Händler")}</label>
+        <input className="nrev-in nrev-in-lg" value={ef.merchant} onChange={(e) => setF({ merchant: e.target.value })} />
+        <div className="nrev-amt-row">
+          <div className="nrev-amt-field"><label className="nrev-lab">{t("Betrag brutto")}</label><input className="nrev-in nrev-amt" type="number" step="0.01" value={ef.gross} onChange={(e) => setF({ gross: e.target.value })} /></div>
+          <div className="nrev-cur-field"><label className="nrev-lab">{t("Währung")}</label><select className="nrev-in" value={ef.currency} onChange={(e) => setF({ currency: e.target.value })}>{Array.from(new Set([ef.currency, "EUR", "USD", "RON"])).map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
+        </div>
+        {r.source !== "cash" && <>
+          <label className="nrev-lab">{t("CUI / Cod Fiscal")}</label><input className="nrev-in num" value={ef.merchant_cui} onChange={(e) => setF({ merchant_cui: e.target.value })} />
+          <label className="nrev-lab">{t("Rechnungsnummer")}</label><input className="nrev-in num" value={ef.invoice_no} onChange={(e) => setF({ invoice_no: e.target.value })} />
+        </>}
+        <div className="nrev-two">
+          <div><label className="nrev-lab">{t("Datum")}</label><input className="nrev-in" type="date" value={ef.doc_date || ""} onChange={(e) => setF({ doc_date: e.target.value })} /></div>
+          <div><label className="nrev-lab">{t("MwSt-Satz (%)")}</label><input className="nrev-in num" type="number" step="0.1" value={ef.vat_rate} onChange={(e) => setF({ vat_rate: e.target.value })} /></div>
+        </div>
+        <label className="nrev-lab">{t("Kategorie")}</label>
+        <select className="nrev-in" value={ef.category} onChange={(e) => setF({ category: e.target.value })}>{catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}</select>
+        <label className="nrev-lab">{t("Kostenstelle / Projekt")}</label>
+        <select className="nrev-in" value={ef.cost_center_id} onChange={(e) => setF({ cost_center_id: e.target.value })}><option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select>
+        <label className="nrev-lab">{t("Zahlart")}</label>
+        <div className="nrev-pay">
+          <button type="button" className={ef.payment_method === "private" ? "on" : ""} onClick={() => setF({ payment_method: "private" })}><Icon name="wallet" size={15} /> {t("Privat verauslagt")}</button>
+          <button type="button" className={ef.payment_method === "company_card" ? "on" : ""} onClick={() => setF({ payment_method: "company_card" })}><Icon name="banknote" size={15} /> {t("Firmenkarte")}</button>
+        </div>
+      </div>
+      <div className="nrev-bar">
+        <button type="button" className="nrev-reject" onClick={() => setEditing(false)}>{t("Abbrechen")}</button>
+        <button type="button" className="nrev-confirm" disabled={busy} onClick={saveEdit}>{busy ? <span className="spin" /> : <Icon name="check" size={16} />} {t("Speichern")}</button>
+      </div>
+    </div>
+  );
+
+  const rank = { draft: 0, review: 1, submitted: 1, approved: 2, booked: 3 }[r.status] ?? 0;
+  const ladder = [
+    { icon: "scan", title: "Erfasst", st: "done" },
+    { icon: "upload", title: "Eingereicht", st: rank >= 1 ? "done" : "todo" },
+    { icon: "clock", title: "In Prüfung", st: rank === 1 ? "active" : rank > 1 ? "done" : "todo" },
+    { icon: "check", title: "Freigabe", st: rank === 2 ? "active" : rank > 2 ? "done" : "todo" },
+    { icon: "checkcheck", title: "Gebucht", st: rank === 3 ? "active" : "todo" },
+  ];
+  const row = (label, value) => <div className="ndet-row"><span className="ndet-l">{label}</span><span className="ndet-v">{value}</span></div>;
+
+  return (
+    <div className="neos ndetail">
+      {head(t("Beleg"))}
+      <div className="ndet-body">
+        <div className="ndet-hero">
+          <span className="ndet-tile"><Icon name={r.source === "cash" ? "banknote" : info.icon} size={22} /></span>
+          <div className="ndet-hmain">
+            <div className="ndet-merch">{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</div>
+            <span className={"nmob-badge s-" + r.status}><i />{t(STATUS[r.status])}</span>
+          </div>
+        </div>
+        <div className="ndet-amt">{money(r.gross, r.currency)}{foreign && <span className="ndet-eur"> ≈ {eur(r.gross_eur)}</span>}</div>
+
+        {preview && (pkind === "pdf"
+          ? <a className="ndet-prev" href={preview} target="_blank" rel="noreferrer"><Icon name="filetext" size={18} /> {t("PDF öffnen")}</a>
+          : <a className="ndet-prev-img" href={preview} target="_blank" rel="noreferrer"><img src={preview} alt="" /></a>)}
+
+        <div className="ndet-rows">
+          {row(t("Datum"), dDE(r.doc_date))}
+          {row(t("Kategorie"), t(info.label))}
+          {r.source !== "cash" && r.merchant_cui && row(t("CUI / Cod Fiscal"), <span className="num">{r.merchant_cui}</span>)}
+          {r.source !== "cash" && r.invoice_no && row(t("Rechnungsnummer"), <span className="num">{r.invoice_no}</span>)}
+          {net != null && row(t("Netto"), <span className="num">{money(net, r.currency)}</span>)}
+          {row(t("MwSt"), <span className="num">{r.vat_rate ?? "—"}% · {money(r.vat_amount, r.currency)}</span>)}
+          {row(t("Kostenstelle / Projekt"), cc ? `${cc.code} · ${cc.name}` : "—")}
+          {row(t("Zahlart"), r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte"))}
+          {r.source === "cash" && row(t("Empfänger"), r.recipient || "—")}
+          {r.created_by && r.created_by !== r.user_id && row(t("Erfasst von / für"), `${names[r.created_by] || "—"} · ${names[r.user_id] || "—"}`)}
+        </div>
+
+        <div className="ndet-sec cap">{t("Verlauf")}</div>
+        <div className="ndone-ladder" style={{ maxWidth: "none" }}>
+          {ladder.map((l, i) => (
+            <div className={"ndone-step " + l.st} key={i}><span className="ndone-node"><Icon name={l.icon} size={14} /></span><div className="ndone-txt"><b>{t(l.title)}</b></div></div>
+          ))}
+        </div>
+      </div>
+      {(r.status === "draft" || r.status === "rejected") && (
+        <div className="nrev-bar"><button type="button" className="nrev-confirm" disabled={busy} onClick={() => setStatus("submitted")}>{busy ? <span className="spin" /> : <Icon name="arrowright" size={16} />} {t("Einreichen")}</button></div>
+      )}
+      {r.status === "submitted" && (
+        <div className="nrev-bar"><button type="button" className="nrev-reject" style={{ flex: 1 }} disabled={busy} onClick={() => setStatus("draft")}><Icon name="chevronleft" size={15} /> {t("Zurückziehen")}</button></div>
+      )}
+    </div>
+  );
+}
+
 function Shell({ session }) {
   const { t, lang, setLang } = useT();
   const isMobile = useIsMobile();
