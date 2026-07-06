@@ -687,7 +687,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
       // Lieferanten-Gedächtnis aktualisieren (fire-and-forget).
       Promise.all(ready.filter((it) => it.merchant).map((it) => saveVendorMemory(it).catch(() => {}))).catch(() => {});
       toast(status === "draft" ? `${rows.length} ${t("als Entwurf gespeichert")}` : `${rows.length} ${t("Beleg(e) eingereicht")}`);
-      onDone();
+      if (!opts.noNav) onDone(); else { setItems([]); opts.onOk?.(); }
     } catch (e2) { setErr(e2.message); } finally { setBusy(false); }
   }
 
