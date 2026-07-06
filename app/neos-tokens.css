@@ -63,7 +63,7 @@
   font-family: var(--font-ui);
 }
 
-.neos.dark {
+.neos.dark, [data-theme="dark"] .neos {
   --bg: #111312;
   --canvas: #0A0C09;
   --card: #1B1D1C;
