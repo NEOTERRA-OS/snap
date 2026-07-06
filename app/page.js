@@ -475,13 +475,12 @@ function Shell({ session }) {
       <div className="maincol">
         <div className="content">
           <div className="container">
-            {view === "capture" ? <Capture uid={uid} onDone={() => setView("receipts")} onClose={() => { setDetail(null); setView("receipts"); }} inbound={inbound} onInboundHandled={() => setInbound(null)} />
-              : view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} onCapture={() => { setDetail(null); setView("capture"); }} />
-              : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} onCapture={() => { setDetail(null); setView("capture"); }} />
+            {view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} onCapture={() => setCaptureOpen(true)} />
+              : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} onCapture={() => setCaptureOpen(true)} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "activity" ? <ActivityLog />
               : view === "history" ? <MobileHistory uid={uid} onOpen={setDetail} />
-              : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => { setDetail(null); setView("capture"); }} onDelegations={() => setDelegModal(true)} />
+              : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => setCaptureOpen(true)} onDelegations={() => setDelegModal(true)} />
               : view === "admin" ? <Admin session={session} />
               : view === "categories" ? <Admin session={session} only="categories" />
               : view === "analytics" ? <Dashboard onOpen={setDetail} uid={uid} />
