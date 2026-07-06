@@ -1301,6 +1301,18 @@ function NeosInstallBanner() {
   );
 }
 
+// Wiederverwendbarer Modul-Kopf (exakt DS CommandHeader, 58px)
+function CmdHeader({ icon, title, search, children }) {
+  return (
+    <div className="cmdh">
+      <div className="cmdh-ic"><Icon name={icon} size={17} /></div>
+      <h1 className="cmdh-title">{title}</h1>
+      {search}
+      <div className="cmdh-right">{children}</div>
+    </div>
+  );
+}
+
 function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who = "" }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
