@@ -1018,11 +1018,11 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
             <span className="cap-src-ic"><Icon name="mail" size={20} /></span>
             <b>{t("E-Mail-Inbox")}</b><span>{t("Weitergeleitete Belege")}</span>
           </button>
-          <button type="button" className="cap-src" onClick={addManual}>
+          <button type="button" className="cap-src alt" onClick={addManual}>
             <span className="cap-src-ic"><Icon name="keyboard" size={20} /></span>
             <b>{t("Manuell")}</b><span>{t("Felder selbst füllen")}</span>
           </button>
-          <button type="button" className="cap-src" onClick={addCash}>
+          <button type="button" className="cap-src alt" onClick={addCash}>
             <span className="cap-src-ic"><Icon name="wallet" size={20} /></span>
             <b>{t("Barauslage")}</b><span>{t("mit Empfänger")}</span>
           </button>
