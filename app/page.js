@@ -818,6 +818,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const statusMatch = (r) => statusF === "all" ? true
+    : statusF === "priv" ? r.payment_method === "private"
     : statusF === "submitted" ? ["review", "submitted"].includes(r.status)
     : r.status === statusF;
   const filtered = rows.filter((r) => statusMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
@@ -844,8 +845,11 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const firstName = ((who || "").split(/[ @.]/)[0]) || who;
   const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
   const kw = (() => { const d = new Date(); const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = dt.getUTCDay() || 7; dt.setUTCDate(dt.getUTCDate() + 4 - day); const ys = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1)); return Math.ceil((((dt - ys) / 86400000) + 1) / 7); })();
-  const mchips = [["all", "Alle"], ["submitted", "In Prüfung"], ["approved", "Freigabe"], ["booked", "Gebucht"]];
-  const chipCount = (k) => k === "all" ? rows.length : rows.filter((r) => k === "submitted" ? ["review", "submitted"].includes(r.status) : r.status === k).length;
+  const mchips = [["all", "Alle"], ["submitted", "In Prüfung"], ["priv", "Privat verauslagt"], ["booked", "Gebucht"]];
+  const chipCount = (k) => k === "all" ? rows.length
+    : k === "priv" ? rows.filter((r) => r.payment_method === "private").length
+    : k === "submitted" ? rows.filter((r) => ["review", "submitted"].includes(r.status)).length
+    : rows.filter((r) => r.status === k).length;
   const flagged = (r) => (r.flags?.length > 0 || r.duplicate_of);
   const allSel = sorted.length > 0 && sorted.every((r) => sel.has(r.id));
   const toggleAll = () => setSel(allSel ? new Set() : new Set(sorted.map((r) => r.id)));
