@@ -445,7 +445,7 @@ function Shell({ session }) {
       <PullToRefresh />
       {delegModal && <DelegationsModal onClose={() => setDelegModal(false)} />}
       <aside className="sidebar">
-        <button type="button" className="sb-brand" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
+        <button type="button" className="sb-brand" onClick={() => { setDetail(null); setView("dashboard"); }} aria-label={t("Zum Dashboard")}><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
         <div className="sb-grp">{t("Workspace")}</div>
         {nav("dashboard", "dashboard", "Dashboard")}
         {nav("receipts", "receipt", "Belege")}
