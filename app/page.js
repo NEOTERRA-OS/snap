@@ -465,27 +465,13 @@ function Shell({ session }) {
         </div>
       </aside>
       <div className="maincol">
-        <div className="topbar">
-          <button type="button" className="brand mob-only" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={22} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
+        {/* Mobile-only Top-Leiste (Marke + Theme). Desktop-Chrome liegt komplett in Sidebar + Modul-CommandHeader. */}
+        <div className="topbar mob-only-bar">
+          <button type="button" className="brand" onClick={() => { setDetail(null); setView("capture"); }} aria-label={t("Zur Startseite")}><Logo size={22} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
           <span className="spacer" />
-          <span className="langtog">
-            <button className={lang === "de" ? "on" : ""} onClick={() => setLang("de")}>DE</button>
-            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
-          </span>
           <button className="themetog" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme">
             <Icon name={theme === "dark" ? "sun" : "moon"} size={16} />
           </button>
-          <span className="who">{who}</span>
-          <span className="avatar">{initials}</span>
-          <button className="linkbtn" onClick={signOut} title={t("Abmelden")}><Icon name="logout" size={15} /></button>
-        </div>
-        <div className="cmdbar">
-          <span className="mandant"><Icon name="building" size={15} /> Neoterra <span className="mut">· The Vegetable Company</span></span>
-          <span className="spacer" />
-          <div className="cmdsearch">
-            <Icon name="search" size={15} />
-            <input value={searchQ} onChange={(e) => goSearch(e.target.value)} placeholder={t("Beleg oder Händler suchen …")} aria-label={t("Suchen")} />
-          </div>
         </div>
         <div className="content">
           <div className="container">
