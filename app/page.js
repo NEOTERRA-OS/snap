@@ -862,10 +862,8 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
     try { const mem = await loadVendorMemory(it.merchant); if (mem) { const p = {}; const m = {}; if (!it.cost_center_id && mem.cost_center_id) { p.cost_center_id = mem.cost_center_id; m.cost_center_id = true; } if (mem.payment_method && mem.payment_method !== it.payment_method) { p.payment_method = mem.payment_method; m.payment_method = true; } if (!it.merchant_cui && mem.merchant_cui) { p.merchant_cui = mem.merchant_cui; m.merchant_cui = true; } if (Object.keys(m).length) { p.mem = m; upd(it.id, p); } } } catch {}
   }
   function onImport(e) { const file = e.target.files?.[0]; e.target.value = ""; importSheet(file); }
-  // Drag & Drop mit automatischer Formaterkennung: Bilder/PDF → OCR, CSV/XLSX → Import.
-  function smartDrop(e) {
-    e.preventDefault(); setDrag(false);
-    const files = Array.from(e.dataTransfer?.files || []);
+  // Automatische Formaterkennung: Bilder/PDF → OCR, CSV/XLSX → Import.
+  function routeFiles(files) {
     if (!files.length) return;
     const isSheet = (f) => /\.(csv|xlsx|xls)$/i.test(f.name || "") || /csv|excel|spreadsheet|officedocument\.spreadsheet/i.test(f.type || "");
     const sheets = files.filter(isSheet);
@@ -873,6 +871,8 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
     if (docs.length) addFiles(docs);
     sheets.forEach((f) => importSheet(f));
   }
+  function smartDrop(e) { e.preventDefault(); setDrag(false); routeFiles(Array.from(e.dataTransfer?.files || [])); }
+  function onPickAny(e) { routeFiles(Array.from(e.target.files || [])); e.target.value = ""; }
   async function importSheet(file) {
     if (!file) return;
     setErr("");
