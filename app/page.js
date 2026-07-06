@@ -911,7 +911,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
         <NeosInstallBanner />
         <div className="nmob-search">
           <div className="nmob-srch"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Händler, Betrag, CUI …")} /></div>
-          <button type="button" className="nmob-sort" onClick={() => setDir(dir === "asc" ? "desc" : "asc")}>{t("Datum")} <Icon name={dir === "asc" ? "arrowup" : "arrowdown"} size={14} /></button>
+          <button type="button" className="nmob-sort" onClick={() => setDir(dir === "asc" ? "desc" : "asc")}><Icon name="updown" size={14} /> {t("Datum")}</button>
         </div>
         <div className="nmob-chips">
           {mchips.map(([k, l]) => <button type="button" key={k} className={"nmob-chip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
