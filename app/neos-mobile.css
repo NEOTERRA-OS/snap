@@ -21,6 +21,8 @@
 .neos .nmob-hero-top .cap { color: #b9c6b1; }
 .neos .nmob-cur { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--on-dark); background: rgba(255,255,255,.12); border: 0; border-radius: var(--r-pill); padding: 4px 9px; font-family: var(--font-ui); }
 .neos .nmob-hero-amt { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 32px; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 12px; }
+.neos .nmob-hero-unit { font-size: 15px; font-weight: 600; color: #a9b7a1; letter-spacing: 0; }
+.neos .nmob-unit { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-3); }
 .neos .nmob-hero-stats { display: flex; gap: 22px; }
 .neos .nmob-hero-stats > div { display: flex; flex-direction: column; }
 .neos .nmob-hero-stats b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 16px; font-weight: 700; color: #fff; }
