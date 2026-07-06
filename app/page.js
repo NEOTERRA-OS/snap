@@ -1683,11 +1683,12 @@ function Dashboard({ onOpen, uid }) {
 
   const ccMap = {}; ccs.forEach((c) => (ccMap[c.id] = c));
   const now = new Date();
-  const cutoff = period === "all" ? null : new Date(now.getFullYear(), now.getMonth() - (period === "1m" ? 1 : period === "3m" ? 3 : 12) + 1, 1);
+  const cutoff = period === "all" ? null : period === "week" ? new Date(now.getTime() - 7 * 86400000) : new Date(now.getFullYear(), now.getMonth() - (period === "1m" ? 1 : period === "3m" ? 3 : 12) + 1, 1);
   const f = rows.filter((r) => {
     if (cc && r.cost_center_id !== cc) return false;
     if (cat && r.category !== cat) return false;
     if (emp && r.user_id !== emp) return false;
+    if (scope === "me" && uid && r.user_id !== uid) return false;
     if (cutoff && r.doc_date && new Date(r.doc_date) < cutoff) return false;
     return true;
   });
