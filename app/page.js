@@ -849,6 +849,58 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
 
   return (
     <>
+      {/* ===== Mobile-Home (Neubau) ===== */}
+      <div className="neos nmob rx-mobile">
+        <div className="nmob-head">
+          <div>
+            <div className="nmob-h1">{allScope ? t("Alle Belege") : t("Meine Belege")}</div>
+            <div className="nmob-sub">{greet}{firstName ? `, ${firstName}` : ""} · KW {kw}</div>
+          </div>
+          <span className="nmob-av">{initials || "?"}</span>
+        </div>
+        <div className="nmob-hero">
+          <div className="nmob-hero-top">
+            <span className="cap">{t("Offene Erstattung")}</span>
+            <span className="nmob-cur">EUR</span>
+          </div>
+          <div className="nmob-hero-amt">{eur(openReimbSum)}</div>
+          <div className="nmob-hero-stats">
+            <div><b>{openReimb.length}</b><span>{t("Belege")}</span></div>
+            <div><b>{inReviewCount}</b><span>{t("In Prüfung")}</span></div>
+            <div><b>{eur(vorsteuer)}</b><span>{t("Vorsteuer")}</span></div>
+          </div>
+        </div>
+        <div className="nmob-search">
+          <div className="nmob-srch"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Händler, Betrag, CUI …")} /></div>
+          <button type="button" className="nmob-sort" onClick={() => setDir(dir === "asc" ? "desc" : "asc")}>{t("Datum")} <Icon name={dir === "asc" ? "arrowup" : "arrowdown"} size={14} /></button>
+        </div>
+        <div className="nmob-chips">
+          {mchips.map(([k, l]) => <button type="button" key={k} className={"nmob-chip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
+        </div>
+        <div className="nmob-secbar"><span className="cap">{sorted.length} {t("Belege")}</span></div>
+        {sorted.length === 0 ? (
+          <div className="nmob-empty">{q || statusF !== "all" ? t("Keine Treffer im Filter.") : t("Noch keine Belege erfasst.")}</div>
+        ) : (
+          <div className="nmob-list">
+            {sorted.map((r) => (
+              <button type="button" key={r.id} className="nmob-row" onClick={() => onOpen(r.id)}>
+                <span className="nmob-tile"><Icon name={r.source === "cash" ? "banknote" : catInfo(r.category).icon} size={19} /></span>
+                <span className="nmob-main">
+                  <span className="nmob-merch">{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>
+                  <span className="nmob-meta">{t(catInfo(r.category).label)} · {dShort(r.doc_date)}{allScope ? ` · ${names[r.user_id] || "—"}` : ""}</span>
+                </span>
+                <span className="nmob-right">
+                  <span className="nmob-amt">{money(r.gross, r.currency)}</span>
+                  <span className={"nmob-badge s-" + r.status}><i />{t(STATUS[r.status])}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ===== Desktop (bestehend) ===== */}
+      <div className="rx-desktop">
       <h1 className="title">{allScope ? t("Alle Belege") : t("Meine Belege")}</h1>
       <div className="kpis" style={{ marginTop: 18 }}>
         <div className="kpi"><div className="kt"><Icon name="receipt" />{t("Offen")}</div><div className="n mono">{open.length}</div></div>
@@ -930,6 +982,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
           ))}
         </div>
       </>)}
+      </div>
     </>
   );
 }
