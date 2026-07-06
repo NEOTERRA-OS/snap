@@ -2135,83 +2135,122 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
         </div>
       </div>
 
-      <div className="kpis kx">
-        <div className="kpi">
-          <div className="kt"><Icon name="banknote" />{t("Volumen")}</div>
-          <div className="n mono"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
-          {volDelta == null
-            ? <div className="ksub neu">{t("Gesamtzeitraum")}</div>
-            : <div className={"ksub " + (volDelta >= 0 ? "pos" : "neg")}><Icon name={volDelta >= 0 ? "trendup" : "trenddown"} size={12} />{(volDelta >= 0 ? "+" : "") + volDelta.toFixed(1)}% {t("ggü. Vorperiode")}</div>}
-        </div>
-        <div className="kpi">
-          <div className="kt"><Icon name="receipt" />{t("Belege")}</div>
-          <div className="n mono"><span className="nv">{f.length}</span></div>
-          <div className="ksub neu">{cntDelta == null ? t("gesamt") : `${cntDelta >= 0 ? "+" : ""}${cntDelta} ${t("ggü. Vorperiode")}`}</div>
-        </div>
-        <div className="kpi">
-          <div className="kt"><Icon name="layers" />{t("Ø Betrag")}</div>
-          <div className="n mono"><span className="nv">{fmtN0(avg)}</span><span className="nu">EUR</span></div>
-          <div className="ksub neu">{t("pro Beleg")}</div>
-        </div>
-      </div>
-      <div className="kpis kx" style={{ marginTop: 14 }}>
-        <div className="kpi">
-          <div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div>
-          <div className="n mono"><span className="nv">{fmtN0(sum(booked))}</span><span className="nu">EUR</span></div>
-          <div className="ksub neu">{bookedPct}% {t("des Volumens")}</div>
-        </div>
-        <div className="kpi">
-          <div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div>
-          <div className={"n mono" + (openReimb.length ? " warnv" : "")}><span className="nv">{fmtN0(sum(openReimb))}</span><span className="nu">EUR</span></div>
-          <div className={"ksub " + (openReimb.length ? "warn" : "neu")}>{openReimb.length} {t("privat · erstattungsfähig")}</div>
-        </div>
-        <div className="kpi">
-          <div className="kt"><Icon name="layers" />{t("Vorsteuer")}</div>
-          <div className="n mono"><span className="nv">{fmtN0(vat)}</span><span className="nu">EUR</span></div>
-          <div className="ksub neu">{t("abziehbar (EUR)")}</div>
-        </div>
-      </div>
+      <div className="aws-body">
+        {/* ANSICHTEN-SubNavRail */}
+        <nav className="aws-rail">
+          <div className="aws-rail-h">{t("Ansichten")}</div>
+          {[["overview", "Übersicht", "barchart"], ["cat", "Kategorie", "layers"], ["cc", "Kostenstelle", "package"], ["merch", "Lieferant", "cart"], ["emp", "Mitarbeiter", "user"], ["cur", "Währung", "banknote"], ["vat", "Vorsteuer", "ticket"], ["reimb", "Erstattung", "wallet"]].map(([k, l, ic]) => (
+            <button key={k} className={"aws-rail-i" + (vsel === k ? " on" : "")} onClick={() => setVsel(k)}><Icon name={ic} size={15} /> {t(l)}</button>))}
+        </nav>
 
-      <div className="fxnote"><Icon name="banknote" size={12} /> {t("Beträge in EUR · EZB-Kurs zum Belegdatum")}{unconverted > 0 ? ` · ${unconverted} ${t("ohne Kurs")}` : ""}</div>
-
-      {curs.length > 1 && (
-        <div className="panel">
-          <div className="pw"><Icon name="wallet" /> {t("Nach Währung")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
-          {curs.map(([c, v], i) => (
-            <div className="rrow" key={c}>
-              <div className="rmain">
-                <div className="rlab">{c === "RON" ? "RON (Lei)" : c}</div>
-                <div className="rtrack"><i className={rampClass(i)} style={{ width: (v.eur / (total || 1)) * 100 + "%" }} /></div>
+        <div className="aws-main">
+          {vsel === "overview" && (<>
+            {volDelta != null && catArr.length > 0 && (
+              <div className="aws-insight"><Icon name="trend" size={14} /> {t("Ausgaben")} <b>{(volDelta >= 0 ? "+" : "") + volDelta.toFixed(0)}%</b> {t("ggü. Vorperiode")} — {t("Haupttreiber")} <b>{t(catArr[0].label)}</b>.</div>)}
+            <div className="kpis kx">
+              <div className="kpi">
+                <div className="kt"><Icon name="banknote" />{t("Volumen")}</div>
+                <div className="n mono"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
+                {volDelta == null
+                  ? <div className="ksub neu">{t("Gesamtzeitraum")}</div>
+                  : <div className={"ksub " + (volDelta >= 0 ? "pos" : "neg")}><Icon name={volDelta >= 0 ? "trendup" : "trenddown"} size={12} />{(volDelta >= 0 ? "+" : "") + volDelta.toFixed(1)}% {t("ggü. Vorperiode")}</div>}
               </div>
-              <div className="rrgt"><span className="rv">{eur(v.eur)}</span><span className="rpct">{money(v.orig, c)}</span></div>
-            </div>))}
-        </div>
-      )}
-
-      <div className="panel">
-        <div className="pw">{t("Ausgaben pro Monat")}<span className="pw-hint">Ø {eur(total / (months.length || 1))} · {t("Beträge in EUR")}</span></div>
-        {months.length === 0
-          ? <div className="empty"><Icon name="trend" size={26} /><p>{t("Keine Daten im Filter.")}</p></div>
-          : <MonthlyChart months={months} data={byMonth} />}
-      </div>
-
-      <div className="agrid">
-        <Bars map={byCat} label="Nach Kategorie" keyOf={keyCat} />
-        <Bars map={byCc} label="Nach Kostenstelle" keyOf={keyCc} />
-        <Bars map={byEmp} label="Nach Mitarbeiter" keyOf={keyEmp} />
-        <Bars map={byMerch} label="Top-Lieferanten" limit={6} keyOf={keyMerch} />
-      </div>
-
-      <div className="panel">
-        <div className="pw"><Icon name="wallet" /> {t("Zahlart")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
-        {sorted(byPay).map(([k, v], i) => { const mx = total || 1; return (
-          <div className="rrow rrow-clk" key={k} onClick={() => setDrill({ title: t(k), predicate: (r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte") === k })} title={t("Belege anzeigen & Zahlart ändern")}>
-            <div className="rmain">
-              <div className="rlab">{t(k)}</div>
-              <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
+              <div className="kpi">
+                <div className="kt"><Icon name="receipt" />{t("Belege")}</div>
+                <div className="n mono"><span className="nv">{f.length}</span></div>
+                <div className="ksub neu">{cntDelta == null ? t("gesamt") : `${cntDelta >= 0 ? "+" : ""}${cntDelta} ${t("ggü. Vorperiode")}`}</div>
+              </div>
+              <div className="kpi">
+                <div className="kt"><Icon name="layers" />{t("Ø Betrag")}</div>
+                <div className="n mono"><span className="nv">{fmtN0(avg)}</span><span className="nu">EUR</span></div>
+                <div className="ksub neu">{t("pro Beleg")}</div>
+              </div>
             </div>
-            <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / mx * 100)}%</span><Icon name="chevronleft" size={14} style={{ transform: "rotate(180deg)", color: "var(--muted2)" }} /></div>
-          </div>); })}
+            <div className="kpis kx" style={{ marginTop: 14 }}>
+              <div className="kpi">
+                <div className="kt"><Icon name="checkcheck" />{t("Gebucht")}</div>
+                <div className="n mono"><span className="nv">{fmtN0(sum(booked))}</span><span className="nu">EUR</span></div>
+                <div className="ksub neu">{bookedPct}% {t("des Volumens")}</div>
+              </div>
+              <div className="kpi">
+                <div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div>
+                <div className={"n mono" + (openReimb.length ? " warnv" : "")}><span className="nv">{fmtN0(sum(openReimb))}</span><span className="nu">EUR</span></div>
+                <div className={"ksub " + (openReimb.length ? "warn" : "neu")}>{openReimb.length} {t("privat · erstattungsfähig")}</div>
+              </div>
+              <div className="kpi">
+                <div className="kt"><Icon name="layers" />{t("Vorsteuer")}</div>
+                <div className="n mono"><span className="nv">{fmtN0(vat)}</span><span className="nu">EUR</span></div>
+                <div className="ksub neu">{t("abziehbar (EUR)")}</div>
+              </div>
+            </div>
+            <div className="fxnote"><Icon name="banknote" size={12} /> {t("Beträge in EUR · EZB-Kurs zum Belegdatum")}{unconverted > 0 ? ` · ${unconverted} ${t("ohne Kurs")}` : ""}</div>
+            <div className="agrid">
+              <div className="panel">
+                <div className="pw">{t("Ausgaben pro Monat")}<span className="pw-hint">Ø {eur(total / (months.length || 1))} · {t("Beträge in EUR")}</span></div>
+                {months.length === 0
+                  ? <div className="empty"><Icon name="trend" size={26} /><p>{t("Keine Daten im Filter.")}</p></div>
+                  : <MonthlyChart months={months} data={byMonth} />}
+              </div>
+              <Bars map={byCat} label="Top-Kategorien" limit={6} keyOf={keyCat} />
+            </div>
+          </>)}
+
+          {vsel === "cat" && <Bars map={byCat} label="Nach Kategorie" keyOf={keyCat} />}
+          {vsel === "cc" && <Bars map={byCc} label="Nach Kostenstelle" keyOf={keyCc} />}
+          {vsel === "merch" && <Bars map={byMerch} label="Top-Lieferanten" keyOf={keyMerch} />}
+          {vsel === "emp" && <Bars map={byEmp} label="Nach Mitarbeiter" keyOf={keyEmp} />}
+
+          {vsel === "cur" && (
+            <div className="panel">
+              <div className="pw"><Icon name="banknote" /> {t("Nach Währung")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
+              {curs.length === 0
+                ? <p className="hint">{t("Keine Daten im Filter.")}</p>
+                : curs.map(([c, v], i) => (
+                  <div className="rrow" key={c}>
+                    <div className="rmain">
+                      <div className="rlab">{c === "RON" ? "RON (Lei)" : c}</div>
+                      <div className="rtrack"><i className={rampClass(i)} style={{ width: (v.eur / (total || 1)) * 100 + "%" }} /></div>
+                    </div>
+                    <div className="rrgt"><span className="rv">{eur(v.eur)}</span><span className="rpct">{money(v.orig, c)}</span></div>
+                  </div>))}
+            </div>)}
+
+          {vsel === "vat" && (<>
+            <div className="kpis kx">
+              <div className="kpi">
+                <div className="kt"><Icon name="ticket" />{t("Vorsteuer")}</div>
+                <div className="n mono"><span className="nv">{fmtN0(vat)}</span><span className="nu">EUR</span></div>
+                <div className="ksub neu">{t("abziehbar (EUR)")}</div>
+              </div>
+              <div className="kpi">
+                <div className="kt"><Icon name="banknote" />{t("Volumen")}</div>
+                <div className="n mono"><span className="nv">{fmtN0(total)}</span><span className="nu">EUR</span></div>
+                <div className="ksub neu">{t("Bruttovolumen")}</div>
+              </div>
+              <div className="kpi">
+                <div className="kt"><Icon name="layers" />{t("Netto")}</div>
+                <div className="n mono"><span className="nv">{fmtN0(total - vat)}</span><span className="nu">EUR</span></div>
+                <div className="ksub neu">{t("nach Vorsteuer")}</div>
+              </div>
+            </div>
+            <div className="agrid" style={{ marginTop: 14 }}>
+              <Bars map={byCat} label="Vorsteuer-Basis nach Kategorie" limit={8} keyOf={keyCat} />
+            </div>
+          </>)}
+
+          {vsel === "reimb" && (
+            <div className="panel">
+              <div className="pw"><Icon name="wallet" /> {t("Erstattung / Zahlart")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
+              {sorted(byPay).map(([k, v], i) => { const mx = total || 1; return (
+                <div className="rrow rrow-clk" key={k} onClick={() => setDrill({ title: t(k), predicate: (r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte") === k })} title={t("Belege anzeigen & Zahlart ändern")}>
+                  <div className="rmain">
+                    <div className="rlab">{t(k)}</div>
+                    <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
+                  </div>
+                  <div className="rrgt"><span className="rv">{eur(v)}</span><span className="rpct">{Math.round(v / mx * 100)}%</span><Icon name="chevronleft" size={14} style={{ transform: "rotate(180deg)", color: "var(--muted2)" }} /></div>
+                </div>); })}
+            </div>)}
+        </div>
       </div>
 
       {drill && (() => {
