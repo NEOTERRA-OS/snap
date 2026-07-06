@@ -235,8 +235,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   .maincol{height:100%;overflow-y:auto}
   .bottomnav{display:none}
   .brand.mob-only{display:none}
-  .content{padding:30px 34px 56px}
-  .container{max-width:1120px;margin:0}
+  .content{padding:26px 40px 56px}
+  .container{max-width:none;margin:0}
   /* Desktop: keine Topbar — Sprache/Theme/User liegen in der Sidebar (wie NEOS Index) */
   .topbar{display:none}
 }
