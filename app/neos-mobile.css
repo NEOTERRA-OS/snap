@@ -100,3 +100,55 @@
 .ncam-side { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: 0; color: rgba(255,255,255,.85); font-size: 10.5px; font-weight: 600; cursor: pointer; font-family: inherit; width: 64px; }
 .ncam-shutter { width: 70px; height: 70px; border-radius: 50%; background: var(--yellow); border: 4px solid rgba(255,255,255,.25); cursor: pointer; flex: 0 0 auto; box-shadow: 0 4px 18px rgba(0,0,0,.35); }
 .ncam-shutter:active { transform: scale(.94); }
+
+/* ===== Mobile Review (Prüfen) — Karten-Stepper ===== */
+.neos.nrev { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; background: var(--bg); color: var(--text); }
+.neos .nrev-top { display: flex; align-items: center; gap: 12px; padding: calc(env(safe-area-inset-top) + 12px) 16px 10px; border-bottom: 1px solid var(--border-soft); }
+.neos .nrev-x { width: 34px; height: 34px; border-radius: 50%; background: var(--sunken); border: 0; color: var(--text-2); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto; }
+.neos .nrev-prog { flex: 1; text-align: center; font-size: 13px; font-weight: 700; color: var(--text); }
+.neos .nrev-src { font-size: 11px; font-weight: 600; color: var(--text-3); background: var(--sunken); border-radius: 999px; padding: 4px 10px; }
+.neos .nrev-proc { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 40px; }
+.neos .nrev-proc-t { font-size: 15px; font-weight: 700; }
+.neos .nrev-proc-s { font-size: 12.5px; color: var(--text-3); margin-top: -6px; }
+.neos .nrev-card { flex: 1; overflow-y: auto; padding: 14px 16px 12px; }
+.neos .nrev-prev { border: 1px solid var(--border); border-radius: var(--r-card); overflow: hidden; margin-bottom: 14px; background: var(--card-alt); }
+.neos .nrev-prev img { display: block; width: 100%; max-height: 200px; object-fit: contain; }
+.neos .nrev-lab { display: block; font-size: 11px; font-weight: 600; color: var(--text-3); margin: 12px 2px 5px; }
+.neos .nrev-in { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-btn); padding: 11px 12px; font-size: 14px; color: var(--text); font-family: var(--font-ui); outline: 0; }
+.neos .nrev-in.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.neos .nrev-in:focus { border-color: var(--green-ink); }
+.neos .nrev-in-lg { font-size: 17px; font-weight: 700; }
+.neos .nrev-amt-row { display: flex; gap: 10px; }
+.neos .nrev-amt-field { flex: 1.4; }
+.neos .nrev-cur-field { flex: 1; }
+.neos .nrev-amt { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 18px; font-weight: 700; }
+.neos .nrev-note { font-size: 11.5px; color: var(--text-3); margin-top: 7px; font-variant-numeric: tabular-nums; }
+.neos .nrev-note b { color: var(--text); font-weight: 700; }
+.neos .nrev-two { display: flex; gap: 10px; }
+.neos .nrev-two > div { flex: 1; }
+.neos .nrev-pay { display: flex; gap: 8px; }
+.neos .nrev-pay button { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-btn); padding: 11px 8px; font-size: 12.5px; font-weight: 600; color: var(--text-2); cursor: pointer; font-family: var(--font-ui); }
+.neos .nrev-pay button.on { border-color: var(--green); color: var(--green-ink); background: var(--green-soft); }
+.neos .nrev-flags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+.neos .nrev-flag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--warning); background: var(--warning-bg); border-radius: 999px; padding: 4px 9px; }
+.neos .nrev-bar { display: flex; gap: 10px; padding: 10px 16px calc(env(safe-area-inset-bottom) + 12px); border-top: 1px solid var(--border-soft); background: var(--card); }
+.neos .nrev-reject { flex: 0 0 38%; background: var(--card); border: 1px solid var(--border-btn); border-radius: var(--r-btn); padding: 13px; font-size: 14px; font-weight: 700; color: var(--text-2); cursor: pointer; font-family: var(--font-ui); }
+.neos .nrev-confirm { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--yellow); color: var(--yellow-ink); border: 0; border-radius: var(--r-btn); padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--font-ui); }
+.neos .nrev-confirm:disabled { opacity: .55; }
+
+/* ===== Fertig-Screen ===== */
+.neos.ndone { position: fixed; inset: 0; z-index: 200; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 28px calc(env(safe-area-inset-bottom) + 28px); }
+.neos .ndone-ic { width: 66px; height: 66px; border-radius: 50%; background: var(--success-bg); color: var(--success); display: grid; place-items: center; margin-bottom: 18px; }
+.neos .ndone-h1 { font-size: 24px; font-weight: 800; }
+.neos .ndone-sub { font-size: 13.5px; color: var(--text-2); text-align: center; line-height: 1.5; margin: 8px 0 26px; max-width: 300px; }
+.neos .ndone-ladder { width: 100%; max-width: 320px; position: relative; }
+.neos .ndone-step { display: flex; align-items: flex-start; gap: 13px; padding-bottom: 20px; position: relative; }
+.neos .ndone-step:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 30px; bottom: -2px; width: 2px; background: var(--border); }
+.neos .ndone-step.done:not(:last-child)::before { background: var(--success); }
+.neos .ndone-node { width: 30px; height: 30px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center; background: var(--sunken); color: var(--text-3); z-index: 2; }
+.neos .ndone-step.done .ndone-node { background: var(--success); color: #fff; }
+.neos .ndone-step.active .ndone-node { background: var(--yellow); color: var(--yellow-ink); }
+.neos .ndone-txt b { display: block; font-size: 14px; font-weight: 700; color: var(--text-3); }
+.neos .ndone-step.done .ndone-txt b, .neos .ndone-step.active .ndone-txt b { color: var(--text); }
+.neos .ndone-txt span { font-size: 11.5px; color: var(--text-3); }
+.neos .ndone-btn { width: 100%; max-width: 320px; margin-top: 20px; background: var(--yellow); color: var(--yellow-ink); border: 0; border-radius: var(--r-btn); padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--font-ui); }
