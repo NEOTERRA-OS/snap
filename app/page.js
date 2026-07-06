@@ -795,6 +795,96 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
     </>
   );
 
+  // ===== Mobile: Karten-Stepper (Prüfen) + Fertig =====
+  if (stage === "review" && isMobile) {
+    if (subDone) return <MobileDone onClose={() => onClose?.()} />;
+    if (!items.length) { onClose?.(); return null; }
+    const idx = Math.min(reviewIdx, items.length - 1);
+    const it = items[idx];
+    const isLast = idx >= items.length - 1;
+    const flags = it.loading ? [] : plausFlags(it, warnLimit);
+    const net = netFrom(it.gross, it.vat_rate);
+    const catSel = catInfo(it.category);
+    const confirm = async () => {
+      if (!isLast) setReviewIdx(idx + 1);
+      else await submitAll("submitted", { noNav: true, onOk: () => setSubDone(true) });
+    };
+    const reject = () => {
+      const rest = items.filter((x) => x.id !== it.id);
+      setItems(rest);
+      setReviewIdx((p) => Math.max(0, Math.min(p, rest.length - 1)));
+      if (!rest.length) onClose?.();
+    };
+    const fchip = (label) => <span className="nrev-flag"><Icon name="alert" size={11} /> {t(label)}</span>;
+    return (
+      <div className="neos nrev">
+        <div className="nrev-top">
+          <button type="button" className="nrev-x" onClick={() => onClose?.()} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
+          <span className="nrev-prog">{t("Beleg")} {idx + 1} / {items.length}</span>
+          <span className="nrev-src">{it.source === "cash" ? t("Barauslage") : it.source === "manual" ? t("Manuell") : it.source === "upload" ? t("Upload") : t("Foto")}</span>
+        </div>
+        {it.loading ? (
+          <div className="nrev-proc"><span className="spin" /><div className="nrev-proc-t">{t("Beleg wird ausgelesen …")}</div><div className="nrev-proc-s">{t("OCR erkennt Händler, Betrag & MwSt")}</div></div>
+        ) : (
+          <div className="nrev-card">
+            {it.preview && <div className="nrev-prev"><img src={it.preview} alt="" /></div>}
+            <label className="nrev-lab">{it.source === "cash" ? t("Zweck") : t("Händler")}</label>
+            <input className="nrev-in nrev-in-lg" value={it.merchant} onChange={(e) => upd(it.id, { merchant: e.target.value })} placeholder={it.source === "cash" ? t("wofür war das Geld?") : "—"} />
+
+            <div className="nrev-amt-row">
+              <div className="nrev-amt-field">
+                <label className="nrev-lab">{t("Betrag brutto")}</label>
+                <input className="nrev-in nrev-amt" type="number" step="0.01" value={it.gross ?? ""} onChange={(e) => upd(it.id, { gross: e.target.value === "" ? null : parseFloat(e.target.value) })} />
+              </div>
+              <div className="nrev-cur-field">
+                <label className="nrev-lab">{t("Währung")}</label>
+                <select className="nrev-in" value={it.currency || "EUR"} onChange={(e) => upd(it.id, { currency: e.target.value })}>
+                  {Array.from(new Set([it.currency || "EUR", "EUR", "USD", "RON"])).map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
+            {net != null && <div className="nrev-note">{t("Netto")}: <b className="num">{fmtN(net)} {it.currency || "EUR"}</b> · {t("MwSt")}: {fmtN(it.gross - net)} {it.currency || "EUR"}</div>}
+
+            {it.source !== "cash" && <>
+              <label className="nrev-lab">{t("CUI / Cod Fiscal")} {flags.includes("Händler fehlt") ? null : null}</label>
+              <input className="nrev-in num" value={it.merchant_cui || ""} onChange={(e) => upd(it.id, { merchant_cui: e.target.value })} placeholder="RO…" />
+              <label className="nrev-lab">{t("Rechnungsnummer")}</label>
+              <input className="nrev-in num" value={it.invoice_no || ""} onChange={(e) => upd(it.id, { invoice_no: e.target.value })} placeholder="—" />
+            </>}
+
+            <div className="nrev-two">
+              <div><label className="nrev-lab">{t("Datum")}</label><input className="nrev-in" type="date" value={it.doc_date || ""} onChange={(e) => upd(it.id, { doc_date: e.target.value })} /></div>
+              <div><label className="nrev-lab">{t("MwSt-Satz (%)")}</label><input className="nrev-in num" type="number" step="0.1" value={it.vat_rate ?? ""} onChange={(e) => upd(it.id, { vat_rate: e.target.value === "" ? null : parseFloat(e.target.value) })} /></div>
+            </div>
+
+            <label className="nrev-lab">{t("Kategorie")}</label>
+            <select className="nrev-in" value={it.category} onChange={(e) => upd(it.id, { category: e.target.value })}>
+              {catOpts().map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}
+            </select>
+            <label className="nrev-lab">{t("Kostenstelle / Projekt")}</label>
+            <select className="nrev-in" value={it.cost_center_id} onChange={(e) => upd(it.id, { cost_center_id: e.target.value })}>
+              <option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
+            </select>
+            <label className="nrev-lab">{t("Zahlart")}</label>
+            <div className="nrev-pay">
+              <button type="button" className={it.payment_method === "private" ? "on" : ""} onClick={() => upd(it.id, { payment_method: "private" })}><Icon name="wallet" size={15} /> {t("Privat verauslagt")}</button>
+              <button type="button" className={it.payment_method === "company_card" ? "on" : ""} onClick={() => upd(it.id, { payment_method: "company_card" })}><Icon name="banknote" size={15} /> {t("Firmenkarte")}</button>
+            </div>
+
+            {flags.length > 0 && <div className="nrev-flags">{flags.map((f) => fchip(f))}</div>}
+          </div>
+        )}
+        {err && <div className="err" style={{ margin: "0 16px" }}>{err}</div>}
+        <div className="nrev-bar">
+          <button type="button" className="nrev-reject" onClick={reject}>{t("Ablehnen")}</button>
+          <button type="button" className="nrev-confirm" disabled={busy || it.loading} onClick={confirm}>
+            {busy ? <span className="spin" /> : <Icon name={isLast ? "arrowright" : "check"} size={16} />} {isLast ? t("Einreichen") : t("Bestätigen")}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="ahead">
