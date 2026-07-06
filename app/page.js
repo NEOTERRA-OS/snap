@@ -2961,9 +2961,11 @@ function Admin({ session, only }) {
           </div>
         )}
       </div>
+      </>)}
 
+      {catsOnly && (
       <div className="card">
-        <div className="pw"><Icon name="layers" /> {t("Kategorien")}</div>
+        <div className="pw"><Icon name="tag" /> {t("Kategorien")}</div>
         <form onSubmit={addCat}>
           <div className="field"><label>{t("Bezeichnung")}</label>
             <input value={catForm.label} onChange={(e) => setCatForm({ ...catForm, label: e.target.value })} placeholder={t("z. B. Marketing")} required /></div>
@@ -3017,6 +3019,7 @@ function Admin({ session, only }) {
           </table>
         )}
       </div>
+      )}
 
       {confirmUser && (
         <div className="modal-wrap" onClick={() => { if (!delBusy) setConfirmUser(null); }}>
