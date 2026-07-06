@@ -864,3 +864,5 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .mc2-bar{background:linear-gradient(180deg,#46A557 0%,#2C6E3D 100%)}
 .mc2-bar.cur{background:linear-gradient(180deg,#FFDE59 0%,#FAD201 100%)}
 .mc2-bar.cur .mc2-val{color:var(--ink)}
+
+.nmob-cur{border:0;font-family:inherit;cursor:pointer}
