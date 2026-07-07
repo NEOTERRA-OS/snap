@@ -1442,7 +1442,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
           <button type="button" className="nmob-sort" onClick={() => setDir(dir === "asc" ? "desc" : "asc")}><Icon name="updown" size={14} /> {t("Datum")}</button>
         </div>
         <div className="nmob-chips">
-          {mchips.map(([k, l]) => <button type="button" key={k} className={"nmob-chip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
+          {mchips.map(([k, l, dot]) => <button type="button" key={k} className={"nmob-chip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{dot && <span className="fchip-dot" style={{ background: dot }} />}{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
           {curList.length > 1 && <span className="fchips-div" />}
           {curList.length > 1 && curList.map((c) => <button type="button" key={c} className={"nmob-chip" + (curF === c ? " on" : "")} onClick={() => setCurF(curF === c ? "all" : c)}>{c} <span className="cnt">{curCount(c)}</span></button>)}
         </div>
