@@ -1470,10 +1470,38 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
       <div className="rx-desktop">
       <CmdHeader icon="receipt" title={allScope ? t("Alle Belege") : t("Meine Belege")}
         search={<label className="cmdh-search"><Icon name="search" size={15} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Händler suchen …")} /></label>}>
+        <div className="cur-tog">
+          <button className={cur === "EUR" ? "on" : ""} onClick={() => setCur("EUR")}>EUR</button>
+          <button className={cur === "RON" ? "on" : ""} onClick={() => setCur("RON")}>RON</button>
+        </div>
         {onCapture && <button className="cmdh-ghost" onClick={onCapture}><Icon name="upload" size={14} /> {t("Import")}</button>}
         <button className="cmdh-ghost" onClick={doExport}><Icon name="download" size={14} /> {t("Export")}</button>
         {onCapture && <button className="cmdh-cta" onClick={onCapture}><Icon name="plus" size={15} /> {t("Beleg erfassen")}</button>}
       </CmdHeader>
+
+      {/* KPI-Strip (wie mobile Belege-Hero) */}
+      <div className="kpis kx kx4" style={{ margin: "0 0 16px" }}>
+        <div className="kpi">
+          <div className="kt"><Icon name="wallet" />{t("Offene Erstattung")}</div>
+          <div className={"n mono" + (openReimb.length ? " warnv" : "")}><span className="nv">{fmtN0(cvR(openReimbSum))}</span><span className="nu">{curUnit}</span></div>
+          <div className={"ksub " + (openReimb.length ? "warn" : "neu")}>{openReimb.length} {t("privat · erstattungsfähig")}</div>
+        </div>
+        <div className="kpi">
+          <div className="kt"><Icon name="receipt" />{t("Belege")}</div>
+          <div className="n mono"><span className="nv">{rows.length}</span></div>
+          <div className="ksub neu">{allScope ? t("firmenweit") : t("eigene")}</div>
+        </div>
+        <div className="kpi">
+          <div className="kt"><Icon name="clock" />{t("In Prüfung")}</div>
+          <div className="n mono"><span className="nv">{inReviewCount}</span></div>
+          <div className={"ksub " + (inReviewCount ? "warn" : "neu")}>{t("zur Freigabe")}</div>
+        </div>
+        <div className="kpi">
+          <div className="kt"><Icon name="layers" />{t("Vorsteuer")}</div>
+          <div className="n mono"><span className="nv">{fmtN0(cvR(vorsteuer))}</span><span className="nu">{curUnit}</span></div>
+          <div className="ksub neu">{t("abziehbar")} ({curUnit})</div>
+        </div>
+      </div>
 
       <div className="subfilter">
         <div className="fchips">
