@@ -1411,7 +1411,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
     const blob = new Blob(["﻿" + [head.map(esc).join(","), ...lines].join("\n")], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "belege.csv"; a.click(); URL.revokeObjectURL(url);
   };
-  const dchips = [["all", "Alle"], ["submitted", "In Prüfung"], ["approved", "Freigabe"], ["booked", "Gebucht"]];
+  const dchips = [["all", "Alle", null], ["submitted", "In Prüfung", "#E0B100"], ["approved", "Freigabe", "#2C7A43"], ["booked", "Gebucht", "#8C937F"]];
 
   return (
     <>
@@ -1479,7 +1479,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
 
       <div className="subfilter">
         <div className="fchips">
-          {dchips.map(([k, l]) => <button key={k} className={"fchip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
+          {dchips.map(([k, l, dot]) => <button key={k} className={"fchip" + (statusF === k ? " on" : "")} onClick={() => setStatusF(k)}>{dot && <span className="fchip-dot" style={{ background: dot }} />}{t(l)} <span className="cnt">{chipCount(k)}</span></button>)}
           {curList.length > 1 && <span className="fchips-div" />}
           {curList.length > 1 && curList.map((c) => <button key={c} className={"fchip" + (curF === c ? " on" : "")} onClick={() => setCurF(curF === c ? "all" : c)}>{c} <span className="cnt">{curCount(c)}</span></button>)}
         </div>
