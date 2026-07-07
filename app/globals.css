@@ -931,3 +931,5 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .ndet-pdf-open .i{color:var(--green)}
 
 .fchips-div{flex:0 0 auto;width:1px;height:22px;align-self:center;background:var(--line);margin:0 5px}
+
+.fchip-dot{width:7px;height:7px;border-radius:999px;flex:0 0 auto;display:inline-block}
