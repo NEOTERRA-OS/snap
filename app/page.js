@@ -494,7 +494,7 @@ function Shell({ session }) {
       <div className="bottomnav">
         <div className="bnav-side">
           {bnav("receipts", "receipt", "Belege")}
-          {bnav("dashboard", "barchart", "Auswerten")}
+          {bnav("analytics", "barchart", "Auswerten")}
         </div>
         <button type="button" className={"bnav-fab" + (captureOpen ? " on" : "")} onClick={() => { setDetail(null); setCaptureOpen(true); }} aria-label={t("Neuer Beleg")}><Icon name="camera" size={24} /></button>
         <div className="bnav-side">
