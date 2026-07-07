@@ -451,9 +451,8 @@ function Shell({ session }) {
       <PullToRefresh />
       {delegModal && <DelegationsModal onClose={() => setDelegModal(false)} />}
       <aside className="sidebar">
-        <button type="button" className="sb-brand" onClick={() => { setDetail(null); setView("dashboard"); }} aria-label={t("Zum Dashboard")}><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
+        <button type="button" className="sb-brand" onClick={() => { setDetail(null); setView("receipts"); }} aria-label={t("Zu den Belegen")}><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
         <div className="sb-grp">{t("Workspace")}</div>
-        {nav("dashboard", "dashboard", "Dashboard")}
         {nav("receipts", "receipt", "Belege")}
         {["accounting", "admin"].includes(role) && nav("allreceipts", "layers", "Alle Belege")}
         {["approver", "accounting", "admin"].includes(role) && nav("approvals", "checkcheck", "Freigaben", pendingCount)}
@@ -488,8 +487,7 @@ function Shell({ session }) {
               : view === "profile" ? <MobileProfile who={who} initials={initials} role={role} lang={lang} setLang={setLang} theme={theme} toggleTheme={toggleTheme} onSignOut={signOut} onImport={() => setCaptureOpen(true)} onDelegations={() => setDelegModal(true)} />
               : view === "admin" ? <Admin session={session} />
               : view === "categories" ? <Admin session={session} only="categories" />
-              : view === "analytics" ? <Dashboard onOpen={setDetail} uid={uid} />
-              : <Dashboard onOpen={setDetail} uid={uid} mode="dashboard" onCapture={() => setCaptureOpen(true)} onOpenApprovals={() => { setDetail(null); setView("approvals"); }} />}
+              : <Dashboard onOpen={setDetail} uid={uid} />}
           </div>
         </div>
       </div>
