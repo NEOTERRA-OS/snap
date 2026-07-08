@@ -1558,6 +1558,12 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
             <option value="company_card">{t("Firmenkarte")}</option>
             <option value="private">{t("Privat verauslagt")}</option>
           </select>
+          {allScope && (
+            <select value="" disabled={bulkBusy} onChange={(e) => { if (e.target.value) bulkReassign(e.target.value); e.target.value = ""; }} title={t("Belege einem Mitarbeiter zuweisen (für wen)")}>
+              <option value="">{t("Mitarbeiter zuweisen …")}</option>
+              {Object.entries(names).sort((a, b) => a[1].localeCompare(b[1], "de")).map(([id, nm]) => <option key={id} value={id}>{nm}</option>)}
+            </select>
+          )}
           <button type="button" className="bulkbar-x" onClick={() => setSel(new Set())} title={t("Auswahl aufheben")}><Icon name="x" size={15} /></button>
         </div>
       )}
