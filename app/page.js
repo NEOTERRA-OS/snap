@@ -544,7 +544,7 @@ function Shell({ session }) {
               <span className="noti-ic"><Icon name="receipt" size={15} /></span>
               <span className="noti-main">
                 <span className="noti-t"><b>{n.creator_name || t("Jemand")}</b> {t("hat einen Beleg für dich erfasst")}</span>
-                <span className="noti-s">{n.merchant || "—"} · {money(n.gross, n.currency)} · {dtLong(n.created_at)}</span>
+                <span className="noti-s">{n.merchant || "—"} · {money(n.gross, n.currency)} · {n.created_at ? new Date(n.created_at).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : ""}</span>
               </span>
             </button>
           ))}
