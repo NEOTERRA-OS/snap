@@ -420,10 +420,6 @@ function Shell({ session }) {
   const [notis, setNotis] = useState([]);
   const [notiOpen, setNotiOpen] = useState(false);
   const [notiSeen, setNotiSeen] = useState(() => { try { return localStorage.getItem("snap_noti_seen") || ""; } catch { return ""; } });
-  useEffect(() => {
-    if (!uid) return;
-    supabase.from("receipts").select("id,merchant,gross,currency,created_by,creator_name,created_at,status").eq("user_id", uid).neq("created_by", uid).order("created_at", { ascending: false }).limit(30).then(({ data }) => setNotis(data || []));
-  }, [uid, view, captureOpen]);
   const notiUnread = notis.filter((n) => !notiSeen || (n.created_at || "") > notiSeen).length;
   const toggleNotis = () => {
     setNotiOpen((o) => {
@@ -445,6 +441,11 @@ function Shell({ session }) {
     window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
   }, [detail]);
   const uid = session.user.id;
+  // Benachrichtigungen laden: Belege mit user_id = ich, created_by ≠ ich (nach uid-Definition wegen TDZ)
+  useEffect(() => {
+    if (!uid) return;
+    supabase.from("receipts").select("id,merchant,gross,currency,created_by,creator_name,created_at,status").eq("user_id", uid).neq("created_by", uid).order("created_at", { ascending: false }).limit(30).then(({ data }) => setNotis(data || []));
+  }, [uid, view, captureOpen]);
   const email = session.user.email;
   const who = session.user.user_metadata?.full_name || session.user.email;
   const signOut = () => supabase.auth.signOut();
