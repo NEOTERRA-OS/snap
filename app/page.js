@@ -1168,17 +1168,17 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   return (
     <div className="cap-modal-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose?.(); }}>
       <div className="cap-modal cap-modal-lg">
-      <CmdHeader icon="scan" title={`${t("Prüfen & ergänzen")} (${items.length})`}>
-        {owners.length > 0 && (
-          <div className="forsel">
-            <label>{t("Für Mitarbeiter")}</label>
-            <select value={forUser} onChange={(e) => setForUser(e.target.value)}>
-              <option value="">{t("Ich selbst")}</option>
-              {owners.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-            </select>
+      <CmdHeader icon="scan" title={`${t("Prüfen & ergänzen")} (${items.length})`} />
+      {owners.length > 0 && (
+        <div className={"forwho" + (forUser === null ? " req" : "")}>
+          <div className="forwho-q"><Icon name="user" size={16} /> {t("Für wen ist dieser Beleg?")} <span className="forwho-req">{t("Pflichtangabe")}</span></div>
+          <div className="forwho-opts">
+            <button type="button" className={"forwho-opt" + (forUser === "" ? " on" : "")} onClick={() => setForUser("")}><Icon name="check" size={14} /> {t("Für mich")}</button>
+            {owners.map((o) => <button type="button" key={o.id} className={"forwho-opt" + (forUser === o.id ? " on" : "")} onClick={() => setForUser(o.id)}><Icon name="user" size={14} /> {o.name}</button>)}
           </div>
-        )}
-      </CmdHeader>
+          {forUser === null && <div className="forwho-hint"><Icon name="alert" size={13} /> {t("Bitte wählen, bevor du speicherst — sonst landet der Beleg bei dir.")}</div>}
+        </div>
+      )}
       {items.map((it) => (
         <div className="card bcard" key={it.id}>
           <div className="bcard-head">
