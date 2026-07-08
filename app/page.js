@@ -952,6 +952,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   async function submitAll(status = "submitted", opts = {}) {
     const ready = items.filter((it) => !it.loading);
     if (!ready.length) return;
+    if (owners.length > 0 && forUser === null) { toast(t("Bitte zuerst wählen, für wen der Beleg erfasst wird."), "err"); return; }
     setBusy(true); setErr("");
     try {
       const rows = [];
