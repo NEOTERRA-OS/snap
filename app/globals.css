@@ -955,3 +955,5 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .forwho-opt.on .i{color:#fff}
 .forwho-hint{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;font-weight:600;color:var(--warn)}
 .forwho-hint .i{color:var(--warn);flex:0 0 auto}
+
+.emp-by.other{color:var(--warn);font-weight:600}
