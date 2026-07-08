@@ -416,6 +416,21 @@ function Shell({ session }) {
   const fabCamRef = useRef(null);          // App-Ebene: Kamera direkt aus FAB-Klick öffnen (iOS-Geste)
   const [inbound, setInbound] = useState(null); // per FAB aufgenommene Dateien → an Capture
   const [captureOpen, setCaptureOpen] = useState(false); // Erfassen als Overlay-Modal (DS)
+  // Benachrichtigungen: Belege, die jemand anderes für mich erfasst hat (user_id = ich, created_by ≠ ich)
+  const [notis, setNotis] = useState([]);
+  const [notiOpen, setNotiOpen] = useState(false);
+  const [notiSeen, setNotiSeen] = useState(() => { try { return localStorage.getItem("snap_noti_seen") || ""; } catch { return ""; } });
+  useEffect(() => {
+    if (!uid) return;
+    supabase.from("receipts").select("id,merchant,gross,currency,created_by,creator_name,created_at,status").eq("user_id", uid).neq("created_by", uid).order("created_at", { ascending: false }).limit(30).then(({ data }) => setNotis(data || []));
+  }, [uid, view, captureOpen]);
+  const notiUnread = notis.filter((n) => !notiSeen || (n.created_at || "") > notiSeen).length;
+  const toggleNotis = () => {
+    setNotiOpen((o) => {
+      if (!o && notis.length) { const ts = new Date().toISOString(); setNotiSeen(ts); try { localStorage.setItem("snap_noti_seen", ts); } catch {} }
+      return !o;
+    });
+  };
   const [pendingCount, setPendingCount] = useState(0); // offene Freigaben → Sidebar-Badge
   useEffect(() => { supabase.from("receipts").select("id", { count: "exact", head: true }).eq("status", "submitted").then(({ count }) => setPendingCount(count || 0)); }, [view]);
   const goSearch = (v) => { setSearchQ(v); setDetail(null); setView("receipts"); };
