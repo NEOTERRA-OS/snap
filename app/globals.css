@@ -933,3 +933,9 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .fchips-div{flex:0 0 auto;width:1px;height:22px;align-self:center;background:var(--line);margin:0 5px}
 
 .fchip-dot{width:7px;height:7px;border-radius:999px;flex:0 0 auto;display:inline-block}
+
+/* Mitarbeiter-Zelle: Eigentümer (für wen) + „erfasst von" */
+.jtable .emp-c{align-items:flex-start}
+.emp-w{display:inline-flex;flex-direction:column;line-height:1.25;min-width:0}
+.emp-owner{color:var(--ink);font-weight:600}
+.emp-by{font-size:11px;color:var(--muted2)}
