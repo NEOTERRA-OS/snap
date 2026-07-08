@@ -1261,17 +1261,17 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
       </label>
       <div className="submitrow">
         {draftFirst ? (<>
-          <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("draft")}>
+          <button className="btn" disabled={busy || anyLoading || !items.length || (owners.length > 0 && forUser === null)} onClick={() => submitAll("draft")}>
             {busy ? <span className="spin" /> : <Icon name="filetext" size={15} />} {`${t("Als Entwürfe speichern")} (${items.filter((i) => !i.loading).length})`}
           </button>
-          <button className="btn ghost" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("submitted")}>
+          <button className="btn ghost" disabled={busy || anyLoading || !items.length || (owners.length > 0 && forUser === null)} onClick={() => submitAll("submitted")}>
             <Icon name="arrowright" size={15} /> {t("Direkt einreichen")}
           </button>
         </>) : (<>
-          <button className="btn" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("submitted")}>
+          <button className="btn" disabled={busy || anyLoading || !items.length || (owners.length > 0 && forUser === null)} onClick={() => submitAll("submitted")}>
             {busy ? <span className="spin" /> : <Icon name="arrowright" />} {anyLoading ? t("OCR läuft …") : `${t("Alle einreichen")} (${items.filter((i) => !i.loading).length})`}
           </button>
-          <button className="btn ghost" disabled={busy || anyLoading || !items.length} onClick={() => submitAll("draft")}>
+          <button className="btn ghost" disabled={busy || anyLoading || !items.length || (owners.length > 0 && forUser === null)} onClick={() => submitAll("draft")}>
             <Icon name="filetext" size={15} /> {t("Als Entwurf speichern")}
           </button>
         </>)}
