@@ -533,6 +533,23 @@ function Shell({ session }) {
           </div>
         </div>
       ))}
+      {notiOpen && (<>
+        <div className="noti-back" onClick={() => setNotiOpen(false)} />
+        <div className="noti-panel">
+          <div className="noti-head"><Icon name="bell" size={15} /> {t("Benachrichtigungen")}</div>
+          {notis.length === 0 ? (
+            <div className="noti-empty">{t("Noch keine Belege wurden für dich erfasst.")}</div>
+          ) : notis.map((n) => (
+            <button type="button" className="noti-item" key={n.id} onClick={() => { setNotiOpen(false); setDetail(n.id); }}>
+              <span className="noti-ic"><Icon name="receipt" size={15} /></span>
+              <span className="noti-main">
+                <span className="noti-t"><b>{n.creator_name || t("Jemand")}</b> {t("hat einen Beleg für dich erfasst")}</span>
+                <span className="noti-s">{n.merchant || "—"} · {money(n.gross, n.currency)} · {dtLong(n.created_at)}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </>)}
       <Toasts />
     </div>
   );
