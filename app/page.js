@@ -1143,13 +1143,16 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
               <button type="button" className={it.payment_method === "company_card" ? "on" : ""} onClick={() => upd(it.id, { payment_method: "company_card" })}><Icon name="banknote" size={15} /> {t("Firmenkarte")}</button>
             </div>
 
-            {owners.length > 0 && <>
-              <label className="nrev-lab">{t("Erfasst für")}</label>
-              <select className="nrev-in" value={forUser} onChange={(e) => setForUser(e.target.value)}>
-                <option value="">{t("Ich selbst")}</option>
-                {owners.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-              </select>
-            </>}
+            {owners.length > 0 && (
+              <div className={"forwho" + (forUser === null ? " req" : "")} style={{ margin: "10px 0 0" }}>
+                <div className="forwho-q"><Icon name="user" size={15} /> {t("Für wen ist dieser Beleg?")} <span className="forwho-req">{t("Pflicht")}</span></div>
+                <div className="forwho-opts">
+                  <button type="button" className={"forwho-opt" + (forUser === "" ? " on" : "")} onClick={() => setForUser("")}><Icon name="check" size={13} /> {t("Für mich")}</button>
+                  {owners.map((o) => <button type="button" key={o.id} className={"forwho-opt" + (forUser === o.id ? " on" : "")} onClick={() => setForUser(o.id)}><Icon name="user" size={13} /> {o.name}</button>)}
+                </div>
+                {forUser === null && <div className="forwho-hint"><Icon name="alert" size={12} /> {t("Bitte wählen, bevor du speicherst.")}</div>}
+              </div>
+            )}
 
             {flags.length > 0 && <div className="nrev-flags">{flags.map((f) => fchip(f))}</div>}
           </div>
