@@ -480,6 +480,10 @@ function Shell({ session }) {
         <div className="sb-user">
           <span className="sb-av">{initials}</span>
           <div className="sb-id"><div className="nm">{who}</div><div className="ml">{email}</div></div>
+          <button className="sb-bell" onClick={toggleNotis} title={t("Benachrichtigungen")} aria-label={t("Benachrichtigungen")}>
+            <Icon name="bell" size={16} />
+            {notiUnread > 0 && <span className="sb-bell-dot">{notiUnread > 9 ? "9+" : notiUnread}</span>}
+          </button>
           <button className="sb-theme" onClick={toggleTheme} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></button>
         </div>
         <div className="sb-foot-row">
