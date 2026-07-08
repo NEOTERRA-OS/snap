@@ -980,3 +980,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .nmob-bell .i{color:var(--ink)}
 .nmob-bell-dot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--yellow);color:#2C3C2B;font-size:11px;font-weight:800;display:grid;place-items:center;font-family:"JetBrains Mono",ui-monospace,monospace;line-height:1}
 @media(max-width:760px){.noti-panel{left:10px;right:10px;width:auto;max-width:none;top:70px;bottom:auto;max-height:72vh}}
+
+/* Dark Mode: gelbe CTAs mit dunkelgrünem (nicht emerald) Text/Icon */
+[data-theme="dark"] .cmdh-cta, [data-theme="dark"] .appr-btn, [data-theme="dark"] .adm-cta{color:#2C3C2B}
+[data-theme="dark"] .cmdh-cta .i, [data-theme="dark"] .appr-btn .i, [data-theme="dark"] .adm-cta .i{color:#2C3C2B}
