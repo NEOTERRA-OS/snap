@@ -498,7 +498,7 @@ function Shell({ session }) {
       <div className="maincol">
         <div className="content">
           <div className="container">
-            {view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} onCapture={() => setCaptureOpen(true)} />
+            {view === "receipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} who={who} onCapture={() => setCaptureOpen(true)} notiUnread={notiUnread} onNotis={toggleNotis} />
               : view === "allreceipts" ? <Receipts uid={uid} onOpen={setDetail} q={searchQ} setQ={setSearchQ} allScope who={who} onCapture={() => setCaptureOpen(true)} />
               : view === "approvals" ? <Approvals onOpen={setDetail} />
               : view === "activity" ? <ActivityLog />
@@ -1478,7 +1478,15 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
             <div className="nmob-h1">{allScope ? t("Alle Belege") : t("Meine Belege")}</div>
             <div className="nmob-sub">{greet}{firstName ? `, ${firstName}` : ""} · KW {kw}</div>
           </div>
-          <span className="nmob-av">{initials || "?"}</span>
+          <div className="nmob-head-r">
+            {onNotis && (
+              <button type="button" className="nmob-bell" onClick={onNotis} aria-label={t("Benachrichtigungen")}>
+                <Icon name="bell" size={19} />
+                {notiUnread > 0 && <span className="nmob-bell-dot">{notiUnread > 9 ? "9+" : notiUnread}</span>}
+              </button>
+            )}
+            <span className="nmob-av">{initials || "?"}</span>
+          </div>
         </div>
         <div className="nmob-hero">
           <div className="nmob-hero-top">
