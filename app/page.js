@@ -1363,7 +1363,7 @@ function CmdHeader({ icon, title, search, children }) {
   );
 }
 
-function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who = "", onCapture = null }) {
+function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who = "", onCapture = null, notiUnread = 0, onNotis = null }) {
   const { t } = useT();
   const [rows, setRows] = useState(null);
   const [statusF, setStatusF] = useState("all");
