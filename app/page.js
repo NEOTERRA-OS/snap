@@ -1586,7 +1586,14 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
               <tr key={r.id} onClick={() => onOpen(r.id)} className={sel.has(r.id) ? "selrow" : undefined}>
                 <td className="td-chk" onClick={(e) => toggleSel(r.id, e)}><input type="checkbox" checked={sel.has(r.id)} onChange={(e) => toggleSel(r.id, e)} onClick={(e) => e.stopPropagation()} aria-label={t("Auswählen")} /></td>
                 <td className="tdmerch"><span className="m-name">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{r.invoice_no && <span className="m-doc">{r.invoice_no}</span>}</td>
-                {allScope && <td><span className="emp-c"><Icon name="user" size={13} /> <span className="emp-w"><span className="emp-owner">{names[r.user_id] || "—"}</span>{r.created_by && r.created_by !== r.user_id && <span className="emp-by">{t("erfasst von")} {names[r.created_by] || r.creator_name || "—"}</span>}</span></span></td>}
+                {allScope && (() => {
+                  const byOther = r.created_by && r.created_by !== r.user_id;
+                  const creator = r.created_by ? (names[r.created_by] || r.creator_name || "—") : (r.creator_name || null);
+                  return <td><span className="emp-c"><Icon name="user" size={13} /> <span className="emp-w">
+                    <span className="emp-owner">{names[r.user_id] || "—"}</span>
+                    <span className={"emp-by" + (byOther ? " other" : "")}>{byOther ? `${t("erfasst von")} ${creator}` : t("selbst erfasst")}</span>
+                  </span></span></td>;
+                })()}
                 <td><span className="catcell"><span className="cat-ic"><Icon name={catInfo(r.category).icon} size={14} /></span> {t(catInfo(r.category).label)}</span></td>
                 <td className="mono">{dShort(r.doc_date)}</td>
                 <td className="r mono amt">{money(r.gross, r.currency)}</td>
