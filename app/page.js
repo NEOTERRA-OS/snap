@@ -1356,6 +1356,20 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
     setSel(new Set());
     toast(`${ids.length} ${t("Belege geändert")}`);
   }
+  // Eigentümer (für wen) nachträglich zuweisen — created_by (wer erfasst) bleibt erhalten.
+  async function bulkReassign(target) {
+    const ids = [...sel];
+    if (!ids.length || !target) return;
+    setBulkBusy(true);
+    const list = (rows || []).filter((r) => ids.includes(r.id));
+    const res = await Promise.all(list.map((r) => supabase.from("receipts").update({ user_id: target, created_by: r.created_by || r.user_id }).eq("id", r.id)));
+    setBulkBusy(false);
+    const bad = res.find((x) => x.error);
+    if (bad) { toast(bad.error.message, "err"); return; }
+    setRows((prev) => (prev || []).map((r) => (ids.includes(r.id) ? { ...r, user_id: target, created_by: r.created_by || r.user_id } : r)));
+    setSel(new Set());
+    toast(`${ids.length} ${t("Belege zugewiesen")}`);
+  }
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const statusMatch = (r) => statusF === "all" ? true
