@@ -1160,7 +1160,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
         {err && <div className="err" style={{ margin: "0 16px" }}>{err}</div>}
         <div className="nrev-bar">
           <button type="button" className="nrev-reject" onClick={reject}>{t("Ablehnen")}</button>
-          <button type="button" className="nrev-confirm" disabled={busy || it.loading} onClick={confirm}>
+          <button type="button" className="nrev-confirm" disabled={busy || it.loading || (isLast && owners.length > 0 && forUser === null)} onClick={confirm}>
             {busy ? <span className="spin" /> : <Icon name={isLast ? "arrowright" : "check"} size={16} />} {isLast ? t("Einreichen") : t("Bestätigen")}
           </button>
         </div>
