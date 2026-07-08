@@ -1363,10 +1363,13 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
     : statusF === "submitted" ? ["review", "submitted"].includes(r.status)
     : r.status === statusF;
   const curMatch = (r) => curF === "all" || (r.currency || "EUR") === curF;
-  const filtered = rows.filter((r) => statusMatch(r) && curMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
+  const empMatch = (r) => empF === "all" || r.user_id === empF;
+  const filtered = rows.filter((r) => statusMatch(r) && curMatch(r) && empMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
   // Währungen im Datenbestand + Zähler (für Filter-Chips)
   const curList = [...new Set(rows.map((r) => r.currency || "EUR"))].sort();
   const curCount = (c) => rows.filter((r) => (r.currency || "EUR") === c).length;
+  // Mitarbeiterliste (nur „Alle Belege"): user_id → Name
+  const empList = allScope ? [...new Map(rows.filter((r) => r.user_id).map((r) => [r.user_id, names[r.user_id] || r.creator_name || "—"])).entries()].sort((a, b) => a[1].localeCompare(b[1], "de")) : [];
   const sorted = [...filtered].sort((a, b) => {
     let c = 0;
     if (sortBy === "amount") c = Number(a.gross || 0) - Number(b.gross || 0);
@@ -1511,6 +1514,12 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
           {curList.length > 1 && curList.map((c) => <button key={c} className={"fchip" + (curF === c ? " on" : "")} onClick={() => setCurF(curF === c ? "all" : c)}>{c} <span className="cnt">{curCount(c)}</span></button>)}
         </div>
         <span className="aws-scope-sp" />
+        {allScope && empList.length > 0 && (
+          <select className="cmdh-sel" value={empF} onChange={(e) => setEmpF(e.target.value)} aria-label={t("Mitarbeiter")}>
+            <option value="all">{t("Alle Mitarbeiter")}</option>
+            {empList.map(([id, nm]) => <option key={id} value={id}>{nm}</option>)}
+          </select>
+        )}
         <div className="srt">
           <select className="cmdh-sel" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             <option value="date">{t("Datum")}</option><option value="amount">{t("Betrag")}</option><option value="merchant">{t("Händler")}</option>
