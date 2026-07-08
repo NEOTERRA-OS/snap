@@ -808,7 +808,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
   useEffect(() => { supabase.from("app_settings").select("value").eq("key", "amount_warn_limit").maybeSingle().then(({ data }) => { const n = Number(data?.value); if (n > 0) setWarnLimit(n); }); }, []);
   // Vertretung: für wen darf ich erfassen (owners) → „Für Mitarbeiter"-Auswahl.
   const [owners, setOwners] = useState([]);
-  const [forUser, setForUser] = useState("");
+  const [forUser, setForUser] = useState(null); // null = noch nicht gewählt (Pflicht, wenn owners vorhanden), "" = für mich, "<id>" = Mitarbeiter
   const [delegOpen, setDelegOpen] = useState(false);
   useEffect(() => {
     (async () => {
