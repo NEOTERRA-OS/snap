@@ -1331,6 +1331,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const [dir, setDir] = useState("desc");
   const [cur, setCur] = useState("EUR");
   const [curF, setCurF] = useState("all"); // Währungsfilter
+  const [empF, setEmpF] = useState("all"); // Mitarbeiterfilter (nur „Alle Belege")
   const [ccs, setCcs] = useState([]);
   const [sel, setSel] = useState(() => new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
