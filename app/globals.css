@@ -1005,3 +1005,14 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .bulkbar .cmdh-cta .i{color:#2C3C2B}
 .bulkbar-x{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#EFF1E9}
 .bulkbar-x:hover{color:#fff;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.30)}
+
+/* Duplizieren-Aktion: Zeilen-Button (Liste), Karten-Button, Detail-Kopf */
+.row-acts{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end}
+.dupbtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;min-width:32px;padding:0 9px;border:1px solid var(--line);border-radius:var(--radius-control);background:var(--surface);color:var(--muted);cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;transition:color .12s,border-color .12s,background .12s}
+.dupbtn:hover{color:var(--green);border-color:var(--green)}
+.dupbtn:disabled{opacity:.5;cursor:default}
+.td-act{width:52px}
+.ap-dup{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--muted);cursor:pointer;display:inline-grid;place-items:center;transition:color .12s,border-color .12s}
+.ap-dup:hover{color:var(--green);border-color:var(--green)}
+.ap-dup:disabled{opacity:.5;cursor:default}
+.ndet-top-acts{display:flex;align-items:center;gap:6px}
