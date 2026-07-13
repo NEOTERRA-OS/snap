@@ -51,7 +51,7 @@ function Login() {
       <div className="auth-hero">
         <div className="auth-glow" />
         <div className="ah-body">
-          <Logo size={72} />
+          <Logo size={80} />
           <div className="ah-name">NEOS <span>Snap</span></div>
           <div className="ah-tag">{t("Belege & Spesen — erfasst, geprüft, gebucht.")}</div>
         </div>

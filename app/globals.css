@@ -192,7 +192,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
   .auth{flex-direction:row}
   .auth-hero{flex:0 0 44%;border-radius:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:48px}
   .auth-hero .ah-body{flex:1;justify-content:center}
-  .auth-hero .ah-name{font-size:34px;margin-top:26px}
+  .auth-hero .ah-name{font-size:36px;margin-top:28px}
   .auth-hero .ah-tag{font-size:14px;margin-top:16px}
   .auth-hero .ah-foot{display:block}
   .auth-card{flex:1;align-items:center;margin-top:0;padding:48px;background:#F6F7F2}
