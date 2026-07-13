@@ -1433,7 +1433,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const [bulkBusy, setBulkBusy] = useState(false);
   const [names, setNames] = useState({});
   const load = useCallback(() => {
-    let qb = supabase.from("receipts").select("id,merchant,doc_date,gross,gross_eur,vat_rate,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method,user_id,created_by,creator_name,invoice_no").order("doc_date", { ascending: false });
+    let qb = supabase.from("receipts").select("id,merchant,doc_date,gross,gross_eur,vat_rate,status,category,currency,flags,duplicate_of,source,recipient,cost_center_id,payment_method,user_id,created_by,creator_name,invoice_no,receipt_no").order("doc_date", { ascending: false });
     if (!allScope) qb = qb.eq("user_id", uid);   // „Meine Belege": nur eigene; Admin-Blick „Alle Belege": ungefiltert
     qb.then(({ data }) => setRows(data || []));
   }, [allScope, uid]);
@@ -1731,7 +1731,7 @@ function Approvals({ onOpen }) {
   const [q, setQ] = useState("");
   const [vmode, setVmode] = useState("list"); // list | cards
   const load = useCallback(() => {
-    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of,user_id,created_by,creator_name,source,recipient,cost_center_id,invoice_no,merchant_cui").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
+    supabase.from("receipts").select("id,merchant,doc_date,gross,currency,category,flags,duplicate_of,user_id,created_by,creator_name,source,recipient,cost_center_id,invoice_no,merchant_cui,receipt_no").eq("status", "submitted").order("doc_date").then(({ data }) => { setRows(data || []); setSel(new Set()); });
   }, []);
   useEffect(() => { load(); }, [load]);
   useEffect(() => {
