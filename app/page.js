@@ -1774,6 +1774,7 @@ function Approvals({ onOpen }) {
       <div style={{ textAlign: "right" }}>
         <div className="amt">{money(r.gross, r.currency)}</div>
         <div style={{ display: "flex", gap: 6, marginTop: 8, justifyContent: "flex-end" }}>
+          <DupBtn id={r.id} onOpen={onOpen} cls="ap-dup" />
           <button className="ap-ok" disabled={busy} onClick={() => decide(r.id, "approved")} title={t("Freigeben")}><Icon name="check" size={15} /></button>
           <button className="ap-no" disabled={busy} onClick={() => { const reason = prompt(t("Ablehnungsgrund?")); if (reason !== null) decide(r.id, "rejected", reason); }} title={t("Ablehnen")}>✕</button>
         </div>
