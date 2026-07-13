@@ -1698,6 +1698,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
                 <td className="mono">{dShort(r.doc_date)}</td>
                 <td className="r mono amt">{money(r.gross, r.currency)}</td>
                 <td><span className={"badge b-" + r.status}><span className="dot" />{t(STATUS[r.status])}</span></td>
+                <td className="r td-act" onClick={(e) => e.stopPropagation()}><DupBtn id={r.id} onOpen={onOpen} /></td>
               </tr>
             ))}
           </tbody>
