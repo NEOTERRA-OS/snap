@@ -317,12 +317,19 @@ function MobileDetail({ id, onClose, onOpen = null, embedded = false }) {
     supabase.storage.from("receipts").createSignedUrl(r.file_path, 300).then(({ data }) => { setPreview(data?.signedUrl || null); setPkind(pdf ? "pdf" : "img"); });
   }, [r?.file_path]);
   useEffect(() => { if (r?.created_by && r.created_by !== r.user_id) supabase.from("profiles").select("id,full_name").in("id", [r.user_id, r.created_by].filter(Boolean)).then(({ data }) => { const m = {}; (data || []).forEach((p) => (m[p.id] = p.full_name)); setNames(m); }); }, [r?.created_by, r?.user_id]);
+  const [duping, setDuping] = useState(false);
+  async function dup() { if (!onOpen) return; setDuping(true); try { const nid = await duplicateReceipt(id); PENDING_DUP_EDIT = nid; toast(t("Duplikat erstellt — bitte Betrag eintragen")); onOpen(nid); } catch (e) { toast(e.message || "Fehler", "err"); } finally { setDuping(false); } }
+  // Direkt nach dem Duplizieren: Beleg im Bearbeiten-Modus öffnen und den Betrag fokussieren.
+  useEffect(() => { if (r && PENDING_DUP_EDIT === id) { PENDING_DUP_EDIT = null; startEdit(); setTimeout(() => document.querySelector(".nrev-amt")?.focus(), 90); } }, [r]);
 
   const head = (title) => (
     <div className="ndet-top">
       <button type="button" className="nrev-x" onClick={onClose} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
       <span className="nrev-prog">{title}</span>
-      {r && !["approved", "booked"].includes(r.status) && !editing ? <button type="button" className="ndet-edit" onClick={startEdit}><Icon name="pencil" size={16} /></button> : <span style={{ width: 34 }} />}
+      <div className="ndet-top-acts">
+        {r && !editing && onOpen && <button type="button" className="ndet-edit" title={t("Duplizieren")} disabled={duping} onClick={dup}>{duping ? <span className="spin" /> : <Icon name="copy" size={16} />}</button>}
+        {r && !["approved", "booked"].includes(r.status) && !editing ? <button type="button" className="ndet-edit" onClick={startEdit}><Icon name="pencil" size={16} /></button> : <span style={{ width: 34 }} />}
+      </div>
     </div>
   );
   if (!r) return <div className={oc}>{head(t("Beleg"))}<div className="center" style={{ minHeight: 200 }}><span className="spin" /></div></div>;
