@@ -1821,7 +1821,7 @@ function Approvals({ onOpen }) {
                     <td className="mut">{ccMap[r.cost_center_id]?.name || "—"}</td>
                     <td className="mono">{dShort(r.doc_date)}</td>
                     <td className="r mono amt">{money(r.gross, r.currency)}</td>
-                    <td className="r"><button className="appr-btn" disabled={busy} onClick={() => decide(r.id, "approved")}><Icon name="check" size={14} /> {t("Freigeben")}</button></td>
+                    <td className="r"><div className="row-acts"><DupBtn id={r.id} onOpen={onOpen} /><button className="appr-btn" disabled={busy} onClick={() => decide(r.id, "approved")}><Icon name="check" size={14} /> {t("Freigeben")}</button></div></td>
                   </tr>
                 ))}
               </tbody>
