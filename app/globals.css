@@ -985,3 +985,17 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 /* Dark Mode: gelbe CTAs mit dunkelgrünem (nicht emerald) Text/Icon */
 [data-theme="dark"] .cmdh-cta, [data-theme="dark"] .appr-btn, [data-theme="dark"] .adm-cta{color:#2C3C2B}
 [data-theme="dark"] .cmdh-cta .i, [data-theme="dark"] .appr-btn .i, [data-theme="dark"] .adm-cta .i{color:#2C3C2B}
+
+/* Auswahl-Leiste im NEOS-Stil: dunkelgrün, gelber Zähler, helle Pill-Buttons, gelber Primär */
+.bulkbar{background:#2C3C2B;border:1px solid #2C3C2B;border-radius:12px;gap:10px;padding:11px 14px}
+.bulkbar-c{font-size:14.5px;font-weight:700;color:var(--yellow);white-space:nowrap}
+.bulkbar .selall{color:#EFF1E9;font-size:14px}
+.bulkbar .selall input{accent-color:var(--yellow)}
+.bulkbar select{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#EFF1E9;font-size:13.5px}
+.bulkbar select option{color:#1B211A}
+.bulkbar .btn.ghost{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#EFF1E9;font-size:13.5px;font-weight:600}
+.bulkbar .btn.ghost .i{color:#EFF1E9}
+.bulkbar .cmdh-cta{font-size:13.5px;color:#2C3C2B}
+.bulkbar .cmdh-cta .i{color:#2C3C2B}
+.bulkbar-x{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#EFF1E9}
+.bulkbar-x:hover{color:#fff;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.30)}
