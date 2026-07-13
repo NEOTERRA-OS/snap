@@ -158,19 +158,21 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .kv .k{color:var(--muted)}.kv .v{font-weight:600}
 
 /* login — hero + card (mobile-first, responsive) */
-.auth{min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
+.auth{min-height:100vh;display:flex;flex-direction:column;background:#F6F7F2}
 .auth-hero{position:relative;overflow:hidden;text-align:center;color:#fff;padding:34px 24px 30px;
-  background:linear-gradient(160deg,#33442f,#2C3C2B 62%,#22301f);border-radius:0 0 22px 22px}
-.auth-glow{position:absolute;width:220px;height:220px;border-radius:50%;top:-80px;right:-70px;
-  background:radial-gradient(circle,rgba(250,210,1,.15),transparent 70%)}
-.auth-hero .ah-name{position:relative;font-size:18px;font-weight:800;letter-spacing:.3px;margin-top:11px}
+  background:#2C3C2B;border-radius:0 0 22px 22px}
+.auth-glow{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 45% at 28% 8%,rgba(250,210,1,.12),transparent 60%),radial-gradient(ellipse 55% 45% at 85% 100%,rgba(16,185,129,.12),transparent 60%)}
+.auth-hero .ah-body{position:relative;display:flex;flex-direction:column;align-items:center}
+.auth-hero .ah-name{position:relative;font-size:20px;font-weight:800;letter-spacing:.3px;margin-top:14px;line-height:1}
 .auth-hero .ah-name span{color:var(--yellow)}
-.auth-hero .ah-tag{position:relative;font-size:12px;color:rgba(255,255,255,.7);margin-top:5px}
+.auth-hero .ah-tag{position:relative;font-size:13px;color:rgba(245,243,240,.6);margin-top:10px;line-height:1.5;max-width:19rem}
+.auth-hero .ah-foot{position:relative;font-size:12px;color:rgba(245,243,240,.35);display:none}
 .auth-card{flex:1;display:flex;justify-content:center;padding:0 20px 28px;margin-top:18px}
-.panel-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px 22px;width:100%;max-width:420px;
-  box-shadow:0 6px 22px rgba(17,24,39,.05)}
-.auth-h{font-size:18px;font-weight:800}
-.auth-sub{color:var(--muted);font-size:13px;margin:4px 0 20px}
+.panel-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;width:100%;max-width:360px;
+  box-shadow:0 16px 40px rgba(27,33,26,.12)}
+.auth-h{font-size:23px;font-weight:800;color:#2C3C2B}
+.auth-sub{color:#5f6b62;font-size:14px;margin:8px 0 20px}
 .inp{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:11px 12px}
 .inp:focus-within{border-color:var(--green)}
 .inp .i{color:var(--muted);flex:0 0 auto}
