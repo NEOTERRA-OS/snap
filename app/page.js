@@ -1474,7 +1474,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
     : r.status === statusF;
   const curMatch = (r) => curF === "all" || (r.currency || "EUR") === curF;
   const empMatch = (r) => empF === "all" || r.user_id === empF;
-  const filtered = rows.filter((r) => statusMatch(r) && curMatch(r) && empMatch(r) && (!q || (r.merchant || "").toLowerCase().includes(q.toLowerCase())));
+  const filtered = rows.filter((r) => statusMatch(r) && curMatch(r) && empMatch(r) && (!q || [r.merchant, r.receipt_no, r.invoice_no].some((x) => (x || "").toString().toLowerCase().includes(q.toLowerCase()))));
   // Währungen im Datenbestand + Zähler (für Filter-Chips)
   const curList = [...new Set(rows.map((r) => r.currency || "EUR"))].sort();
   const curCount = (c) => rows.filter((r) => (r.currency || "EUR") === c).length;
@@ -1740,7 +1740,7 @@ function Approvals({ onOpen }) {
   }, []);
   if (!rows) return <div className="center"><span className="spin" /></div>;
   const ccMap = {}; ccs.forEach((c) => (ccMap[c.id] = c));
-  const filtered = rows.filter((r) => !q || [r.merchant, r.merchant_cui, String(r.gross)].some((x) => (x || "").toString().toLowerCase().includes(q.toLowerCase())));
+  const filtered = rows.filter((r) => !q || [r.merchant, r.merchant_cui, r.receipt_no, r.invoice_no, String(r.gross)].some((x) => (x || "").toString().toLowerCase().includes(q.toLowerCase())));
 
   const toggle = (id) => setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const allSel = rows.length > 0 && sel.size === rows.length;
