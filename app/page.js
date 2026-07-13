@@ -265,7 +265,7 @@ async function duplicateReceipt(rid) {
     user_id: r.user_id || uid, created_by: uid, creator_name: name,
     status: "draft", source: r.source || "upload", recipient: r.recipient || null,
     merchant: r.merchant || null, merchant_cui: r.merchant_cui || null, invoice_no: null,
-    doc_date: r.doc_date || null,
+    doc_date: new Date().toISOString().slice(0, 10),
     gross: null, vat_rate: r.vat_rate ?? null, currency: r.currency || "EUR",
     gross_eur: null, fx_rate: null, net: null, vat_amount: null,
     category: r.category || "other", payment_method: r.payment_method || "private",
