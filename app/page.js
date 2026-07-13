@@ -1739,6 +1739,16 @@ function Approvals({ onOpen }) {
           <button className="cmdh-cta" disabled={busy || !rows.length} onClick={() => decideMany(rows.map((r) => r.id), "approved")}><Icon name="checkcheck" size={15} /> {t("Alle freigeben")}</button>
         </CmdHeader>
 
+        {sel.size > 0 && (
+          <div className="bulkbar" style={{ marginBottom: 12 }}>
+            <span className="bulkbar-c">{sel.size} {t("ausgewählt")}</span>
+            <span className="aws-scope-sp" />
+            <button type="button" className="btn ghost" style={{ width: "auto", padding: "0 14px", height: 36 }} disabled={busy} onClick={bulkReject}><Icon name="x" size={15} /> {t("Ablehnen")}</button>
+            <button type="button" className="cmdh-cta" disabled={busy} onClick={bulkApprove}>{busy ? <span className="spin" /> : <Icon name="checkcheck" size={15} />} {t("Freigeben")} ({sel.size})</button>
+            <button type="button" className="bulkbar-x" onClick={() => setSel(new Set())} title={t("Auswahl aufheben")}><Icon name="x" size={15} /></button>
+          </div>
+        )}
+
         {rows.length === 0 ? <div className="empty"><Icon name="checkcheck" size={28} /><p>{t("Nichts zur Freigabe.")}</p></div>
           : vmode === "list" ? (
             <table className="jtable">
