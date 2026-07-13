@@ -257,3 +257,6 @@
 .neos .ndone-step.done .ndone-txt b, .neos .ndone-step.active .ndone-txt b { color: var(--text); }
 .neos .ndone-txt span { font-size: 11.5px; color: var(--text-3); }
 .neos .ndone-btn { width: 100%; max-width: 320px; margin-top: 20px; background: var(--yellow); color: var(--yellow-ink); border: 0; border-radius: var(--r-btn); padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--font-ui); }
+
+.neos .ndet-refno { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 11.5px; letter-spacing: .2px; color: var(--text-3); margin-bottom: 5px; }
+.neos .ndet-refno.mut { color: var(--text-3); opacity: .8; font-style: italic; font-family: var(--font-ui); letter-spacing: normal; }

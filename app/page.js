@@ -1520,9 +1520,9 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const allSel = sorted.length > 0 && sorted.every((r) => sel.has(r.id));
   const toggleAll = () => setSel(allSel ? new Set() : new Set(sorted.map((r) => r.id)));
   const doExport = () => {
-    const head = ["Datum", "Händler", "Belegnr", "Mitarbeiter", "Kategorie", "Status", "Betrag", "Währung"];
+    const head = ["Belegnummer", "Datum", "Händler", "Rechnungsnr", "Mitarbeiter", "Kategorie", "Status", "Betrag", "Währung"];
     const esc = (x) => `"${String(x ?? "").replace(/"/g, '""')}"`;
-    const lines = sorted.map((r) => [r.doc_date || "", r.merchant || "", r.invoice_no || "", names[r.user_id] || "", catInfo(r.category).label, STATUS[r.status] || r.status, r.gross ?? "", r.currency || ""].map(esc).join(","));
+    const lines = sorted.map((r) => [r.receipt_no || "", r.doc_date || "", r.merchant || "", r.invoice_no || "", names[r.user_id] || "", catInfo(r.category).label, STATUS[r.status] || r.status, r.gross ?? "", r.currency || ""].map(esc).join(","));
     const blob = new Blob(["﻿" + [head.map(esc).join(","), ...lines].join("\n")], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "belege.csv"; a.click(); URL.revokeObjectURL(url);
   };
