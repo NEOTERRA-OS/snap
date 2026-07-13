@@ -581,11 +581,11 @@ function Shell({ session }) {
         onChange={(e) => { const fs = Array.from(e.target.files || []); e.target.value = ""; if (fs.length) { setInbound(fs); setDetail(null); setCaptureOpen(true); } }} />
       {captureOpen && <Capture uid={uid} onDone={() => setCaptureOpen(false)} onClose={() => setCaptureOpen(false)} inbound={inbound} onInboundHandled={() => setInbound(null)} />}
       {detail && (isMobile ? (
-        <MobileDetail id={detail} onClose={() => setDetail(null)} />
+        <MobileDetail id={detail} onClose={() => setDetail(null)} onOpen={setDetail} />
       ) : (
         <div className="sheet-wrap" onMouseDown={(e) => { if (e.target === e.currentTarget) setDetail(null); }}>
           <div className="sheet">
-            <MobileDetail id={detail} onClose={() => setDetail(null)} embedded />
+            <MobileDetail id={detail} onClose={() => setDetail(null)} onOpen={setDetail} embedded />
           </div>
         </div>
       ))}
