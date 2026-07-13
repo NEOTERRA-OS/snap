@@ -50,9 +50,12 @@ function Login() {
     <div className="auth">
       <div className="auth-hero">
         <div className="auth-glow" />
-        <Logo size={46} />
-        <div className="ah-name">NEOS <span>Snap</span></div>
-        <div className="ah-tag">{t("Belege & Spesen — erfasst, geprüft, gebucht.")}</div>
+        <div className="ah-body">
+          <Logo size={72} />
+          <div className="ah-name">NEOS <span>Snap</span></div>
+          <div className="ah-tag">{t("Belege & Spesen — erfasst, geprüft, gebucht.")}</div>
+        </div>
+        <div className="ah-foot">© {new Date().getFullYear()} Neoterra Tools</div>
       </div>
       <div className="auth-card">
         <div className="panel-card">
