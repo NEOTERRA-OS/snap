@@ -413,6 +413,9 @@ function MobileDetail({ id, onClose, onOpen = null, embedded = false }) {
           <span className="ndet-tile"><Icon name={r.source === "cash" ? "banknote" : info.icon} size={22} /></span>
           <div className="ndet-hmain">
             <div className="ndet-merch">{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</div>
+            {r.receipt_no
+              ? <div className="ndet-refno">{r.receipt_no}</div>
+              : <div className="ndet-refno mut">{t("Belegnr. bei Einreichung")}</div>}
             <span className={"nmob-badge s-" + r.status}><i />{t(STATUS[r.status])}</span>
           </div>
         </div>
