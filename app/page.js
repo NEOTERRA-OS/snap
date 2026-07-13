@@ -1685,7 +1685,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
             {sorted.map((r) => (
               <tr key={r.id} onClick={() => onOpen(r.id)} className={sel.has(r.id) ? "selrow" : undefined}>
                 <td className="td-chk" onClick={(e) => toggleSel(r.id, e)}><input type="checkbox" checked={sel.has(r.id)} onChange={(e) => toggleSel(r.id, e)} onClick={(e) => e.stopPropagation()} aria-label={t("Auswählen")} /></td>
-                <td className="tdmerch"><span className="m-name">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{r.invoice_no && <span className="m-doc">{r.invoice_no}</span>}</td>
+                <td className="tdmerch"><span className="m-name">{flagged(r) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{(r.receipt_no || r.invoice_no) && <span className="m-doc">{r.receipt_no || r.invoice_no}</span>}</td>
                 {allScope && (() => {
                   const byOther = r.created_by && r.created_by !== r.user_id;
                   const creator = r.created_by ? (names[r.created_by] || r.creator_name || "—") : (r.creator_name || null);
@@ -1818,7 +1818,7 @@ function Approvals({ onOpen }) {
                 {filtered.map((r) => (
                   <tr key={r.id} className={sel.has(r.id) ? "selrow" : undefined}>
                     <td className="td-chk" onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={sel.has(r.id)} onChange={() => toggle(r.id)} aria-label={t("Auswählen")} /></td>
-                    <td className="tdmerch" onClick={() => onOpen(r.id)}><span className="m-name">{(r.flags?.length > 0 || r.duplicate_of) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{r.invoice_no && <span className="m-doc">{r.invoice_no}</span>}</td>
+                    <td className="tdmerch" onClick={() => onOpen(r.id)}><span className="m-name">{(r.flags?.length > 0 || r.duplicate_of) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{(r.receipt_no || r.invoice_no) && <span className="m-doc">{r.receipt_no || r.invoice_no}</span>}</td>
                     <td><span className="emp-c"><Icon name="user" size={13} /> {names[r.user_id] || r.creator_name || "—"}</span></td>
                     <td className="mut">{ccMap[r.cost_center_id]?.name || "—"}</td>
                     <td className="mono">{dShort(r.doc_date)}</td>
