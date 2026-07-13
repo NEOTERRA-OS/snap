@@ -250,7 +250,52 @@ function PullToRefresh() {
 }
 
 // Mobile Beleg-Detail (Vollbild, nach Claude-Design): Ansicht + Bearbeiten + Status-Leiter.
-function MobileDetail({ id, onClose, embedded = false }) {
+// Duplizieren: aus einem bestehenden Beleg einen neuen Entwurf erzeugen — alle
+// Stammdaten werden kopiert, nur der Betrag bleibt leer (und die Rechnungsnr. + das Beleg-Bild).
+let PENDING_DUP_EDIT = null;
+async function duplicateReceipt(rid) {
+  const [{ data: auth }, { data: r, error }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("receipts").select("*").eq("id", rid).single(),
+  ]);
+  if (error) throw error;
+  const uid = auth?.user?.id;
+  const name = auth?.user?.user_metadata?.full_name || auth?.user?.email || null;
+  const row = {
+    user_id: r.user_id || uid, created_by: uid, creator_name: name,
+    status: "draft", source: r.source || "upload", recipient: r.recipient || null,
+    merchant: r.merchant || null, merchant_cui: r.merchant_cui || null, invoice_no: null,
+    doc_date: r.doc_date || null,
+    gross: null, vat_rate: r.vat_rate ?? null, currency: r.currency || "EUR",
+    gross_eur: null, fx_rate: null, net: null, vat_amount: null,
+    category: r.category || "other", payment_method: r.payment_method || "private",
+    reimbursable: r.payment_method === "private",
+    cost_center_id: r.cost_center_id || null,
+    occasion: r.occasion || null, attendees: r.attendees || null,
+    file_path: null, file_hash: null, file_size: null,
+    confidence: null, duplicate_of: null, flags: null,
+  };
+  const { data: ins, error: e2 } = await supabase.from("receipts").insert(row).select("id").single();
+  if (e2) throw e2;
+  return ins.id;
+}
+
+function DupBtn({ id, onOpen, label = false, cls = "dupbtn" }) {
+  const { t } = useT();
+  const [busy, setBusy] = useState(false);
+  return (
+    <button type="button" className={cls} disabled={busy} title={t("Duplizieren")}
+      onClick={async (e) => {
+        e.stopPropagation(); setBusy(true);
+        try { const nid = await duplicateReceipt(id); PENDING_DUP_EDIT = nid; toast(t("Duplikat erstellt — bitte Betrag eintragen")); onOpen(nid); }
+        catch (err) { toast(err.message || "Fehler", "err"); } finally { setBusy(false); }
+      }}>
+      {busy ? <span className="spin" /> : <Icon name="copy" size={14} />}{label && <span> {t("Duplizieren")}</span>}
+    </button>
+  );
+}
+
+function MobileDetail({ id, onClose, onOpen = null, embedded = false }) {
   const { t } = useT();
   const oc = "neos ndetail" + (embedded ? " emb" : "");
   const ocEdit = "neos nrev" + (embedded ? " emb" : "");
