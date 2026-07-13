@@ -1679,7 +1679,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
           <thead><tr>
             <th className="thc thc-chk"><input type="checkbox" checked={allSel} onChange={toggleAll} aria-label={t("Alle auswählen")} /></th>
             <th className="thc">{t("Händler")}</th>{allScope && <th className="thc">{t("Mitarbeiter")}</th>}<th className="thc">{t("Kategorie")}</th>
-            <th className="thc">{t("Datum")}</th><th className="thc r">{t("Betrag")}</th><th className="thc">{t("Status")}</th>
+            <th className="thc">{t("Datum")}</th><th className="thc r">{t("Betrag")}</th><th className="thc">{t("Status")}</th><th className="thc r td-act-h" aria-hidden />
           </tr></thead>
           <tbody>
             {sorted.map((r) => (
