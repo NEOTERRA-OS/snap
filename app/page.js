@@ -1743,12 +1743,14 @@ function Approvals({ onOpen }) {
           : vmode === "list" ? (
             <table className="jtable">
               <thead><tr>
+                <th className="thc thc-chk"><input type="checkbox" checked={filtered.length > 0 && filtered.every((r) => sel.has(r.id))} onChange={() => { const all = filtered.length > 0 && filtered.every((r) => sel.has(r.id)); setSel(all ? new Set() : new Set(filtered.map((r) => r.id))); }} aria-label={t("Alle auswählen")} /></th>
                 <th className="thc">{t("Händler")}</th><th className="thc">{t("Mitarbeiter")}</th><th className="thc">{t("Kostenstelle")}</th>
                 <th className="thc">{t("Datum")}</th><th className="thc r">{t("Betrag")}</th><th className="thc r">{t("Aktion")}</th>
               </tr></thead>
               <tbody>
                 {filtered.map((r) => (
                   <tr key={r.id} className={sel.has(r.id) ? "selrow" : undefined}>
+                    <td className="td-chk" onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={sel.has(r.id)} onChange={() => toggle(r.id)} aria-label={t("Auswählen")} /></td>
                     <td className="tdmerch" onClick={() => onOpen(r.id)}><span className="m-name">{(r.flags?.length > 0 || r.duplicate_of) && <Icon name="alert" size={13} className="flagdot" />}{r.merchant || (r.source === "cash" ? t("Barauslage") : "—")}</span>{r.invoice_no && <span className="m-doc">{r.invoice_no}</span>}</td>
                     <td><span className="emp-c"><Icon name="user" size={13} /> {names[r.user_id] || r.creator_name || "—"}</span></td>
                     <td className="mut">{ccMap[r.cost_center_id]?.name || "—"}</td>
