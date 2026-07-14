@@ -269,7 +269,7 @@ async function duplicateReceipt(rid) {
     gross: null, vat_rate: r.vat_rate ?? null, currency: r.currency || "EUR",
     gross_eur: null, fx_rate: null, net: null, vat_amount: null,
     category: r.category || "other", payment_method: r.payment_method || "private",
-    reimbursable: r.payment_method === "private",
+    reimbursable: ["private", "cash"].includes(r.payment_method),
     cost_center_id: r.cost_center_id || null,
     occasion: r.occasion || null, attendees: r.attendees || null,
     file_path: null, file_hash: null, file_size: null,
@@ -385,6 +385,7 @@ function MobileDetail({ id, onClose, onOpen = null, embedded = false }) {
         <label className="nrev-lab">{t("Zahlart")}</label>
         <div className="nrev-pay">
           <button type="button" className={ef.payment_method === "private" ? "on" : ""} onClick={() => setF({ payment_method: "private" })}><Icon name="wallet" size={15} /> {t("Privat verauslagt")}</button>
+          <button type="button" className={ef.payment_method === "cash" ? "on" : ""} onClick={() => setF({ payment_method: "cash" })}><Icon name="coins" size={15} /> {t("Bar")}</button>
           <button type="button" className={ef.payment_method === "company_card" ? "on" : ""} onClick={() => setF({ payment_method: "company_card" })}><Icon name="banknote" size={15} /> {t("Firmenkarte")}</button>
         </div>
       </div>
@@ -438,7 +439,7 @@ function MobileDetail({ id, onClose, onOpen = null, embedded = false }) {
           {net != null && row(t("Netto"), <span className="num">{money(net, r.currency)}</span>)}
           {row(t("MwSt"), <span className="num">{r.vat_rate ?? "—"}% · {money(r.vat_amount, r.currency)}</span>)}
           {row(t("Kostenstelle / Projekt"), cc ? `${cc.code} · ${cc.name}` : "—")}
-          {row(t("Zahlart"), r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte"))}
+          {row(t("Zahlart"), r.payment_method === "private" ? t("Privat verauslagt") : r.payment_method === "cash" ? t("Bar") : t("Firmenkarte"))}
           {r.source === "cash" && row(t("Empfänger"), r.recipient || "—")}
           {r.created_by && r.created_by !== r.user_id && row(t("Erfasst von / für"), `${names[r.created_by] || "—"} · ${names[r.user_id] || "—"}`)}
         </div>
@@ -1062,7 +1063,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
           net: netFrom(it.gross, it.vat_rate),
           vat_amount: it.gross && it.vat_rate ? +(it.gross - it.gross / (1 + it.vat_rate / 100)).toFixed(2) : null,
           category: it.category, payment_method: it.payment_method,
-          reimbursable: it.payment_method === "private", confidence: it.confidence,
+          reimbursable: ["private", "cash"].includes(it.payment_method), confidence: it.confidence,
           cost_center_id: it.cost_center_id || null,
           occasion: it.category === "hospitality" ? (it.occasion || null) : null,
           attendees: it.category === "hospitality" ? (it.attendees || null) : null,
@@ -1235,6 +1236,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
             <label className="nrev-lab">{t("Zahlart")}</label>
             <div className="nrev-pay">
               <button type="button" className={it.payment_method === "private" ? "on" : ""} onClick={() => upd(it.id, { payment_method: "private" })}><Icon name="wallet" size={15} /> {t("Privat verauslagt")}</button>
+              <button type="button" className={it.payment_method === "cash" ? "on" : ""} onClick={() => upd(it.id, { payment_method: "cash" })}><Icon name="coins" size={15} /> {t("Bar")}</button>
               <button type="button" className={it.payment_method === "company_card" ? "on" : ""} onClick={() => upd(it.id, { payment_method: "company_card" })}><Icon name="banknote" size={15} /> {t("Firmenkarte")}</button>
             </div>
 
@@ -1329,7 +1331,7 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
                   <option value="">{t("— wählen —")}</option>{ccs.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select></div>
               <div className="field"><label>{t("Zahlart")} {mb(it, "payment_method")}</label>
                 <select value={it.payment_method} onChange={(e) => upd(it.id, { payment_method: e.target.value })}>
-                  <option value="company_card">{t("Firmenkarte")}</option><option value="private">{t("Privat verauslagt")}</option></select></div>
+                  <option value="company_card">{t("Firmenkarte")}</option><option value="private">{t("Privat verauslagt")}</option><option value="cash">{t("Bar")}</option></select></div>
               {it.category === "hospitality" && (
                 <>
                   <div className="field wide"><label>{t("Anlass der Bewirtung")}</label><input value={it.occasion} onChange={(e) => upd(it.id, { occasion: e.target.value })} placeholder={t("z. B. Projektbesprechung mit Lieferant")} /></div>
@@ -1472,7 +1474,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   if (!rows) return <div className="center"><span className="spin" /></div>;
 
   const statusMatch = (r) => statusF === "all" ? true
-    : statusF === "priv" ? r.payment_method === "private"
+    : statusF === "priv" ? ["private", "cash"].includes(r.payment_method)
     : statusF === "submitted" ? ["review", "submitted"].includes(r.status)
     : r.status === statusF;
   const curMatch = (r) => curF === "all" || (r.currency || "EUR") === curF;
@@ -1497,7 +1499,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const openUnconverted = open.filter((r) => eurOf(r) == null).length;
   const chips = [["all", "Alle"], ["draft", "Entwurf"], ["submitted", "In Prüfung"], ["approved", "Freigabe"], ["booked", "Gebucht"], ["rejected", "Abgelehnt"]];
   // ---- Mobile-Home (Neubau nach Claude-Design) ----
-  const openReimb = open.filter((r) => r.payment_method === "private");
+  const openReimb = open.filter((r) => ["private", "cash"].includes(r.payment_method));
   const openReimbSum = openReimb.reduce((s, r) => s + (eurOf(r) ?? 0), 0);
   const inReviewCount = open.filter((r) => ["review", "submitted"].includes(r.status)).length;
   const vorsteuer = open.reduce((s, r) => { const e = eurOf(r); return s + (e && r.vat_rate ? e - e / (1 + r.vat_rate / 100) : 0); }, 0);
@@ -1511,9 +1513,9 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
   const firstName = ((who || "").split(/[ @.]/)[0]) || who;
   const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
   const kw = (() => { const d = new Date(); const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = dt.getUTCDay() || 7; dt.setUTCDate(dt.getUTCDate() + 4 - day); const ys = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1)); return Math.ceil((((dt - ys) / 86400000) + 1) / 7); })();
-  const mchips = [["all", "Alle", null], ["submitted", "In Prüfung", "#E0B100"], ["priv", "Privat verauslagt", "#C2700C"], ["booked", "Gebucht", "#8C937F"]];
+  const mchips = [["all", "Alle", null], ["submitted", "In Prüfung", "#E0B100"], ["priv", "Erstattung", "#C2700C"], ["booked", "Gebucht", "#8C937F"]];
   const chipCount = (k) => k === "all" ? rows.length
-    : k === "priv" ? rows.filter((r) => r.payment_method === "private").length
+    : k === "priv" ? rows.filter((r) => ["private", "cash"].includes(r.payment_method)).length
     : k === "submitted" ? rows.filter((r) => ["review", "submitted"].includes(r.status)).length
     : rows.filter((r) => r.status === k).length;
   const flagged = (r) => (r.flags?.length > 0 || r.duplicate_of);
@@ -1664,6 +1666,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
             <option value="">{t("Zahlart setzen …")}</option>
             <option value="company_card">{t("Firmenkarte")}</option>
             <option value="private">{t("Privat verauslagt")}</option>
+            <option value="cash">{t("Bar")}</option>
           </select>
           {allScope && (
             <select value="" disabled={bulkBusy} onChange={(e) => { if (e.target.value) bulkReassign(e.target.value); e.target.value = ""; }} title={t("Belege einem Mitarbeiter zuweisen (für wen)")}>
@@ -1981,7 +1984,7 @@ function Detail({ id, onBack }) {
       <button className="linkbtn" onClick={onBack} style={{ marginBottom: 10 }}><Icon name="chevronleft" size={16} /> {t("Zurück")}</button>
       <div className="lcard" style={{ cursor: "default" }}>
         <div className="lthumb"><Icon name={catInfo(r.category).icon} size={19} /></div>
-        <div className="meta"><div className="t">{r.merchant}</div><div className="d">{t(catInfo(r.category).label)} · {r.payment_method === "private" ? t("Privat verauslagt") : t("Firmenkarte")}</div></div>
+        <div className="meta"><div className="t">{r.merchant}</div><div className="d">{t(catInfo(r.category).label)} · {r.payment_method === "private" ? t("Privat verauslagt") : r.payment_method === "cash" ? t("Bar") : t("Firmenkarte")}</div></div>
         <div className="amt">{money(r.gross, r.currency)}</div>
       </div>
       {preview && (
@@ -2205,7 +2208,7 @@ function Dashboard({ onOpen, uid, mode = "analysis", onCapture = null, onOpenApp
   const vat = f.reduce((s, r) => { const e = eurOf(r); return s + (e && r.vat_rate ? e - e / (1 + r.vat_rate / 100) : 0); }, 0);
   const avg = f.length ? total / f.length : 0;
   const openR = f.filter((r) => ["review", "submitted", "approved"].includes(r.status));
-  const openReimb = openR.filter((r) => r.payment_method === "private");
+  const openReimb = openR.filter((r) => ["private", "cash"].includes(r.payment_method));
   const booked = f.filter((r) => r.status === "booked");
   const unconverted = f.filter((r) => eurOf(r) == null).length;
   const inReview = f.filter((r) => ["review", "submitted"].includes(r.status));
@@ -2247,7 +2250,7 @@ function Dashboard({ onOpen, uid, mode = "analysis", onCapture = null, onOpenApp
   const byMerch = agg(keyMerch);
   const byEmp = agg(keyEmp);
   const byMonth = agg((r) => (r.doc_date ? r.doc_date.slice(0, 7) : null));
-  const byPay = agg((r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte"));
+  const byPay = agg((r) => (r.payment_method === "private" ? "Privat verauslagt" : r.payment_method === "cash" ? "Bar" : "Firmenkarte"));
 
   const sorted = (m) => Object.entries(m).sort((a, b) => b[1] - a[1]);
   const months = Object.keys(byMonth).sort();
@@ -2550,7 +2553,7 @@ table{width:100%;border-collapse:collapse;font-size:11.5px} .dist td{padding:5px
       <div className="panel" style={{ marginTop: 14 }}>
         <div className="pw"><Icon name="wallet" /> {t("Erstattung / Zahlart")}<span className="pw-hint">{t("Anteil am Volumen")}</span></div>
         {sorted(byPay).map(([k, v], i) => { const mx = total || 1; return (
-          <div className="rrow rrow-clk" key={k} onClick={() => setDrill({ title: t(k), predicate: (r) => (r.payment_method === "private" ? "Privat verauslagt" : "Firmenkarte") === k })} title={t("Belege anzeigen & Zahlart ändern")}>
+          <div className="rrow rrow-clk" key={k} onClick={() => setDrill({ title: t(k), predicate: (r) => (r.payment_method === "private" ? "Privat verauslagt" : r.payment_method === "cash" ? "Bar" : "Firmenkarte") === k })} title={t("Belege anzeigen & Zahlart ändern")}>
             <div className="rmain">
               <div className="rlab">{t(k)}</div>
               <div className="rtrack"><i className={rampClass(i)} style={{ width: (v / mx) * 100 + "%" }} /></div>
