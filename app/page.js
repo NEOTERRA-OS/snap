@@ -1691,6 +1691,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
       {sorted.length === 0 ? (
         <div className="empty"><Icon name="receipt" size={28} /><p>{q || statusF !== "all" ? t("Keine Treffer im Filter.") : t("Noch keine Belege erfasst.")}</p></div>
       ) : (<>
+        <div className="list-secbar only-desktop"><span className="ls-count">{sorted.length} {t("Belege")}</span><span className="ls-sum">Σ {listSumParts.join(" · ")}</span></div>
         <table className="jtable only-desktop">
           <thead><tr>
             <th className="thc thc-chk"><input type="checkbox" checked={allSel} onChange={toggleAll} aria-label={t("Alle auswählen")} /></th>
