@@ -1499,6 +1499,9 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
     else c = (a.doc_date || "").localeCompare(b.doc_date || "");
     return dir === "asc" ? c : -c;
   });
+  // Summe der aktuell angezeigten (gefilterten) Belege, gruppiert nach Währung.
+  const listSumByCur = sorted.reduce((m, r) => { const c = r.currency || "EUR"; m[c] = (m[c] || 0) + Number(r.gross || 0); return m; }, {});
+  const listSumParts = Object.entries(listSumByCur).sort((a, b) => b[1] - a[1]).map(([c, v]) => money(v, c));
   const open = rows.filter((r) => ["review", "submitted", "approved"].includes(r.status));
   // EUR-Wert je Beleg (Fremdwährung via gespeichertem gross_eur; EUR unverändert).
   const eurOf = (r) => (r.gross_eur != null ? Number(r.gross_eur) : ((!r.currency || r.currency === "EUR") ? Number(r.gross || 0) : null));
@@ -1578,7 +1581,7 @@ function Receipts({ uid, onOpen, q = "", setQ = () => {}, allScope = false, who 
           {curList.length > 1 && <span className="fchips-div" />}
           {curList.length > 1 && curList.map((c) => <button type="button" key={c} className={"nmob-chip" + (curF === c ? " on" : "")} onClick={() => setCurF(curF === c ? "all" : c)}>{c} <span className="cnt">{curCount(c)}</span></button>)}
         </div>
-        <div className="nmob-secbar"><span className="cap">{sorted.length} {t("Belege")}</span></div>
+        <div className="nmob-secbar"><span className="cap">{sorted.length} {t("Belege")}</span>{sorted.length > 0 && <span className="nmob-sum">Σ {listSumParts.join(" · ")}</span>}</div>
         {sorted.length === 0 ? (
           <div className="nmob-empty">{q || statusF !== "all" ? t("Keine Treffer im Filter.") : t("Noch keine Belege erfasst.")}</div>
         ) : (
