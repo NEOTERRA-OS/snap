@@ -353,7 +353,14 @@ function MobileDetail({ id, onClose, onOpen = null, embedded = false }) {
     const gross = ef.gross === "" ? null : Number(ef.gross);
     const vr = ef.vat_rate === "" ? null : Number(ef.vat_rate);
     let nn = null, va = null; if (gross != null && vr != null) { nn = Math.round(gross / (1 + vr / 100) * 100) / 100; va = Math.round((gross - nn) * 100) / 100; }
-    const patch = { merchant: ef.merchant.trim() || null, merchant_cui: ef.merchant_cui.trim() || null, invoice_no: ef.invoice_no.trim() || null, doc_date: ef.doc_date || null, gross, currency: (ef.currency || "EUR").toUpperCase(), vat_rate: vr, net: nn, vat_amount: va, category: ef.category, cost_center_id: ef.cost_center_id || null, payment_method: ef.payment_method };
+    const curr = (ef.currency || "EUR").toUpperCase();
+    // EUR-Wert (für Auswertungen/Erstattung) beim Bearbeiten immer neu berechnen.
+    let gross_eur = null, fx_rate = null;
+    if (gross != null) {
+      if (curr === "EUR") { gross_eur = gross; fx_rate = 1; }
+      else { try { const fx = await fxToEur(gross, curr, ef.doc_date || null); gross_eur = fx?.eur ?? null; fx_rate = fx?.rate ?? null; } catch { gross_eur = null; fx_rate = null; } }
+    }
+    const patch = { merchant: ef.merchant.trim() || null, merchant_cui: ef.merchant_cui.trim() || null, invoice_no: ef.invoice_no.trim() || null, doc_date: ef.doc_date || null, gross, currency: curr, vat_rate: vr, net: nn, vat_amount: va, gross_eur, fx_rate, category: ef.category, cost_center_id: ef.cost_center_id || null, payment_method: ef.payment_method };
     const { error } = await supabase.from("receipts").update(patch).eq("id", id);
     setBusy(false);
     if (error) { toast(error.message, "err"); return; }
