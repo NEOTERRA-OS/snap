@@ -6,7 +6,7 @@
   --bg:#F6F7F2; --surface:#FFFFFF; --thead:#EDEFE8;
   --ink:#1B211A; --muted:#5E665B; --muted2:#8C937F; --line:#E4E7DE; --line2:#EDEFE8;
   --green:#2C3C2B; --yellow:#FAD201;
-  --r1:#2C3C2B; --r2:#0a7a24; --r3:#009A17; --track2:#EDEFE8;
+  --r1:#047857; --r2:#10B981; --r3:#34D399; --track2:#EDEFE8;
   --pos:#2C7A43; --neg:#C0392B; --warn:#C2700C;
   --emerald:#2C7A43; --emerald-bg:#E7F0E8; --emerald-bd:#c7e0cd;
   --amber:#C2700C; --amber-bg:#FCF0C4; --amber-bd:#f0dca0;
@@ -870,7 +870,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 /* sync 1783353339 */
 
 /* Ausgaben pro Monat: grüner Gradient, aktueller (letzter) Balken gelb */
-.mc2-bar{background:linear-gradient(180deg,#46A557 0%,#2C6E3D 100%)}
+.mc2-bar{background:linear-gradient(180deg,#34D399 0%,#059669 100%)}
 .mc2-bar.cur{background:linear-gradient(180deg,#FFDE59 0%,#FAD201 100%)}
 .mc2-bar.cur .mc2-val{color:var(--ink)}
 
