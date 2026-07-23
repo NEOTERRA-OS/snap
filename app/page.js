@@ -477,7 +477,7 @@ function Shell({ session }) {
   const [role, setRole] = useState(null);
   const [mustChange, setMustChange] = useState(false);
   const [delegModal, setDelegModal] = useState(false);
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("system"); // "light" | "dark" | "system"
   const [searchQ, setSearchQ] = useState("");
   const fabCamRef = useRef(null);          // App-Ebene: Kamera direkt aus FAB-Klick öffnen (iOS-Geste)
   const [inbound, setInbound] = useState(null); // per FAB aufgenommene Dateien → an Capture
@@ -499,7 +499,23 @@ function Shell({ session }) {
   // Service Worker bewusst NICHT mehr registrieren (Stale-Cache vermeiden);
   // ein bereits installierter SW wird über /sw.js automatisch abgemeldet.
   useEffect(() => { try { const s = localStorage.getItem("snap_theme"); if (s) setTheme(s); } catch {} }, []);
-  useEffect(() => { try { document.documentElement.dataset.theme = theme; localStorage.setItem("snap_theme", theme); } catch {} }, [theme]);
+  // Theme anwenden: Hell/Dunkel/System (folgt OS live), persistiert, setzt data-theme + data-neos-theme.
+  useEffect(() => {
+    const apply = () => {
+      const sys = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const resolved = theme === "system" ? (sys ? "dark" : "light") : theme;
+      const r = document.documentElement;
+      r.dataset.theme = resolved; r.dataset.neosTheme = resolved;
+    };
+    apply();
+    try { localStorage.setItem("snap_theme", theme); } catch {}
+    if (theme === "system" && typeof window !== "undefined" && window.matchMedia) {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      const h = () => apply();
+      mq.addEventListener ? mq.addEventListener("change", h) : mq.addListener(h);
+      return () => { mq.removeEventListener ? mq.removeEventListener("change", h) : mq.removeListener(h); };
+    }
+  }, [theme]);
   // Esc schließt das Detail-Slide-over.
   useEffect(() => {
     if (!detail) return;
@@ -515,7 +531,9 @@ function Shell({ session }) {
   const email = session.user.email;
   const who = session.user.user_metadata?.full_name || session.user.email;
   const signOut = () => supabase.auth.signOut();
-  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+  const toggleTheme = () => setTheme(theme === "light" ? "dark" : theme === "dark" ? "system" : "light");
+  const themeIcon = theme === "dark" ? "moon" : theme === "system" ? "laptop" : "sun";
+  const themeLabel = theme === "dark" ? t("Dunkel") : theme === "system" ? t("System") : t("Hell");
   const initials = (who || "?").split(/[ @.]/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
   useEffect(() => { supabase.from("profiles").select("role,must_change_password").eq("id", uid).single().then(({ data }) => { setRole(data?.role || "employee"); setMustChange(!!data?.must_change_password); }); }, [uid]);
   const nav = (v, ic, label, badge) => (
@@ -534,6 +552,7 @@ function Shell({ session }) {
       {delegModal && <DelegationsModal onClose={() => setDelegModal(false)} />}
       <aside className="sidebar">
         <button type="button" className="sb-brand" onClick={() => { setDetail(null); setView("receipts"); }} aria-label={t("Zu den Belegen")}><Logo size={28} /> <span className="pn"><b>NEOS</b> <span className="sub">Snap</span></span></button>
+        <button type="button" className="sb-cta" onClick={() => { setDetail(null); setCaptureOpen(true); }}><Icon name="camera" size={16} /> {t("Beleg erfassen")}</button>
         <div className="sb-grp">{t("Workspace")}</div>
         {nav("receipts", "receipt", "Belege")}
         {["accounting", "admin"].includes(role) && nav("allreceipts", "layers", "Alle Belege")}
@@ -551,7 +570,7 @@ function Shell({ session }) {
             <Icon name="bell" size={16} />
             {notiUnread > 0 && <span className="sb-bell-dot">{notiUnread > 9 ? "9+" : notiUnread}</span>}
           </button>
-          <button className="sb-theme" onClick={toggleTheme} title={theme === "dark" ? t("Hell") : t("Dunkel")} aria-label="theme"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></button>
+          <button className="sb-theme" onClick={toggleTheme} title={`${t("Theme")}: ${themeLabel}`} aria-label="theme"><Icon name={themeIcon} size={16} /></button>
         </div>
         <div className="sb-foot-row">
           <button className="sb-logout" onClick={signOut}><Icon name="logout" size={14} /> {t("Abmelden")}</button>
@@ -845,9 +864,9 @@ function MobileProfile({ who, initials, role, lang, setLang, theme, toggleTheme,
         ))}
       </div>
       <button type="button" className="nprof-row" onClick={toggleTheme}>
-        <span className="nprof-row-ic"><Icon name={theme === "dark" ? "sun" : "moon"} size={16} /></span>
+        <span className="nprof-row-ic"><Icon name={theme === "dark" ? "moon" : theme === "system" ? "laptop" : "sun"} size={16} /></span>
         <span className="nprof-row-tx">{t("Darstellung")}</span>
-        <span className="nprof-val">{theme === "dark" ? t("Dunkel") : t("Hell")}</span>
+        <span className="nprof-val">{theme === "dark" ? t("Dunkel") : theme === "system" ? t("System") : t("Hell")}</span>
       </button>
       <button type="button" className="nprof-row nprof-logout" onClick={onSignOut}>
         <span className="nprof-row-ic"><Icon name="logout" size={16} /></span>
@@ -1112,6 +1131,18 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
           <div className="cap-modal-tt"><b>{t("Beleg erfassen")}</b><span>{t("Quelle wählen")}</span></div>
           <button type="button" className="cap-modal-x" onClick={() => onClose?.()} aria-label={t("Schließen")}><Icon name="x" size={18} /></button>
         </div>
+        <div className="cap-modal-dzwrap">
+          <label className={"cap-dz" + (drag ? " over" : "")}
+            onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
+            onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
+            onDrop={smartDrop}>
+            <span className="cap-dz-ic"><Icon name="upload" size={24} /></span>
+            <span className="cap-dz-h">{t("Dateien hierher ziehen oder auswählen")}</span>
+            <span className="cap-dz-p">{t("JPG, PNG, PDF, CSV, XLSX — Format wird automatisch erkannt")}</span>
+            <input ref={allRef} type="file" accept="image/*,application/pdf,.csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple hidden onChange={onPickAny} />
+          </label>
+        </div>
+        <div className="cap-modal-or">{t("oder Quelle wählen")}</div>
         <div className="cap-modal-grid">
           <button type="button" className="cap-src" onClick={() => imgRef.current?.click()}>
             <span className="cap-src-ic"><Icon name="image" size={20} /></span>
@@ -1137,17 +1168,6 @@ function Capture({ uid, onDone, onClose, inbound, onInboundHandled }) {
             <span className="cap-src-ic"><Icon name="filespreadsheet" size={20} /></span>
             <b>{t("Excel / CSV")}</b><span>{t("Mehrere auf einmal")}</span>
             <input type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={onImport} />
-          </label>
-        </div>
-        <div className="cap-modal-dzwrap">
-          <label className={"cap-dz" + (drag ? " over" : "")}
-            onDragOver={(e) => { e.preventDefault(); if (!drag) setDrag(true); }}
-            onDragLeave={(e) => { e.preventDefault(); setDrag(false); }}
-            onDrop={smartDrop}>
-            <span className="cap-dz-ic"><Icon name="upload" size={24} /></span>
-            <span className="cap-dz-h">{t("Dateien hierher ziehen oder auswählen")}</span>
-            <span className="cap-dz-p">{t("JPG, PNG, PDF, CSV, XLSX — Format wird automatisch erkannt")}</span>
-            <input ref={allRef} type="file" accept="image/*,application/pdf,.csv,.xlsx,.xls,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple hidden onChange={onPickAny} />
           </label>
         </div>
         <input ref={imgRef} type="file" accept="image/*" capture="environment" multiple hidden onChange={onPick} />

@@ -622,13 +622,20 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 
 /* ===== Dark Mode (neutral surfaces + Emerald-Akzent, NEOS-Guideline) ===== */
 [data-theme="dark"]{
-  --bg:#111312;--surface:#1B1D1C;--thead:#272A28;
-  --ink:#ECEEEB;--muted:#BFC4BB;--muted2:#969C90;--line:#313431;--line2:#292C29;
-  --green:#10b981;                 /* Brand-Akzent in Dark = Emerald (Icons/Fills/Progress) */
+  /* NEOS Dark — Anker-Palette (Kontrakt) */
+  --bg:#0C110D;--surface:#151C16;--thead:#1C251D;
+  --ink:#EAF0E6;--muted:#AEB6A8;--muted2:#7C8676;--line:#2B352C;--line2:#222A23;
+  --green:#95C11F;                 /* Flaschengrün-Text/Icon hebt auf Dunkel → Fresh-Green (Kontrakt) */
   --emerald:#34d399;--emerald-bg:#10231b;--emerald-bd:#1f4435;
-  --amber-bg:#241d0e;--amber-bd:#4a3a16;--red:#f87171;--red-bg:#2a1414;
+  --amber-bg:#241d0e;--amber-bd:#4a3a16;--red:#E5645C;--red-bg:#2a1414;
   --r1:#34D399;--r2:#10B981;--r3:#059669;--track2:rgba(255,255,255,.07);
-  --pos:#34d399;--neg:#f87171;--warn:#fbbf24;
+  --pos:#4FBF67;--neg:#E5645C;--warn:#E4AE4A;
+}
+/* Ausschluss: erzeugte Dokumente/PDF/Mail/Druck bleiben hell */
+[data-theme="dark"] .neos-force-light,.neos-force-light{
+  --bg:#F6F7F2;--surface:#FFFFFF;--thead:#EDEFE8;
+  --ink:#1B211A;--muted:#5E665B;--muted2:#8C937F;--line:#E4E7DE;--line2:#EDEFE8;
+  --green:#2C3C2B;--red:#C0392B;--pos:#009A17;--neg:#C0392B;--warn:#C2700C;
 }
 /* CTAs behalten dunkles Bottle-Green auf Gelb (Kontrast) */
 [data-theme="dark"] .btn:not(.ghost),[data-theme="dark"] .sb-cta,[data-theme="dark"] .dz-btn{color:#2C3C2B}
@@ -651,6 +658,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 /* ===== NEOS Desktop-Sidebar (dunkelgrün, nach Claude-Design) =====
    .sidebar-Prefix hebt Spezifität über die Dark-Theme-Regeln; am Dateiende → gewinnt. */
 .sidebar{background:#2C3C2B;border-right:0}
+[data-theme="dark"] .sidebar{background:#080C08}
 .sidebar .sb-brand{color:#EFF1E9}
 .sidebar .sb-brand .pn b{color:#fff}
 .sidebar .sb-brand .pn .sub{color:#9fb096}
@@ -889,7 +897,8 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .cap-modal-tt span{font-size:13px;color:var(--muted)}
 .cap-modal-x{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
 .cap-modal-x:hover{color:var(--ink);border-color:var(--green)}
-.cap-modal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:20px}
+.cap-modal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:8px 20px 20px}
+.cap-modal-or{text-align:center;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);padding:12px 20px 0}
 @media(max-width:760px){.cap-modal-grid{grid-template-columns:1fr 1fr;gap:10px;padding:14px}}
 .cap-src{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;font-family:inherit;transition:border-color .15s,box-shadow .15s,background .15s}
 .cap-src:hover{border-color:var(--green);box-shadow:0 4px 16px rgba(44,60,43,.08);background:#fcfcfb}
@@ -906,7 +915,7 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 @media(max-width:760px){.cap-modal-wrap{padding:0}.cap-modal{max-width:100%;max-height:100vh;height:100vh;border-radius:0}}
 
 /* Erfassen-Modal: dedizierte Drag & Drop-Zone */
-.cap-modal-dzwrap{padding:0 20px 18px}
+.cap-modal-dzwrap{padding:18px 20px 4px}
 .cap-dz{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;border:2px dashed rgba(44,60,43,.28);border-radius:16px;padding:40px 18px;cursor:pointer;background:#EEF5EC;transition:border-color .15s,background .15s,box-shadow .15s}
 .cap-dz:hover{border-color:var(--green);background:#E7F0E5}
 .cap-dz.over{border-color:var(--green);background:var(--emerald-bg);box-shadow:0 0 0 4px rgba(44,60,43,.08)}
